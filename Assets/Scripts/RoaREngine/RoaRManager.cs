@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace RoaREngine
@@ -5,12 +6,12 @@ namespace RoaREngine
     public class RoaRManager : MonoBehaviour
     {
         private RoaRPooler roarPooler;
-        private RoaRContainerMap containerMap;
+        public RoaRContainerMap RoarContainerMap = default;
 
         private void Start()
         {
             roarPooler = GetComponent<RoaRPooler>();
-            containerMap = GetComponent<RoaRContainerMap>();
+            RoarContainerMap.SetNames();
         }
 
         public void Play(string musicID)
@@ -18,9 +19,9 @@ namespace RoaREngine
             GameObject roarEmitter = roarPooler.Get();
             if (roarEmitter != null)
             {
-                if (containerMap.MusicIDIsValid(musicID))
+                if (RoarContainerMap.MusicIDIsValid(musicID))
                 {
-                    containerMap.SetContainer(musicID, roarEmitter);
+                    RoarContainerMap.SetContainer(musicID, roarEmitter);
                     roarEmitter.GetComponent<RoaREmitter>().Play();
                 }
             }
@@ -28,7 +29,7 @@ namespace RoaREngine
 
         public void Stop(string musicID)
         {
-            if (containerMap.MusicIDIsValid(musicID))
+            if (RoarContainerMap.MusicIDIsValid(musicID))
             {
                 GameObject roarEmitter = SearchActiveEmitterInPlay(musicID);
                 if (roarEmitter != null)
@@ -40,7 +41,7 @@ namespace RoaREngine
 
         public void Pause(string musicID)
         {
-            if (containerMap.MusicIDIsValid(musicID))
+            if (RoarContainerMap.MusicIDIsValid(musicID))
             {
                 GameObject roarEmitter = SearchActiveEmitterInPlay(musicID);
                 if (roarEmitter != null)
@@ -52,7 +53,7 @@ namespace RoaREngine
 
         public void Resume(string musicID)
         {
-            if (containerMap.MusicIDIsValid(musicID))
+            if (RoarContainerMap.MusicIDIsValid(musicID))
             {
                 GameObject roarEmitter = SearchActiveEmitter(musicID);
                 if (roarEmitter != null)

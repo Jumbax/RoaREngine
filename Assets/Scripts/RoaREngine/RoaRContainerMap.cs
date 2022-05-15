@@ -1,15 +1,16 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace RoaREngine
 {
-    public class RoaRContainerMap : MonoBehaviour
+    [Serializable]
+    public class RoaRContainerMap
     {
-        //DEBUG: dev'essere privato ed impostarsi da editor
         public List<RoaRContainer> roarContainers;
         private Dictionary<string, RoaRContainer> containerDict = new Dictionary<string, RoaRContainer>();
 
-        private void Start()
+        public void SetNames()
         {
             foreach (RoaRContainer container in roarContainers)
             {

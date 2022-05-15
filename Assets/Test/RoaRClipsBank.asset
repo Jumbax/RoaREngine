@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 157a0ea12d967624c92f27df862505b8, type: 3}
-  m_Name: TrackRoaRContainer
+  m_Name: RoaRClipsBank
   m_EditorClassIdentifier: 
   audioClipsGroups:
     sequenceMode: 0

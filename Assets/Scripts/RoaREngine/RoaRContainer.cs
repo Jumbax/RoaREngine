@@ -7,9 +7,12 @@ namespace RoaREngine
     {
         public string Name;
         public AudioClip Clip { get => roarClipBank.GetClip();}
-
         public RoaRClipsBankSO roarClipBank;
+        public RoaRConfigurationSO roarConfiguration;
 
-        //configuration SO
+        public void SetConfiguration(AudioSource audioSource)
+        {
+            roarConfiguration.ApplyTo(audioSource);
+        }
     }
 }
