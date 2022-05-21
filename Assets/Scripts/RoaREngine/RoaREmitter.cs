@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 namespace RoaREngine
@@ -48,5 +49,7 @@ namespace RoaREngine
         {
             audioSource.UnPause();
         }
+
+        public AudioSource GetAudioSource() => audioSource;
     }
 }

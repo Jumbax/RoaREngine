@@ -403,7 +403,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   RoarContainerMap:
     roarContainers:
-    - {fileID: 11400000, guid: 5f015a4866c7e6b4c80235247b171da9, type: 2}
+    - {fileID: 11400000, guid: 68ece8a24e93bb24eaa61dbb4feee11f, type: 2}
 --- !u!4 &859925086
 Transform:
   m_ObjectHideFlags: 0
@@ -449,6 +449,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   manager: {fileID: 859925085}
+  CueName: Music
 --- !u!4 &1259477260
 Transform:
   m_ObjectHideFlags: 0

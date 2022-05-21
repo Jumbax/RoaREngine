@@ -10,14 +10,19 @@ namespace RoaREngine
         private string containerName;
         private int ClipsNumber = 1;
         private List<AudioClip> clips = new List<AudioClip>();
-
+        private int Index;
         private AudioMixerGroup audioMixerGroup = null;
         private PriorityLevel priority = PriorityLevel.Standard;
+        private AudioSequenceMode sequenceMode = AudioSequenceMode.Sequential;
         private bool loop = false;
         private bool mute = false;
-        private bool randomPitch;
         private float volume = 1f;
+        private float fadeInVolume = 0f;
+        private float randomMinVolume = 0f;
+        private float randomMaxVolume = 0f;
         private float pitch = 1f;
+        private float randomMinPitch = 0f;
+        private float randomMaxPitch = 0f;
         private float panStereo = 0f;
         private float reverbZoneMix = 1f;
         private float spatialBlend = 0f;
@@ -41,9 +46,9 @@ namespace RoaREngine
 
         private void Awake()
         {
+            clips.Clear();
             AudioClip clip = null;
             clips.Add(clip);
-
         }
 
         private void OnGUI()
@@ -85,9 +90,10 @@ namespace RoaREngine
         {
             audioMixerGroup = EditorGUILayout.ObjectField("AudioMixerGroup", audioMixerGroup, typeof(AudioMixerGroup), false) as AudioMixerGroup;
             priority = (PriorityLevel)EditorGUILayout.EnumPopup("Priority", priority);
+            sequenceMode = (AudioSequenceMode)EditorGUILayout.EnumPopup("SequenceMode", sequenceMode);
+            Index = EditorGUILayout.IntField("Index", 0);
             loop = EditorGUILayout.Toggle("Loop", loop);
             mute = EditorGUILayout.Toggle("Mute", mute);
-            randomPitch = EditorGUILayout.Toggle("randomPitch", randomPitch);
             using (new GUILayout.HorizontalScope())
             {
                 GUILayout.Label("Volume", GUILayout.Width(145));
@@ -97,10 +103,43 @@ namespace RoaREngine
             }
             using (new GUILayout.HorizontalScope())
             {
+                GUILayout.Label("FadeInVolume", GUILayout.Width(145));
+                fadeInVolume = EditorGUILayout.FloatField(fadeInVolume, GUILayout.Width(25));
+            }
+            using (new GUILayout.HorizontalScope())
+            {
+                GUILayout.Label("RandomMinVolume", GUILayout.Width(145));
+                randomMinVolume = EditorGUILayout.FloatField(randomMinVolume, GUILayout.Width(25));
+                randomMinVolume = GUILayout.HorizontalSlider(randomMinVolume, 0f, 1f);
+                randomMinVolume = Mathf.Clamp(randomMinVolume, 0f, 1f);
+            }
+            using (new GUILayout.HorizontalScope())
+            {
+                GUILayout.Label("RandomMaxVolume", GUILayout.Width(145));
+                randomMaxVolume = EditorGUILayout.FloatField(randomMaxVolume, GUILayout.Width(25));
+                randomMaxVolume = GUILayout.HorizontalSlider(randomMaxVolume, 0f, 1f);
+                randomMaxVolume = Mathf.Clamp(randomMaxVolume, 0f, 1f);
+            }
+            using (new GUILayout.HorizontalScope())
+            {
                 GUILayout.Label("Pitch", GUILayout.Width(145));
                 pitch = EditorGUILayout.FloatField(pitch, GUILayout.Width(25));
                 pitch = GUILayout.HorizontalSlider(pitch, -3f, 3f);
                 pitch = Mathf.Clamp(pitch, -3f, 3f);
+            }
+            using (new GUILayout.HorizontalScope())
+            {
+                GUILayout.Label("RandomMinPitch", GUILayout.Width(145));
+                randomMinPitch = EditorGUILayout.FloatField(randomMinPitch, GUILayout.Width(25));
+                randomMinPitch = GUILayout.HorizontalSlider(randomMinPitch, -3f, 3f);
+                randomMinPitch = Mathf.Clamp(randomMinPitch, -3f, 3f);
+            }
+            using (new GUILayout.HorizontalScope())
+            {
+                GUILayout.Label("randomMaxPitch", GUILayout.Width(145));
+                randomMaxPitch = EditorGUILayout.FloatField(randomMaxPitch, GUILayout.Width(25));
+                randomMaxPitch = GUILayout.HorizontalSlider(randomMaxPitch, -3f, 3f);
+                randomMaxPitch = Mathf.Clamp(randomMaxPitch, -3f, 3f);
             }
             using (new GUILayout.HorizontalScope())
             {
@@ -152,23 +191,28 @@ namespace RoaREngine
                 dopplerLevel = GUILayout.HorizontalSlider(dopplerLevel, 0f, 5f);
                 dopplerLevel = Mathf.Clamp(dopplerLevel, 0f, 5f);
             }
-            bypasseffects = EditorGUILayout.Toggle("Bypasseffects", randomPitch);
-            bypasslistenereffects = EditorGUILayout.Toggle("Bypasslistenereffects", randomPitch);
-            bypassreverbzones = EditorGUILayout.Toggle("Bypassreverbzones", randomPitch);
-            ignorelistenervolume = EditorGUILayout.Toggle("Ignorelistenervolume", randomPitch);
-            ignorelistenerpause = EditorGUILayout.Toggle("Ignorelistenerpause", randomPitch);
+            bypasseffects = EditorGUILayout.Toggle("Bypasseffects", bypasseffects);
+            bypasslistenereffects = EditorGUILayout.Toggle("Bypasslistenereffects", bypasslistenereffects);
+            bypassreverbzones = EditorGUILayout.Toggle("Bypassreverbzones", bypassreverbzones);
+            ignorelistenervolume = EditorGUILayout.Toggle("Ignorelistenervolume", ignorelistenervolume);
+            ignorelistenerpause = EditorGUILayout.Toggle("Ignorelistenerpause", ignorelistenerpause);
     }
 
         private void CreateContainer()
         {
+            if (containerName == "")
+            {
+                //TODO ERROR MESSAGE "A CONTAINER MUST HAVE A NAME"
+                return;
+            }
             RoaRContainer container = CreateInstance<RoaRContainer>();
 
-            string path = AssetDatabase.GenerateUniqueAssetPath(string.Concat("Assets/Test/", containerName, ".asset"));
+            string path = AssetDatabase.GenerateUniqueAssetPath(string.Concat("Assets/Test/", containerName, "CONTAINER.asset"));
             AssetDatabase.CreateAsset(container, path);
 
             container.Name = containerName;
             container.roarClipBank = CreateClipBank();
-            container.roarConfiguration = CreateConfiguration();
+            container.roarConfiguration = CreateConfiguration(container.roarClipBank);
 
             AssetDatabase.SaveAssets();
             EditorUtility.FocusProjectWindow();
@@ -191,37 +235,45 @@ namespace RoaREngine
             return bank;
         }
         
-        private void ApplyConfiguration(RoaRConfigurationSO config) 
+        private void ApplySettings(RoaRClipsBankSO bank ,RoaRConfigurationSO config) 
         {
-            config.audioMixerGroup = this.audioMixerGroup;
+            bank.audioClipsGroups.sequenceMode = sequenceMode;
+            bank.SetClipIndex(Index);
+
+            config.audioMixerGroup = audioMixerGroup;
             config.loop = loop;
-            config.mute = this.mute;
-            config.bypasseffects = this.bypasseffects;
-            config.bypasslistenereffects = this.bypasslistenereffects;
-            config.bypassreverbzones = this.bypassreverbzones;
-            config.priority = this.priority;
-            config.volume = this.volume;
-            config.pitch = this.pitch;
-            config.panStereo = this.panStereo;
-            config.spatialBlend = this.spatialBlend;
-            config.reverbZoneMix = this.reverbZoneMix;
-            config.dopplerLevel = this.dopplerLevel;
-            config.spread = this.spread;
-            config.rolloffMode = this.rolloffMode;
-            config.minDistance = this.minDistance;
-            config.maxDistance = this.maxDistance;
-            config.ignorelistenervolume = this.ignorelistenervolume;
-            config.ignorelistenerpause = this.ignorelistenerpause;
+            config.mute = mute;
+            config.bypasseffects = bypasseffects;
+            config.bypasslistenereffects = bypasslistenereffects;
+            config.bypassreverbzones = bypassreverbzones;
+            config.priority = priority;
+            config.volume = volume;
+            config.fadeInvolume = fadeInVolume;
+            config.randomMinvolume = randomMinVolume;
+            config.randomMaxvolume = randomMaxVolume;
+            config.pitch = pitch;
+            config.randomMinPitch = randomMaxPitch;
+            config.randomMaxPitch = randomMaxPitch;
+            config.panStereo = panStereo;
+            config.spatialBlend = spatialBlend;
+            config.reverbZoneMix = reverbZoneMix;
+            config.dopplerLevel = dopplerLevel;
+            config.spread = spread;
+            config.rolloffMode = rolloffMode;
+            config.minDistance = minDistance;
+            config.maxDistance = maxDistance;
+            config.ignorelistenervolume = ignorelistenervolume;
+            config.ignorelistenerpause = ignorelistenerpause;
         }
 
-        private RoaRConfigurationSO CreateConfiguration()
+        private RoaRConfigurationSO CreateConfiguration(RoaRClipsBankSO bank)
         {
             RoaRConfigurationSO config = CreateInstance<RoaRConfigurationSO>();
 
             string path = AssetDatabase.GenerateUniqueAssetPath(string.Concat("Assets/Test/", containerName, "CONFIG.asset"));
             AssetDatabase.CreateAsset(config, path);
 
-            ApplyConfiguration(config);
+            ApplySettings(bank, config);
 
             AssetDatabase.SaveAssets();
             EditorUtility.FocusProjectWindow();

@@ -9,9 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 157a0ea12d967624c92f27df862505b8, type: 3}
-  m_Name: RoaRClipsBank
+  m_Script: {fileID: 11500000, guid: 1fa71d9cb49a0bc43860d9f5b734c035, type: 3}
+  m_Name: MusicCONTAINER
   m_EditorClassIdentifier: 
-  audioClipsGroups:
-    sequenceMode: 0
-    audioClips: []
+  Name: 
+  roarClipBank: {fileID: 0}
+  roarConfiguration: {fileID: 0}

@@ -1,18 +1,18 @@
 using System;
 using UnityEngine;
 using UnityEngine.Audio;
-public enum PriorityLevel
-{
-    Highest = 0,
-    High = 64,
-    Standard = 128,
-    Low = 194,
-    VeryLow = 256
-}
 
 
 namespace RoaREngine
 {
+    public enum PriorityLevel
+    {
+        Highest = 0,
+        High = 64,
+        Standard = 128,
+        Low = 194,
+        VeryLow = 256
+    }
     [CreateAssetMenu(fileName = "RoaRConfiguration", menuName = "RoaREngine/RoaRConfiguration")]
     public class RoaRConfigurationSO : ScriptableObject
     {
@@ -22,9 +22,13 @@ namespace RoaREngine
         [Header("Properties")]
         public bool loop = false;
         public bool mute = false;
-        public bool randomPitch;
         [Range(0f, 1f)] public float volume = 1f;
+        public float fadeInvolume = 0f;
+        [Range(0f, 1f)] public float randomMinvolume = 0f;
+        [Range(0f, 1f)] public float randomMaxvolume = 0f;
         [Range(-3f, 3f)] public float pitch = 1f;
+        [Range(-3f, 3f)] public float randomMinPitch = 0f;
+        [Range(-3f, 3f)] public float randomMaxPitch = 0f;
         [Range(0f, 1f)] public float panStereo = 0f;
         [Range(0f, 1f)] public float reverbZoneMix = 1f;
 
@@ -52,8 +56,22 @@ namespace RoaREngine
             audioSource.bypassListenerEffects = this.bypasslistenereffects;
             audioSource.bypassReverbZones = this.bypassreverbzones;
             audioSource.priority = (int)this.priority;
-            audioSource.volume = this.volume;
-            audioSource.pitch = this.pitch;
+            if (randomMinvolume != 0 || randomMaxvolume != 0)
+            {
+                audioSource.volume = UnityEngine.Random.Range(randomMinvolume, randomMaxvolume);
+            }
+            else
+            {
+                audioSource.volume = this.volume;
+            }
+            if (randomMinPitch != 0 || randomMaxPitch != 0)
+            {
+                audioSource.pitch = UnityEngine.Random.Range(randomMinPitch, randomMaxPitch);
+            }
+            else
+            {
+                audioSource.pitch = this.pitch;
+            }
             audioSource.panStereo = this.panStereo;
             audioSource.spatialBlend = this.spatialBlend;
             audioSource.reverbZoneMix = this.reverbZoneMix;

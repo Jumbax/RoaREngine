@@ -27,14 +27,5 @@ namespace RoaREngine
         {
             return containerDict.ContainsKey(musicID);
         }
-
-        public bool Test(List<GameObject> roarEmitters, string musicID)
-        {
-            foreach (GameObject roarEmitter in roarEmitters)
-            {
-                return roarEmitter.GetComponent<RoaREmitter>().CheckForContainerName(musicID);
-            }
-            return false;
-        }
     }
 }

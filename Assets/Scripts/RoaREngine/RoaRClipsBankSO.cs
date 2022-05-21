@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace RoaREngine
 {
+    public enum AudioSequenceMode { Sequential, Random, Choise}
     [CreateAssetMenu(fileName = "RoaRClipsBank", menuName = "RoaREngine/RoaRClipsBank")]
     public class RoaRClipsBankSO : ScriptableObject
     {
@@ -13,14 +14,24 @@ namespace RoaREngine
             return audioClipsGroups.NextClip();
         }
 
+        public void SetClipIndex(int index)
+        {
+            audioClipsGroups.Index = index;
+        }
+
+        public int GetClipIndex()
+        {
+            return audioClipsGroups.Index;
+        }
+
         [Serializable]
         public class AudioClipsGroup
         {
-            public enum AudioSequenceMode{ Sequential, Random }
             public AudioSequenceMode sequenceMode = AudioSequenceMode.Sequential;
             public AudioClip[] audioClips;
             private int currentIndex = -1;
             private int previousIndex = -1;
+            public int Index;
 
             public AudioClip NextClip()
             {
@@ -37,6 +48,9 @@ namespace RoaREngine
                             currentIndex = UnityEngine.Random.Range(0, audioClips.Length);
                         }
                         while (currentIndex == previousIndex);
+                        break;
+                    case AudioSequenceMode.Choise:
+                        currentIndex = Index;
                         break;
                 }
 

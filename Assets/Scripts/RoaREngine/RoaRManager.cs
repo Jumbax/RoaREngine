@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -23,6 +24,38 @@ namespace RoaREngine
                 {
                     RoarContainerMap.SetContainer(musicID, roarEmitter);
                     roarEmitter.GetComponent<RoaREmitter>().Play();
+                }
+            }
+        }
+
+        public void PlayEsclusive(string musicID)
+        {
+            GameObject roarEmitter = roarPooler.Get();
+            if (roarEmitter != null)
+            {
+                if (RoarContainerMap.MusicIDIsValid(musicID))
+                {
+                    GameObject oldEmitter = SearchActiveEmitterInPlay(musicID);
+                    if (oldEmitter != null)
+                    {
+                        oldEmitter.GetComponent<RoaREmitter>().Stop();
+                    }                    
+                    RoarContainerMap.SetContainer(musicID, roarEmitter);
+                    roarEmitter.GetComponent<RoaREmitter>().Play();
+                }
+            }
+        }
+           
+        public void PlayWithFade(string musicID, float fadeTime)
+        {
+            GameObject roarEmitter = roarPooler.Get();
+            if (roarEmitter != null)
+            {
+                if (RoarContainerMap.MusicIDIsValid(musicID))
+                {
+                    RoarContainerMap.SetContainer(musicID, roarEmitter);
+                    roarEmitter.GetComponent<RoaREmitter>().Play();
+                    StartCoroutine(FadeInCoroutine(roarEmitter, fadeTime));
                 }
             }
         }
@@ -82,7 +115,7 @@ namespace RoaREngine
         {
             foreach (GameObject roarEmitter in roarPooler.RoarEmitters)
             {
-                if (!roarEmitter.GetComponent<RoaREmitter>().IsPlaying() && roarEmitter.activeInHierarchy == true)
+                if (!roarEmitter.GetComponent<RoaREmitter>().IsPlaying() && roarEmitter.gameObject.activeInHierarchy == true)
                 {
                     if (roarEmitter.GetComponent<RoaREmitter>().CheckForContainerName(musicID))
                     {
@@ -91,6 +124,23 @@ namespace RoaREngine
                 }
             }
             return null;
+        }
+
+        private IEnumerator FadeInCoroutine(GameObject emitter, float fadeTime)
+        {
+            float time = 0f;
+            AudioSource audioSource = emitter.GetComponent<RoaREmitter>().GetAudioSource();
+            float startVolume = audioSource.volume;
+            float duration = fadeTime;
+
+            while (time < duration)
+            {
+                audioSource.volume = Mathf.Lerp(startVolume, 1f, time / duration);
+                time += Time.deltaTime;
+                yield return null;
+            }
+
+            audioSource.volume = 1f;
         }
     }
 }
