@@ -14,10 +14,13 @@ namespace RoaREngine
         private AudioMixerGroup audioMixerGroup = null;
         private PriorityLevel priority = PriorityLevel.Standard;
         private AudioSequenceMode sequenceMode = AudioSequenceMode.Sequential;
+        private float startTime = 0f;
+        private bool randomStartTime = false;
         private bool loop = false;
         private bool mute = false;
         private float volume = 1f;
         private float fadeInVolume = 0f;
+        private float fadeOutVolume = 0f;
         private float randomMinVolume = 0f;
         private float randomMaxVolume = 0f;
         private float pitch = 1f;
@@ -91,6 +94,12 @@ namespace RoaREngine
             audioMixerGroup = EditorGUILayout.ObjectField("AudioMixerGroup", audioMixerGroup, typeof(AudioMixerGroup), false) as AudioMixerGroup;
             priority = (PriorityLevel)EditorGUILayout.EnumPopup("Priority", priority);
             sequenceMode = (AudioSequenceMode)EditorGUILayout.EnumPopup("SequenceMode", sequenceMode);
+            using (new GUILayout.HorizontalScope())
+            {
+                GUILayout.Label("StartTime", GUILayout.Width(145));
+                startTime = EditorGUILayout.FloatField(startTime, GUILayout.Width(25));
+            }
+            randomStartTime = EditorGUILayout.Toggle("RandomStartTime", randomStartTime);
             Index = EditorGUILayout.IntField("Index", 0);
             loop = EditorGUILayout.Toggle("Loop", loop);
             mute = EditorGUILayout.Toggle("Mute", mute);
@@ -105,6 +114,11 @@ namespace RoaREngine
             {
                 GUILayout.Label("FadeInVolume", GUILayout.Width(145));
                 fadeInVolume = EditorGUILayout.FloatField(fadeInVolume, GUILayout.Width(25));
+            }
+            using (new GUILayout.HorizontalScope())
+            {
+                GUILayout.Label("FadeOutVolume", GUILayout.Width(145));
+                fadeOutVolume = EditorGUILayout.FloatField(fadeOutVolume, GUILayout.Width(25));
             }
             using (new GUILayout.HorizontalScope())
             {
@@ -241,6 +255,8 @@ namespace RoaREngine
             bank.SetClipIndex(Index);
 
             config.audioMixerGroup = audioMixerGroup;
+            config.startTime = startTime;
+            config.randomStartTime = randomStartTime;
             config.loop = loop;
             config.mute = mute;
             config.bypasseffects = bypasseffects;
@@ -249,6 +265,7 @@ namespace RoaREngine
             config.priority = priority;
             config.volume = volume;
             config.fadeInvolume = fadeInVolume;
+            config.fadeOutvolume = fadeOutVolume;
             config.randomMinvolume = randomMinVolume;
             config.randomMaxvolume = randomMaxVolume;
             config.pitch = pitch;

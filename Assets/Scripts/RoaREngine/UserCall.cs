@@ -7,8 +7,11 @@ public class UserCall : MonoBehaviour
 {
     private bool Play;
     private bool Stop;
+    private bool Pause;
+    private bool Resume;
     public RoaRManager manager;
     public string CueName;
+    public float FadeTime;
 
     void Update()
     {
@@ -16,7 +19,7 @@ public class UserCall : MonoBehaviour
         {
             if (!Play)
             {
-                manager.PlayWithFade(CueName, 5f);
+                manager.Play(CueName, 0f, false, 0f, true);
                 Play = true;
             }
         }
@@ -28,10 +31,28 @@ public class UserCall : MonoBehaviour
                 Stop = true;
             }
         }
+        if (Input.GetKey(KeyCode.Alpha3))
+        {
+            if (!Pause)
+            {
+                manager.Pause(CueName, 1f);
+                Pause = true;
+            }
+        }
+        if (Input.GetKey(KeyCode.Alpha4))
+        {
+            if (!Resume)
+            {
+                manager.Resume(CueName, 1f);
+                Resume = true;
+            }
+        }
         if (Input.GetKey(KeyCode.F))
         {
             Play = false;
             Stop = false;
+            Pause = false;
+            Resume = false;
         }
     }
 }

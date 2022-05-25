@@ -16,8 +16,11 @@ MonoBehaviour:
   priority: 128
   loop: 0
   mute: 0
-  volume: 0
-  fadeInvolume: 5
+  startTime: 1
+  randomStartTime: 0
+  volume: 1
+  fadeInvolume: 0
+  fadeOutvolume: 0
   randomMinvolume: 0
   randomMaxvolume: 0
   pitch: 1

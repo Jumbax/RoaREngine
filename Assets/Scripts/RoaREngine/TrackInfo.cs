@@ -34,11 +34,16 @@ namespace RoaREngine
             return (double)audioSource.timeSamples / audioSource.clip.frequency;
         }
 
+        public static double GetTimeRemainder(AudioSource audioSource, int bpm, int tempo)
+        {
+            return GetTimeElapsed(audioSource) % GetTrackBarLength(bpm, tempo);
+        }
+
         public static double GetTimeBeforeNextBar(AudioSource audioSource, int bpm, int tempo)
         {
             double barLength = GetTrackBarLength(bpm, tempo);
             // Use the Modulo Operation to get the time Elapsed in the current bar
-            double remainder = GetTimeElapsed(audioSource) % barLength;
+            double remainder = GetTimeRemainder(audioSource, bpm, tempo);
             // Calculate time remaining in the current bar
             return barLength - remainder;
         }

@@ -22,8 +22,11 @@ namespace RoaREngine
         [Header("Properties")]
         public bool loop = false;
         public bool mute = false;
+        public float startTime = 0f;
+        public bool randomStartTime = false;
         [Range(0f, 1f)] public float volume = 1f;
         public float fadeInvolume = 0f;
+        public float fadeOutvolume = 0f;
         [Range(0f, 1f)] public float randomMinvolume = 0f;
         [Range(0f, 1f)] public float randomMaxvolume = 0f;
         [Range(-3f, 3f)] public float pitch = 1f;

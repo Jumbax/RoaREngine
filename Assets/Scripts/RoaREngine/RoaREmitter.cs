@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 
 namespace RoaREngine
@@ -51,5 +50,7 @@ namespace RoaREngine
         }
 
         public AudioSource GetAudioSource() => audioSource;
+
+        public RoaRContainer GetContainer() => container;
     }
 }
