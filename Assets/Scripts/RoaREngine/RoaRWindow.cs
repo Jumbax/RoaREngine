@@ -85,6 +85,10 @@ namespace RoaREngine
                 {
                     CreateContainer();
                 }
+                if (GUILayout.Button("Default"))
+                {
+                    Default();
+                }
                 GUI.enabled = wasGUIEnabled;
             }
         }
@@ -210,7 +214,7 @@ namespace RoaREngine
             bypassreverbzones = EditorGUILayout.Toggle("Bypassreverbzones", bypassreverbzones);
             ignorelistenervolume = EditorGUILayout.Toggle("Ignorelistenervolume", ignorelistenervolume);
             ignorelistenerpause = EditorGUILayout.Toggle("Ignorelistenerpause", ignorelistenerpause);
-    }
+        }
 
         private void CreateContainer()
         {
@@ -248,8 +252,8 @@ namespace RoaREngine
 
             return bank;
         }
-        
-        private void ApplySettings(RoaRClipsBankSO bank ,RoaRConfigurationSO config) 
+
+        private void ApplySettings(RoaRClipsBankSO bank, RoaRConfigurationSO config)
         {
             bank.audioClipsGroups.sequenceMode = sequenceMode;
             bank.SetClipIndex(Index);
@@ -312,6 +316,51 @@ namespace RoaREngine
                 ClipsNumber--;
                 clips.RemoveAt(ClipsNumber);
             }
+        }
+
+        private void Default()
+        {
+            for (int i = 0; i < clips.Count; i++)
+            {
+                if (ClipsNumber == 1)
+                {
+                    break;
+                }
+                ClipsNumber--;
+                clips.RemoveAt(ClipsNumber);
+            }
+
+            containerName = "";
+            ClipsNumber = 1;
+            Index = 0;
+            audioMixerGroup = null;
+            priority = PriorityLevel.Standard;
+            sequenceMode = AudioSequenceMode.Sequential;
+            startTime = 0f;
+            randomStartTime = false;
+            loop = false;
+            mute = false;
+            volume = 1f;
+            fadeInVolume = 0f;
+            fadeOutVolume = 0f;
+            randomMinVolume = 0f;
+            randomMaxVolume = 0f;
+            pitch = 1f;
+            randomMinPitch = 0f;
+            randomMaxPitch = 0f;
+            panStereo = 0f;
+            reverbZoneMix = 1f;
+            spatialBlend = 0f;
+            rolloffMode = AudioRolloffMode.Logarithmic;
+            minDistance = 0.1f;
+            maxDistance = 50f;
+            spread = 0;
+            dopplerLevel = 1f;
+            bypasseffects = false;
+            bypasslistenereffects = false;
+            bypassreverbzones = false;
+            ignorelistenervolume = false;
+            ignorelistenerpause = false;
         }
     }
 }

@@ -55,14 +55,12 @@ namespace RoaREngine
                     }
                     if (fadeTime > 0)
                     {
-                        StartCoroutine(FadeInCoroutine(roarEmitter, fadeTime));
+                        roarEmitter.GetComponent<RoaREmitter>().FadeIn(fadeTime);
                     }
                     roarEmitter.GetComponent<RoaREmitter>().Play();
                     if (!roarEmitter.GetComponent<RoaREmitter>().GetAudioSource().loop)
                     {
-
-                        float clipLengthRemaining = roarEmitter.GetComponent<RoaREmitter>().GetAudioSource().clip.length - roarEmitter.GetComponent<RoaREmitter>().GetAudioSource().time;
-                        StartCoroutine(AudioClipFinishPlaying(musicID, clipLengthRemaining));
+                        roarEmitter.GetComponent<RoaREmitter>().AudioClipFinishPlaying();
                     }
 
                 }
@@ -87,7 +85,7 @@ namespace RoaREngine
                     }
                     else
                     {
-                        StartCoroutine(FadeOutCoroutine(roarEmitter, fadeTime, true));
+                        roarEmitter.GetComponent<RoaREmitter>().FadeOut(fadeTime, true);
                     }
                 }
             }
@@ -106,7 +104,7 @@ namespace RoaREngine
                     }
                     else
                     {
-                        StartCoroutine(FadeOutCoroutine(roarEmitter, fadeTime, false, true));
+                        roarEmitter.GetComponent<RoaREmitter>().FadeOut(fadeTime, false, true);
                     }
                 }
             }
@@ -125,7 +123,7 @@ namespace RoaREngine
                     }
                     else
                     {
-                        StartCoroutine(FadeInCoroutine(roarEmitter, fadeTime, true));
+                        roarEmitter.GetComponent<RoaREmitter>().FadeIn(fadeTime, true);
                     }
                 }
             }

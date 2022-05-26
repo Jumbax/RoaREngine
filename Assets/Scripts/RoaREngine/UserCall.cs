@@ -19,7 +19,7 @@ public class UserCall : MonoBehaviour
         {
             if (!Play)
             {
-                manager.Play(CueName, 0f, false, 0f, true);
+                manager.Play(CueName);
                 Play = true;
             }
         }

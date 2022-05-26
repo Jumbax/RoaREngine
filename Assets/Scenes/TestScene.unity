@@ -450,6 +450,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   manager: {fileID: 859925085}
   CueName: Music
+  FadeTime: 3
 --- !u!4 &1259477260
 Transform:
   m_ObjectHideFlags: 0
