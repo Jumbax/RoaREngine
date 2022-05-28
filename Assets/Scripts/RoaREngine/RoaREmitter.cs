@@ -125,5 +125,16 @@ namespace RoaREngine
             audioSource.Stop();
             audioSource.gameObject.SetActive(false);
         }
+
+        public void UpdateEmitter()
+        {
+            if (container.roarConfiguration.ongGoing)
+            {
+                if (!audioSource.isPlaying)
+                {
+                    audioSource.Play();
+                }
+            }
+        }
     }
 }

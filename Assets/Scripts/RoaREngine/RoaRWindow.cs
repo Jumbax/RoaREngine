@@ -39,6 +39,10 @@ namespace RoaREngine
         private bool bypassreverbzones = false;
         private bool ignorelistenervolume = false;
         private bool ignorelistenerpause = false;
+        private bool onGoing = false;
+        private float minTime= 0f;
+        private float maxTime= 0f;
+        private Texture2D texture;
 
         [MenuItem("RoaREngine/RoaRWindow")]
         private static void DisplayWindow()
@@ -56,6 +60,8 @@ namespace RoaREngine
 
         private void OnGUI()
         {
+            //texture = AssetPreview.GetAssetPreview(clips[0]);
+            //GUILayout.Label(texture);
             using (new GUILayout.VerticalScope())
             {
                 containerName = EditorGUILayout.TextField("ContainerName", containerName);
@@ -104,7 +110,11 @@ namespace RoaREngine
                 startTime = EditorGUILayout.FloatField(startTime, GUILayout.Width(25));
             }
             randomStartTime = EditorGUILayout.Toggle("RandomStartTime", randomStartTime);
-            Index = EditorGUILayout.IntField("Index", 0);
+            using (new GUILayout.HorizontalScope())
+            {
+                GUILayout.Label("Index", GUILayout.Width(145));
+                Index = EditorGUILayout.IntField(Index, GUILayout.Width(25));
+            }
             loop = EditorGUILayout.Toggle("Loop", loop);
             mute = EditorGUILayout.Toggle("Mute", mute);
             using (new GUILayout.HorizontalScope())
@@ -209,11 +219,22 @@ namespace RoaREngine
                 dopplerLevel = GUILayout.HorizontalSlider(dopplerLevel, 0f, 5f);
                 dopplerLevel = Mathf.Clamp(dopplerLevel, 0f, 5f);
             }
-            bypasseffects = EditorGUILayout.Toggle("Bypasseffects", bypasseffects);
-            bypasslistenereffects = EditorGUILayout.Toggle("Bypasslistenereffects", bypasslistenereffects);
-            bypassreverbzones = EditorGUILayout.Toggle("Bypassreverbzones", bypassreverbzones);
-            ignorelistenervolume = EditorGUILayout.Toggle("Ignorelistenervolume", ignorelistenervolume);
-            ignorelistenerpause = EditorGUILayout.Toggle("Ignorelistenerpause", ignorelistenerpause);
+            bypasseffects = EditorGUILayout.Toggle("BypassEffects", bypasseffects);
+            bypasslistenereffects = EditorGUILayout.Toggle("BypassListenerEffects", bypasslistenereffects);
+            bypassreverbzones = EditorGUILayout.Toggle("BypassRevebZones", bypassreverbzones);
+            ignorelistenervolume = EditorGUILayout.Toggle("IgnoreListenerVolume", ignorelistenervolume);
+            ignorelistenerpause = EditorGUILayout.Toggle("IgnoreListenerPause", ignorelistenerpause);
+            onGoing = EditorGUILayout.Toggle("OnGoing", onGoing);
+            using (new GUILayout.HorizontalScope())
+            {
+                GUILayout.Label("MinTime", GUILayout.Width(145));
+                minTime = EditorGUILayout.FloatField(minTime, GUILayout.Width(25));
+            }
+            using (new GUILayout.HorizontalScope())
+            {
+                GUILayout.Label("MaxTime", GUILayout.Width(145));
+                maxTime = EditorGUILayout.FloatField(maxTime, GUILayout.Width(25));
+            }
         }
 
         private void CreateContainer()
@@ -361,6 +382,9 @@ namespace RoaREngine
             bypassreverbzones = false;
             ignorelistenervolume = false;
             ignorelistenerpause = false;
+            onGoing = false;
+            minTime = 0f;
+            maxTime = 0f;
         }
     }
 }

@@ -50,6 +50,7 @@ namespace RoaREngine
         public bool ignorelistenervolume = false;
         public bool ignorelistenerpause = false;
 
+        public bool ongGoing;
         public void ApplyTo(AudioSource audioSource)
         {
             audioSource.outputAudioMixerGroup = this.audioMixerGroup;

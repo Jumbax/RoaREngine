@@ -18,8 +18,8 @@ MonoBehaviour:
   mute: 0
   startTime: 0
   randomStartTime: 0
-  volume: 0
-  fadeInvolume: 10
+  volume: 1
+  fadeInvolume: 0
   fadeOutvolume: 0
   randomMinvolume: 0
   randomMaxvolume: 0
@@ -39,3 +39,4 @@ MonoBehaviour:
   bypassreverbzones: 0
   ignorelistenervolume: 0
   ignorelistenerpause: 0
+  ongGoing: 1
