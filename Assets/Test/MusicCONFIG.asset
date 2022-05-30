@@ -40,3 +40,5 @@ MonoBehaviour:
   ignorelistenervolume: 0
   ignorelistenerpause: 0
   ongGoing: 1
+  minTime: 0
+  maxTime: 1

@@ -51,6 +51,8 @@ namespace RoaREngine
         public bool ignorelistenerpause = false;
 
         public bool ongGoing;
+        public float minTime;
+        public float maxTime;
         public void ApplyTo(AudioSource audioSource)
         {
             audioSource.outputAudioMixerGroup = this.audioMixerGroup;

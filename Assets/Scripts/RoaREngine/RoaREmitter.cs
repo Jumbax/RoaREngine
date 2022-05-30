@@ -132,7 +132,18 @@ namespace RoaREngine
             {
                 if (!audioSource.isPlaying)
                 {
-                    audioSource.Play();
+                    if (container.roarConfiguration.minTime != 0 || container.roarConfiguration.maxTime != 0)
+                    {
+                        audioSource.clip = container.Clip;
+                        float seconds = Random.Range(container.roarConfiguration.minTime, container.roarConfiguration.maxTime);
+                        audioSource.PlayDelayed(seconds);
+
+                    }
+                    else
+                    {
+                        audioSource.clip = container.Clip;
+                        audioSource.Play();
+                    }
                 }
             }
         }
