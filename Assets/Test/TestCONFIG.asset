@@ -10,8 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 956b715fe82263c4fb432624f0987eb8, type: 3}
-  m_Name: MusicCONFIG
+  m_Name: TestCONFIG
   m_EditorClassIdentifier: 
+  parent: {fileID: 0}
   audioMixerGroup: {fileID: 0}
   priority: 128
   loop: 0
@@ -39,6 +40,6 @@ MonoBehaviour:
   bypassreverbzones: 0
   ignorelistenervolume: 0
   ignorelistenerpause: 0
-  ongGoing: 1
+  ongGoing: 0
   minTime: 0
-  maxTime: 1
+  maxTime: 0

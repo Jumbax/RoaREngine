@@ -16,6 +16,8 @@ namespace RoaREngine
     [CreateAssetMenu(fileName = "RoaRConfiguration", menuName = "RoaREngine/RoaRConfiguration")]
     public class RoaRConfigurationSO : ScriptableObject
     {
+        public Transform parent;
+
         public AudioMixerGroup audioMixerGroup = null;
         public PriorityLevel priority = PriorityLevel.Standard;
 
@@ -50,9 +52,13 @@ namespace RoaREngine
         public bool ignorelistenervolume = false;
         public bool ignorelistenerpause = false;
 
-        public bool ongGoing;
-        public float minTime;
-        public float maxTime;
+        public bool ongGoing = false;
+        public float minTime = 0f;
+        public float maxTime = 0f;
+
+        public float minRandomXYZ = 0f;
+        public float maxRandomXYZ = 0f;
+
         public void ApplyTo(AudioSource audioSource)
         {
             audioSource.outputAudioMixerGroup = this.audioMixerGroup;

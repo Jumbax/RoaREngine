@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Timeline;
 
 namespace RoaREngine
 {
@@ -12,26 +13,24 @@ namespace RoaREngine
             RoaRWindowTest w = GetWindow<RoaRWindowTest>("RoaRWindowTest");
             w.Show();
         }
-        private bool collapsed = false;
-        private bool clearOnPlay = false;
+
+        //public float scrollPos = 0.5F;
+        // This will use the following style names to determine the size / placement of the buttons
+        // MyScrollbarleftbutton    - Name of style used for the left button.
+        // MyScrollbarrightbutton - Name of style used for the right button.
+        // MyScrollbarthumb         - Name of style used for the draggable thumb.
+        Vector2 scrollPos = Vector2.zero;
         private void OnGUI()
         {
-            //texture = AssetPreview.GetAssetPreview(clips[0]);
-            //GUILayout.Label(texture);
+            //scrollPos = GUILayout.HorizontalScrollbar(scrollPos, 1, 0, 100);
+            scrollPos = GUILayout.BeginScrollView(scrollPos, true, true, GUILayout.Width(100), GUILayout.Height(100));
+            //GUILayout.BeginArea(new Rect(0, 0, 300, 300));    //Does not display correctly if this is not commented out!
 
-            EditorGUILayout.BeginHorizontal("Toolbar", GUILayout.ExpandWidth(true));
-            if (GUILayout.Button("Clear", "ToolbarButton", GUILayout.Width(45f)))
-            {
-                Debug.Log("You click Clear button");
-            }
-            // Create space between Clear and Collapse button.
-            GUILayout.Space(5f);
-            // Create toggles button.
-            collapsed = GUILayout.Toggle(collapsed, "Collapse", "ToolbarButton");
-            clearOnPlay = GUILayout.Toggle(clearOnPlay, "Clear on Play", "ToolbarButton");
-            // Push content to be what they should be. (ex. width)
-            GUILayout.FlexibleSpace();
-            EditorGUILayout.EndHorizontal();
+            GUILayout.Button("I am a button", GUILayout.MinWidth(150), GUILayout.MinHeight(150));
+
+            //GUILayout.EndArea();
+            GUILayout.EndScrollView();
         }
+
     }
 }

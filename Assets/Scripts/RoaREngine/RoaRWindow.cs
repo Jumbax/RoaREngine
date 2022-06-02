@@ -7,10 +7,14 @@ namespace RoaREngine
 {
     public class RoaRWindow : EditorWindow
     {
+        Vector2 scrollPos = Vector2.zero;
+
         private string containerName;
         private int ClipsNumber = 1;
         private List<AudioClip> clips = new List<AudioClip>();
+
         private int Index;
+        private Transform parent;
         private AudioMixerGroup audioMixerGroup = null;
         private PriorityLevel priority = PriorityLevel.Standard;
         private AudioSequenceMode sequenceMode = AudioSequenceMode.Sequential;
@@ -40,9 +44,10 @@ namespace RoaREngine
         private bool ignorelistenervolume = false;
         private bool ignorelistenerpause = false;
         private bool onGoing = false;
-        private float minTime= 0f;
-        private float maxTime= 0f;
-        private Texture2D texture;
+        private float minTime = 0f;
+        private float maxTime = 0f;
+        private float minRandomXYZ = 0f;
+        private float maxRandomXYZ = 0f;
 
         [MenuItem("RoaREngine/RoaRWindow")]
         private static void DisplayWindow()
@@ -62,6 +67,7 @@ namespace RoaREngine
         {
             //texture = AssetPreview.GetAssetPreview(clips[0]);
             //GUILayout.Label(texture);
+            scrollPos = GUILayout.BeginScrollView(scrollPos, false, false, GUIStyle.none, GUI.skin.verticalScrollbar);
             using (new GUILayout.VerticalScope())
             {
                 containerName = EditorGUILayout.TextField("ContainerName", containerName);
@@ -97,10 +103,12 @@ namespace RoaREngine
                 }
                 GUI.enabled = wasGUIEnabled;
             }
+            GUILayout.EndScrollView();
         }
 
         private void AudioClipConfiguration()
         {
+            parent = EditorGUILayout.ObjectField("Parent", parent, typeof(Transform), true) as Transform;
             audioMixerGroup = EditorGUILayout.ObjectField("AudioMixerGroup", audioMixerGroup, typeof(AudioMixerGroup), false) as AudioMixerGroup;
             priority = (PriorityLevel)EditorGUILayout.EnumPopup("Priority", priority);
             sequenceMode = (AudioSequenceMode)EditorGUILayout.EnumPopup("SequenceMode", sequenceMode);
@@ -225,6 +233,7 @@ namespace RoaREngine
             ignorelistenervolume = EditorGUILayout.Toggle("IgnoreListenerVolume", ignorelistenervolume);
             ignorelistenerpause = EditorGUILayout.Toggle("IgnoreListenerPause", ignorelistenerpause);
             onGoing = EditorGUILayout.Toggle("OnGoing", onGoing);
+            GUI.enabled = onGoing;
             using (new GUILayout.HorizontalScope())
             {
                 GUILayout.Label("MinTime", GUILayout.Width(145));
@@ -234,6 +243,19 @@ namespace RoaREngine
             {
                 GUILayout.Label("MaxTime", GUILayout.Width(145));
                 maxTime = EditorGUILayout.FloatField(maxTime, GUILayout.Width(25));
+            }
+            GUI.enabled = true;
+            using (new GUILayout.HorizontalScope())
+            {
+                GUILayout.Label("MinRandomXYZ", GUILayout.Width(145));
+                minRandomXYZ = EditorGUILayout.FloatField(minRandomXYZ, GUILayout.Width(35));
+                minRandomXYZ = GUILayout.HorizontalSlider(minRandomXYZ, -500f, 500f);
+            }
+            using (new GUILayout.HorizontalScope())
+            {
+                GUILayout.Label("MaxRandomXYZ", GUILayout.Width(145));
+                maxRandomXYZ = EditorGUILayout.FloatField(maxRandomXYZ, GUILayout.Width(35));
+                maxRandomXYZ = GUILayout.HorizontalSlider(maxRandomXYZ, -500f, 500f);
             }
         }
 
@@ -276,9 +298,11 @@ namespace RoaREngine
 
         private void ApplySettings(RoaRClipsBankSO bank, RoaRConfigurationSO config)
         {
+
             bank.audioClipsGroups.sequenceMode = sequenceMode;
             bank.SetClipIndex(Index);
 
+            config.parent = parent;
             config.audioMixerGroup = audioMixerGroup;
             config.startTime = startTime;
             config.randomStartTime = randomStartTime;
@@ -306,6 +330,9 @@ namespace RoaREngine
             config.maxDistance = maxDistance;
             config.ignorelistenervolume = ignorelistenervolume;
             config.ignorelistenerpause = ignorelistenerpause;
+            config.ongGoing = onGoing;
+            config.minTime = minTime;
+            config.maxTime = maxTime;
         }
 
         private RoaRConfigurationSO CreateConfiguration(RoaRClipsBankSO bank)
@@ -351,6 +378,7 @@ namespace RoaREngine
                 clips.RemoveAt(ClipsNumber);
             }
 
+            parent = null;
             containerName = "";
             ClipsNumber = 1;
             Index = 0;
@@ -385,6 +413,8 @@ namespace RoaREngine
             onGoing = false;
             minTime = 0f;
             maxTime = 0f;
+            minRandomXYZ = 0f;
+            maxRandomXYZ = 0f;
         }
     }
 }

@@ -11,7 +11,8 @@ public class UserCall : MonoBehaviour
     private bool Resume;
     public RoaRManager manager;
     public string CueName;
-    public float FadeTime;
+    public float FadeInTime;
+    public float FadeOutTime;
 
     void Update()
     {
@@ -19,7 +20,7 @@ public class UserCall : MonoBehaviour
         {
             if (!Play)
             {
-                manager.Play(CueName);
+                manager.Play(CueName, FadeInTime, false, 0, false, transform);
                 Play = true;
             }
         }
@@ -27,7 +28,7 @@ public class UserCall : MonoBehaviour
         {
             if (!Stop)
             {
-                manager.Stop(CueName);
+                manager.Stop(CueName, FadeOutTime);
                 Stop = true;
             }
         }
@@ -35,7 +36,7 @@ public class UserCall : MonoBehaviour
         {
             if (!Pause)
             {
-                manager.Pause(CueName, 1f);
+                manager.Pause(CueName, FadeOutTime);
                 Pause = true;
             }
         }
@@ -43,7 +44,7 @@ public class UserCall : MonoBehaviour
         {
             if (!Resume)
             {
-                manager.Resume(CueName, 1f);
+                manager.Resume(CueName, FadeInTime);
                 Resume = true;
             }
         }
