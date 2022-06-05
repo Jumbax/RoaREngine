@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fa71d9cb49a0bc43860d9f5b734c035, type: 3}
   m_Name: TestCONTAINER
   m_EditorClassIdentifier: 
-  Name: Music2
-  roarClipBank: {fileID: 11400000, guid: d6c30a47e19badd4b972b67337aac2a5, type: 2}
-  roarConfiguration: {fileID: 11400000, guid: cd03f5f25ef98b648accafe36499d73a, type: 2}
+  Name: Test
+  roarClipBank: {fileID: 11400000, guid: 47cfa93aded29284a857207e01f6e55e, type: 2}
+  roarConfiguration: {fileID: 11400000, guid: e77d528d8bcf30949b8dfcdad16c9a8a, type: 2}

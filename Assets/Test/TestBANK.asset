@@ -14,5 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   audioClipsGroups:
     sequenceMode: 0
-    audioClips: []
+    audioClips:
+    - {fileID: 8300000, guid: 5c32398ea5165d749b7d081e88d2d5d8, type: 3}
+    - {fileID: 8300000, guid: 3e1d6510b62b61448b9aa9120308f376, type: 3}
+    - {fileID: 8300000, guid: c06937b253c04494b88c6e77a4241edd, type: 3}
     Index: 0

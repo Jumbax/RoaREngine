@@ -27,5 +27,10 @@ namespace RoaREngine
         {
             return containerDict.ContainsKey(musicID);
         }
+
+        public RoaRContainer GetContainer(string musicID)
+        {
+            return containerDict[musicID];
+        }
     }
 }

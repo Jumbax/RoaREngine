@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace RoaREngine
 {
@@ -9,10 +10,11 @@ namespace RoaREngine
         public AudioClip Clip { get => roarClipBank.GetClip();}
         public RoaRClipsBankSO roarClipBank;
         public RoaRConfigurationSO roarConfiguration;
+        public UnityAction MeasureEvent;
 
-        public void SetConfiguration(AudioSource audioSource)
+        public void SetConfiguration(AudioSource audioSource, GameObject roarEmitter)
         {
-            roarConfiguration.ApplyTo(audioSource);
+            roarConfiguration.ApplyTo(audioSource, roarEmitter);
         }
     }
 }

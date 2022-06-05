@@ -9,12 +9,17 @@ namespace RoaREngine
     {
         Vector2 scrollPos = Vector2.zero;
 
+        private List<RoaRContainer> containers = new List<RoaRContainer>();
+        private List<string> containersName = new List<string>();
+        private int index = 0;
+        private int oldIndex = 0;
+
         private string containerName;
-        private int ClipsNumber = 1;
+        private int clipsNumber = 1;
         private List<AudioClip> clips = new List<AudioClip>();
 
-        private int Index;
-        private Transform parent;
+        private int clipIndex = 0;
+        private Transform parent = null;
         private AudioMixerGroup audioMixerGroup = null;
         private PriorityLevel priority = PriorityLevel.Standard;
         private AudioSequenceMode sequenceMode = AudioSequenceMode.Sequential;
@@ -23,8 +28,8 @@ namespace RoaREngine
         private bool loop = false;
         private bool mute = false;
         private float volume = 1f;
-        private float fadeInVolume = 0f;
-        private float fadeOutVolume = 0f;
+        private float fadeInTime = 0f;
+        private float fadeOutTime = 0f;
         private float randomMinVolume = 0f;
         private float randomMaxVolume = 0f;
         private float pitch = 1f;
@@ -37,7 +42,7 @@ namespace RoaREngine
         private float minDistance = 0.1f;
         private float maxDistance = 50f;
         private int spread = 0;
-        private float dopplerLevel = 1f;
+        private float dopplerLevel = 0f;
         private bool bypasseffects = false;
         private bool bypasslistenereffects = false;
         private bool bypassreverbzones = false;
@@ -48,6 +53,26 @@ namespace RoaREngine
         private float maxTime = 0f;
         private float minRandomXYZ = 0f;
         private float maxRandomXYZ = 0f;
+        private bool measureEvent = false;
+        private int bpm = 120;
+        private int tempo = 4;
+        private int everyNBar = 1;
+
+        private void Awake()
+        {
+            clips.Clear();
+            AudioClip clip = null;
+            clips.Add(clip);
+            containers.Clear();
+            containersName.Clear();
+            containersName.Add("New Container");
+            foreach (var asset in AssetDatabase.FindAssets("t:RoaRContainer CONTAINER"))
+            {
+                var path = AssetDatabase.GUIDToAssetPath(asset);
+                containers.Add((RoaRContainer)AssetDatabase.LoadMainAssetAtPath(path));
+                containersName.Add(AssetDatabase.LoadMainAssetAtPath(path).name);
+            }
+        }
 
         [MenuItem("RoaREngine/RoaRWindow")]
         private static void DisplayWindow()
@@ -56,32 +81,17 @@ namespace RoaREngine
             w.Show();
         }
 
-        private void Awake()
-        {
-            clips.Clear();
-            AudioClip clip = null;
-            clips.Add(clip);
-        }
 
         private void OnGUI()
         {
+            index = EditorGUILayout.Popup(index, containersName.ToArray());
+
+
             //texture = AssetPreview.GetAssetPreview(clips[0]);
             //GUILayout.Label(texture);
             scrollPos = GUILayout.BeginScrollView(scrollPos, false, false, GUIStyle.none, GUI.skin.verticalScrollbar);
             using (new GUILayout.VerticalScope())
             {
-                containerName = EditorGUILayout.TextField("ContainerName", containerName);
-
-                //FIX THIS
-                GUI.enabled = false;
-                ClipsNumber = EditorGUILayout.IntField("ClipsNumber", ClipsNumber);
-                GUI.enabled = true;
-
-                for (int i = 0; i < ClipsNumber; i++)
-                {
-                    clips[i] = EditorGUILayout.ObjectField("AudioClips", clips[i], typeof(AudioClip), false) as AudioClip;
-                }
-
                 AudioClipConfiguration();
 
                 bool wasGUIEnabled = GUI.enabled;
@@ -101,6 +111,14 @@ namespace RoaREngine
                 {
                     Default();
                 }
+                if (GUILayout.Button("Save"))
+                {
+                    SaveContainerSettings(containers[index-1]);
+                }
+                if (GUILayout.Button("Reload Containers"))
+                {
+                    ReloadContainers();
+                }
                 GUI.enabled = wasGUIEnabled;
             }
             GUILayout.EndScrollView();
@@ -108,6 +126,29 @@ namespace RoaREngine
 
         private void AudioClipConfiguration()
         {
+            if (index != oldIndex)
+            {
+                if (index == 0)
+                {
+                    Default();
+                    oldIndex = index;
+                }
+                else
+                {
+                    GetSettingsFromContainer();
+                    oldIndex = index;
+                }
+            }
+
+            #region settings
+            containerName = EditorGUILayout.TextField("ContainerName", containerName);
+            GUI.enabled = false;
+            clipsNumber = EditorGUILayout.IntField("ClipsNumber", clipsNumber);
+            GUI.enabled = true;
+            for (int i = 0; i < clipsNumber; i++)
+            {
+                clips[i] = EditorGUILayout.ObjectField("AudioClips", clips[i], typeof(AudioClip), false) as AudioClip;
+            }
             parent = EditorGUILayout.ObjectField("Parent", parent, typeof(Transform), true) as Transform;
             audioMixerGroup = EditorGUILayout.ObjectField("AudioMixerGroup", audioMixerGroup, typeof(AudioMixerGroup), false) as AudioMixerGroup;
             priority = (PriorityLevel)EditorGUILayout.EnumPopup("Priority", priority);
@@ -121,7 +162,7 @@ namespace RoaREngine
             using (new GUILayout.HorizontalScope())
             {
                 GUILayout.Label("Index", GUILayout.Width(145));
-                Index = EditorGUILayout.IntField(Index, GUILayout.Width(25));
+                clipIndex = EditorGUILayout.IntField(clipIndex, GUILayout.Width(25));
             }
             loop = EditorGUILayout.Toggle("Loop", loop);
             mute = EditorGUILayout.Toggle("Mute", mute);
@@ -135,12 +176,12 @@ namespace RoaREngine
             using (new GUILayout.HorizontalScope())
             {
                 GUILayout.Label("FadeInVolume", GUILayout.Width(145));
-                fadeInVolume = EditorGUILayout.FloatField(fadeInVolume, GUILayout.Width(25));
+                fadeInTime = EditorGUILayout.FloatField(fadeInTime, GUILayout.Width(25));
             }
             using (new GUILayout.HorizontalScope())
             {
                 GUILayout.Label("FadeOutVolume", GUILayout.Width(145));
-                fadeOutVolume = EditorGUILayout.FloatField(fadeOutVolume, GUILayout.Width(25));
+                fadeOutTime = EditorGUILayout.FloatField(fadeOutTime, GUILayout.Width(25));
             }
             using (new GUILayout.HorizontalScope())
             {
@@ -257,6 +298,25 @@ namespace RoaREngine
                 maxRandomXYZ = EditorGUILayout.FloatField(maxRandomXYZ, GUILayout.Width(35));
                 maxRandomXYZ = GUILayout.HorizontalSlider(maxRandomXYZ, -500f, 500f);
             }
+            measureEvent = EditorGUILayout.Toggle("MeasureEvent", measureEvent);
+            GUI.enabled = measureEvent;
+            using (new GUILayout.HorizontalScope())
+            {
+                GUILayout.Label("BPM", GUILayout.Width(145));
+                bpm = EditorGUILayout.IntField(bpm, GUILayout.Width(35));
+            }
+            using (new GUILayout.HorizontalScope())
+            {
+                GUILayout.Label("Tempo", GUILayout.Width(145));
+                tempo = EditorGUILayout.IntField(tempo, GUILayout.Width(25));
+            }
+            using (new GUILayout.HorizontalScope())
+            {
+                GUILayout.Label("EveryNBar", GUILayout.Width(145));
+                everyNBar = EditorGUILayout.IntField(everyNBar, GUILayout.Width(25));
+            }
+            GUI.enabled = true;
+            #endregion settings
         }
 
         private void CreateContainer()
@@ -300,7 +360,7 @@ namespace RoaREngine
         {
 
             bank.audioClipsGroups.sequenceMode = sequenceMode;
-            bank.SetClipIndex(Index);
+            bank.SetClipIndex(clipIndex);
 
             config.parent = parent;
             config.audioMixerGroup = audioMixerGroup;
@@ -313,8 +373,8 @@ namespace RoaREngine
             config.bypassreverbzones = bypassreverbzones;
             config.priority = priority;
             config.volume = volume;
-            config.fadeInvolume = fadeInVolume;
-            config.fadeOutvolume = fadeOutVolume;
+            config.fadeInTime = fadeInTime;
+            config.fadeOutTime = fadeOutTime;
             config.randomMinvolume = randomMinVolume;
             config.randomMaxvolume = randomMaxVolume;
             config.pitch = pitch;
@@ -330,9 +390,15 @@ namespace RoaREngine
             config.maxDistance = maxDistance;
             config.ignorelistenervolume = ignorelistenervolume;
             config.ignorelistenerpause = ignorelistenerpause;
-            config.ongGoing = onGoing;
+            config.onGoing = onGoing;
             config.minTime = minTime;
             config.maxTime = maxTime;
+            config.minRandomXYZ = minRandomXYZ;
+            config.maxRandomXYZ = maxRandomXYZ;
+            config.measureEvent = measureEvent;
+            config.bpm = bpm;
+            config.tempo = tempo;
+            config.everyNBar = everyNBar;
         }
 
         private RoaRConfigurationSO CreateConfiguration(RoaRClipsBankSO bank)
@@ -350,19 +416,33 @@ namespace RoaREngine
 
             return config;
         }
+
         private void AddClipField()
         {
-            ClipsNumber++;
+            clipsNumber++;
             AudioClip clip = null;
             clips.Add(clip);
         }
 
         private void RemoveClipField()
         {
-            if (ClipsNumber > 1)
+            if (clipsNumber > 1)
             {
-                ClipsNumber--;
-                clips.RemoveAt(ClipsNumber);
+                clipsNumber--;
+                clips.RemoveAt(clipsNumber);
+            }
+        }
+
+        private void ReloadContainers()
+        {
+            containers.Clear();
+            containersName.Clear();
+            containersName.Add("New Container");
+            foreach (var asset in AssetDatabase.FindAssets("t:RoaRContainer CONTAINER"))
+            {
+                var path = AssetDatabase.GUIDToAssetPath(asset);
+                containers.Add((RoaRContainer)AssetDatabase.LoadMainAssetAtPath(path));
+                containersName.Add(AssetDatabase.LoadMainAssetAtPath(path).name);
             }
         }
 
@@ -370,18 +450,19 @@ namespace RoaREngine
         {
             for (int i = 0; i < clips.Count; i++)
             {
-                if (ClipsNumber == 1)
+                if (clipsNumber == 1)
                 {
                     break;
                 }
-                ClipsNumber--;
-                clips.RemoveAt(ClipsNumber);
+                clipsNumber--;
+                clips.RemoveAt(clipsNumber);
             }
 
             parent = null;
             containerName = "";
-            ClipsNumber = 1;
-            Index = 0;
+            clipsNumber = 1;
+            clips[0] = null;
+            clipIndex = 0;
             audioMixerGroup = null;
             priority = PriorityLevel.Standard;
             sequenceMode = AudioSequenceMode.Sequential;
@@ -390,8 +471,8 @@ namespace RoaREngine
             loop = false;
             mute = false;
             volume = 1f;
-            fadeInVolume = 0f;
-            fadeOutVolume = 0f;
+            fadeInTime = 0f;
+            fadeOutTime = 0f;
             randomMinVolume = 0f;
             randomMaxVolume = 0f;
             pitch = 1f;
@@ -415,6 +496,81 @@ namespace RoaREngine
             maxTime = 0f;
             minRandomXYZ = 0f;
             maxRandomXYZ = 0f;
+            measureEvent = false;
+            bpm = 120;
+            tempo = 4;
+            everyNBar = 1;
+        }
+
+        private void SaveContainerSettings(RoaRContainer container)
+        {
+            if (containerName == "" || index == 0)
+            {
+                //TODO ERROR MESSAGE "A CONTAINER MUST HAVE A NAME"
+                return;
+            }
+            container.Name = containerName;
+            container.roarClipBank.audioClipsGroups.audioClips = clips.ToArray();
+            ApplySettings(container.roarClipBank, container.roarConfiguration);
+            AssetDatabase.SaveAssets();
+            EditorUtility.FocusProjectWindow();
+        }
+        
+        private void GetSettingsFromContainer()
+        {
+            RoaRContainer container = containers[index - 1];
+            RoaRClipsBankSO containerBank = container.roarClipBank;
+            RoaRConfigurationSO containerConfiguration = container.roarConfiguration;
+            containerName = container.Name;
+            clipsNumber = containerBank.audioClipsGroups.audioClips.Length;
+            for (int i = 0; i < clipsNumber; i++)
+            {
+                if (clips.Count < containerBank.audioClipsGroups.audioClips.Length)
+                {
+                    AudioClip clip = null;
+                    clips.Add(clip);
+                }
+                clips[i] = containerBank.audioClipsGroups.audioClips[i];
+            }
+            parent = containerConfiguration.parent;
+            audioMixerGroup = containerConfiguration.audioMixerGroup;
+            priority = containerConfiguration.priority;
+            sequenceMode = containerBank.audioClipsGroups.sequenceMode;
+            startTime = containerConfiguration.startTime;
+            randomStartTime = containerConfiguration.randomStartTime;
+            clipIndex = containerBank.audioClipsGroups.Index;
+            loop = containerConfiguration.loop;
+            mute = containerConfiguration.mute;
+            volume = containerConfiguration.volume;
+            fadeInTime = containerConfiguration.fadeInTime;
+            fadeOutTime = containerConfiguration.fadeOutTime;
+            randomMinVolume = containerConfiguration.randomMinvolume;
+            randomMaxVolume = containerConfiguration.randomMaxvolume;
+            pitch = containerConfiguration.pitch;
+            randomMinPitch = containerConfiguration.randomMinPitch;
+            randomMaxPitch = containerConfiguration.randomMaxPitch;
+            panStereo = containerConfiguration.panStereo;
+            reverbZoneMix = containerConfiguration.reverbZoneMix;
+            spatialBlend = containerConfiguration.spatialBlend;
+            rolloffMode = containerConfiguration.rolloffMode;
+            minDistance = containerConfiguration.minDistance;
+            maxDistance = containerConfiguration.maxDistance;
+            spread = containerConfiguration.spread;
+            dopplerLevel = containerConfiguration.dopplerLevel;
+            bypasseffects = containerConfiguration.bypasseffects;
+            bypasslistenereffects = containerConfiguration.bypasslistenereffects;
+            bypassreverbzones = containerConfiguration.bypassreverbzones;
+            ignorelistenervolume = containerConfiguration.ignorelistenervolume;
+            ignorelistenerpause = containerConfiguration.ignorelistenerpause;
+            onGoing = containerConfiguration.onGoing;
+            minTime = containerConfiguration.minTime;
+            maxTime = containerConfiguration.maxTime;
+            minRandomXYZ = containerConfiguration.minRandomXYZ;
+            maxRandomXYZ = containerConfiguration.maxRandomXYZ;
+            measureEvent = containerConfiguration.measureEvent;
+            bpm = containerConfiguration.bpm;
+            tempo = containerConfiguration.tempo;
+            everyNBar = containerConfiguration.everyNBar;
         }
     }
 }

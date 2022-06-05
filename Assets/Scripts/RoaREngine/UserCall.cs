@@ -1,7 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using RoaREngine;
+using UnityEngine;
 
 public class UserCall : MonoBehaviour
 {
@@ -9,10 +7,31 @@ public class UserCall : MonoBehaviour
     private bool Stop;
     private bool Pause;
     private bool Resume;
+    private bool Fade;
     public RoaRManager manager;
     public string CueName;
     public float FadeInTime;
     public float FadeOutTime;
+
+    public float hSliderValue = 0.0F;
+    private void OnGUI()
+    {
+        //hSliderValue = GUI.HorizontalSlider(new Rect(25, 25, 100, 30), hSliderValue, 0f, 1f);
+        //if (manager.SetProperty(CueName) != null)
+        //{
+        //    manager.SetProperty(CueName).volume = hSliderValue;
+        //}
+    }
+
+    void Test()
+    {
+        Debug.Log("test");
+    }
+
+    private void Start()
+    {
+
+    }
 
     void Update()
     {
@@ -20,7 +39,7 @@ public class UserCall : MonoBehaviour
         {
             if (!Play)
             {
-                manager.Play(CueName, FadeInTime, false, 0, false, transform);
+                manager.Play(CueName);
                 Play = true;
             }
         }
@@ -28,7 +47,7 @@ public class UserCall : MonoBehaviour
         {
             if (!Stop)
             {
-                manager.Stop(CueName, FadeOutTime);
+                manager.Stop(CueName, 10f);
                 Stop = true;
             }
         }
@@ -36,7 +55,7 @@ public class UserCall : MonoBehaviour
         {
             if (!Pause)
             {
-                manager.Pause(CueName, FadeOutTime);
+                manager.Pause(CueName);
                 Pause = true;
             }
         }
@@ -44,8 +63,9 @@ public class UserCall : MonoBehaviour
         {
             if (!Resume)
             {
-                manager.Resume(CueName, FadeInTime);
+                manager.Resume(CueName);
                 Resume = true;
+                manager.StopMeasureEvent(CueName, Test);
             }
         }
         if (Input.GetKey(KeyCode.F))
@@ -54,6 +74,17 @@ public class UserCall : MonoBehaviour
             Stop = false;
             Pause = false;
             Resume = false;
+            Fade = false;
         }
+
+        if (Input.GetKey(KeyCode.C))
+        {
+            if (!Fade)
+            {
+                manager.AddMeasureEvent(CueName, Test);
+                Fade = true;
+            }
+        }
+
     }
 }

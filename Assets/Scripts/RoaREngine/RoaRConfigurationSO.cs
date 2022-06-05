@@ -13,10 +13,11 @@ namespace RoaREngine
         Low = 194,
         VeryLow = 256
     }
+
     [CreateAssetMenu(fileName = "RoaRConfiguration", menuName = "RoaREngine/RoaRConfiguration")]
     public class RoaRConfigurationSO : ScriptableObject
     {
-        public Transform parent;
+        public Transform parent = null;
 
         public AudioMixerGroup audioMixerGroup = null;
         public PriorityLevel priority = PriorityLevel.Standard;
@@ -27,8 +28,9 @@ namespace RoaREngine
         public float startTime = 0f;
         public bool randomStartTime = false;
         [Range(0f, 1f)] public float volume = 1f;
-        public float fadeInvolume = 0f;
-        public float fadeOutvolume = 0f;
+        [Range(0f, 1f)] public float finalVolume = 1f;
+        public float fadeInTime = 0f;
+        public float fadeOutTime = 0f;
         [Range(0f, 1f)] public float randomMinvolume = 0f;
         [Range(0f, 1f)] public float randomMaxvolume = 0f;
         [Range(-3f, 3f)] public float pitch = 1f;
@@ -43,7 +45,7 @@ namespace RoaREngine
         [Range(0.01f, 5f)] public float minDistance = 0.1f;
         [Range(5f, 100f)] public float maxDistance = 50f;
         [Range(0, 360)] public int spread = 0;
-        [Range(0f, 5f)] public float dopplerLevel = 1f;
+        [Range(0f, 5f)] public float dopplerLevel = 0f;
 
         [Header("Ignores")]
         public bool bypasseffects = false;
@@ -52,14 +54,18 @@ namespace RoaREngine
         public bool ignorelistenervolume = false;
         public bool ignorelistenerpause = false;
 
-        public bool ongGoing = false;
+        public bool onGoing = false;
         public float minTime = 0f;
         public float maxTime = 0f;
 
         public float minRandomXYZ = 0f;
         public float maxRandomXYZ = 0f;
 
-        public void ApplyTo(AudioSource audioSource)
+        public bool measureEvent = false;
+        public int bpm = 120;
+        public int tempo = 4;
+        public int everyNBar = 1;
+        public void ApplyTo(AudioSource audioSource, GameObject roarEmitter)
         {
             audioSource.outputAudioMixerGroup = this.audioMixerGroup;
             audioSource.loop = this.loop;
@@ -94,6 +100,33 @@ namespace RoaREngine
             audioSource.maxDistance = this.maxDistance;
             audioSource.ignoreListenerVolume = this.ignorelistenervolume;
             audioSource.ignoreListenerPause = this.ignorelistenerpause;
+
+
+            //TEST
+            //if (randomStartTime)
+            //{
+            //    startTime = UnityEngine.Random.Range(0f, audioSource.clip.length);
+            //    audioSource.time = startTime;
+            //}
+            //if (startTime > 0 && !randomStartTime)
+            //{
+            //    startTime = Mathf.Clamp(startTime, 0f, audioSource.clip.length - 0.01f);
+            //    audioSource.time = startTime;
+            //}
+
+
+            //if (fadeInTime > 0)
+            //{
+            //    roarEmitter.GetComponent<RoaREmitter>().Fade(fadeInTime, finalVolume);
+            //}
+            //if (parent != null)
+            //{
+            //    roarEmitter.GetComponent<RoaREmitter>().SetParent(parent);
+            //}
+            //if (minRandomXYZ != 0 || maxRandomXYZ != 0)
+            //{
+            //    roarEmitter.GetComponent<RoaREmitter>().GenerateRandomPosition(minRandomXYZ, maxRandomXYZ);
+            //}
         }
     }
 }

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace RoaREngine
 {
@@ -13,67 +14,16 @@ namespace RoaREngine
             RoarContainerMap.SetNames();
         }
 
-        public void Play(string musicID, float fadeTime = 0f, bool esclusive = false, float startTime = 0f, bool randomStartTime = false, Transform parent = null)
+        public void Play(string musicID, float fadeTime = 0f, float finalVolume = 0f, bool randomStartTime = false, float startTime = 0f, Transform parent = null, float minRandomXYZ = 0f, float maxRandomXYZ = 0f)
         {
             if (RoarContainerMap.MusicIDIsValid(musicID))
             {
                 GameObject roarEmitter = roarPooler.Get();
                 if (roarEmitter != null)
                 {
-                    RoaREmitter emitterComponent = roarEmitter.GetComponent<RoaREmitter>();
-                    if (esclusive)
-                    {
-                        GameObject oldEmitter = SearchEmitterInPlay(musicID);
-                        if (oldEmitter != null)
-                        {
-                            oldEmitter.GetComponent<RoaREmitter>().Stop();
-                            oldEmitter.gameObject.SetActive(false);
-                        }
-                    }
                     RoarContainerMap.SetContainer(musicID, roarEmitter);
-                    if (startTime <= 0)
-                    {
-                        startTime = emitterComponent.GetContainer().roarConfiguration.startTime;
-                    }
-                    if (!randomStartTime)
-                    {
-                        randomStartTime = emitterComponent.GetContainer().roarConfiguration.randomStartTime;
-                    }
-                    if (randomStartTime)
-                    {
-                        startTime = Random.Range(0f, emitterComponent.GetAudioSource().clip.length);
-                        emitterComponent.GetAudioSource().time = startTime;
-                    }
-                    if (startTime > 0 && !randomStartTime)
-                    {
-                        startTime = Mathf.Clamp(startTime, 0f, emitterComponent.GetAudioSource().clip.length - 0.01f);
-                        emitterComponent.GetAudioSource().time = startTime;
-                    }
-                    if (fadeTime <= 0)
-                    {
-                        fadeTime = emitterComponent.GetContainer().roarConfiguration.fadeInvolume;
-                    }
-                    if (fadeTime > 0)
-                    {
-                        emitterComponent.FadeIn(fadeTime);
-                    }
-                    if (parent == null)
-                    {
-                        parent = emitterComponent.GetContainer().roarConfiguration.parent;
-                    }
-                    if (parent != null)
-                    {
-                        emitterComponent.SetParent(parent);
-                    }
-                    if (emitterComponent.GetContainer().roarConfiguration.minRandomXYZ != 0 || emitterComponent.GetContainer().roarConfiguration.maxRandomXYZ != 0)
-                    {
-                        emitterComponent.GenerateRandomPosition(emitterComponent.GetContainer().roarConfiguration.minRandomXYZ, emitterComponent.GetContainer().roarConfiguration.maxRandomXYZ);
-                    }
-                    emitterComponent.Play();
-                    if (!emitterComponent.GetAudioSource().loop && !emitterComponent.GetContainer().roarConfiguration.ongGoing)
-                    {
-                        emitterComponent.AudioClipFinishPlaying();
-                    }
+                    RoaREmitter emitterComponent = roarEmitter.GetComponent<RoaREmitter>();
+                    emitterComponent.Play(fadeTime, finalVolume, randomStartTime, startTime, parent, minRandomXYZ, maxRandomXYZ);
                 }
             }
         }
@@ -82,25 +32,11 @@ namespace RoaREngine
         {
             if (RoarContainerMap.MusicIDIsValid(musicID))
             {
-                GameObject roarEmitter = SearchActiveEmitter(musicID);
+                GameObject roarEmitter = GetActiveEmitterObject(musicID);
                 if (roarEmitter != null)
                 {
                     RoaREmitter emitterComponent = roarEmitter.GetComponent<RoaREmitter>();
-                    if (fadeTime <= 0)
-                    {
-                        fadeTime = emitterComponent.GetContainer().roarConfiguration.fadeOutvolume;
-                    }
-                    if (fadeTime <= 0)
-                    {
-                        emitterComponent.Stop();
-                        roarEmitter.gameObject.SetActive(false);
-                        emitterComponent.ResetParent();
-                    }
-                    else
-                    {
-                        emitterComponent.FadeOut(fadeTime, true);
-                        emitterComponent.ResetParent();
-                    }
+                    emitterComponent.Stop(fadeTime);
                 }
             }
         }
@@ -109,43 +45,29 @@ namespace RoaREngine
         {
             if (RoarContainerMap.MusicIDIsValid(musicID))
             {
-                GameObject roarEmitter = SearchEmitterInPlay(musicID);
+                GameObject roarEmitter = GetEmitterObjectInPlay(musicID);
                 if (roarEmitter != null)
                 {
                     RoaREmitter emitterComponent = roarEmitter.GetComponent<RoaREmitter>();
-                    if (fadeTime <= 0)
-                    {
-                        emitterComponent.Pause();
-                    }
-                    else
-                    {
-                        emitterComponent.FadeOut(fadeTime, false, true);
-                    }
+                    emitterComponent.Pause(fadeTime);
                 }
             }
         }
 
-        public void Resume(string musicID, float fadeTime = 0f)
+        public void Resume(string musicID, float fadeTime = 0f, float finalVolume = 0f)
         {
             if (RoarContainerMap.MusicIDIsValid(musicID))
             {
-                GameObject roarEmitter = SearchActiveEmitter(musicID);
+                GameObject roarEmitter = GetActiveEmitterObject(musicID);
                 if (roarEmitter != null)
                 {
                     RoaREmitter emitterComponent = roarEmitter.GetComponent<RoaREmitter>();
-                    if (fadeTime <= 0)
-                    {
-                        emitterComponent.Resume();
-                    }
-                    else
-                    {
-                        emitterComponent.FadeIn(fadeTime, true);
-                    }
+                    emitterComponent.Resume(fadeTime, finalVolume);
                 }
             }
         }
 
-        private GameObject SearchEmitterInPlay(string musicID)
+        private GameObject GetEmitterObjectInPlay(string musicID)
         {
             foreach (GameObject roarEmitter in roarPooler.RoarEmitters)
             {
@@ -161,7 +83,7 @@ namespace RoaREngine
             return null;
         }
 
-        private GameObject SearchActiveEmitter(string musicID)
+        private GameObject GetActiveEmitterObject(string musicID)
         {
             foreach (GameObject roarEmitter in roarPooler.RoarEmitters)
             {
@@ -177,15 +99,52 @@ namespace RoaREngine
             return null;
         }
 
-        private void Update()
+        private RoaREmitter GetEmitter(string musicID)
         {
-            foreach (GameObject roarEmitter in roarPooler.RoarEmitters)
+            if (RoarContainerMap.MusicIDIsValid(musicID))
             {
-                if (roarEmitter.gameObject.activeInHierarchy)
+                GameObject roarEmitter = GetActiveEmitterObject(musicID);
+                if (roarEmitter != null)
                 {
-                    roarEmitter.GetComponent<RoaREmitter>().UpdateEmitter();
+                    return roarEmitter.GetComponent<RoaREmitter>();
+                }
+            }
+            return null;
+        }
+
+        public AudioSource SetProperty(string musicID)
+        {
+            RoaREmitter emitterComponent = GetEmitter(musicID);
+            if (emitterComponent != null)
+            {
+                return emitterComponent.GetAudioSource();
+            }
+            return null;
+        }
+
+        public void AddMeasureEvent(string musicID, UnityAction measureAction)
+        {
+            if (RoarContainerMap.MusicIDIsValid(musicID))
+            {
+                RoaRContainer container = RoarContainerMap.GetContainer(musicID);
+                if (container != null)
+                {
+                    container.MeasureEvent += measureAction;
+                }
+            }
+        }
+    
+        public void StopMeasureEvent(string musicID, UnityAction measureAction)
+        {
+            if (RoarContainerMap.MusicIDIsValid(musicID))
+            {
+                RoaRContainer container = RoarContainerMap.GetContainer(musicID);
+                if (container != null)
+                {
+                    container.MeasureEvent -= measureAction;
                 }
             }
         }
     }
 }
+

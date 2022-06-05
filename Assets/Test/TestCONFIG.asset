@@ -15,31 +15,38 @@ MonoBehaviour:
   parent: {fileID: 0}
   audioMixerGroup: {fileID: 0}
   priority: 128
-  loop: 0
-  mute: 0
-  startTime: 0
-  randomStartTime: 0
-  volume: 1
-  fadeInvolume: 0
-  fadeOutvolume: 0
-  randomMinvolume: 0
-  randomMaxvolume: 0
-  pitch: 1
-  randomMinPitch: 0
+  loop: 1
+  mute: 1
+  startTime: 4.03
+  randomStartTime: 1
+  volume: 0.428
+  finalVolume: 0.465
+  fadeInTime: 2.78
+  fadeOutTime: 3.65
+  randomMinvolume: 0.428
+  randomMaxvolume: 0.608
+  pitch: -0.91
+  randomMinPitch: -0.5
   randomMaxPitch: 0
-  panStereo: 0
+  panStereo: 0.555
   reverbZoneMix: 1
-  spatialBlend: 0
+  spatialBlend: 0.64
   rolloffMode: 0
-  minDistance: 0.1
-  maxDistance: 50
-  spread: 0
-  dopplerLevel: 1
-  bypasseffects: 0
-  bypasslistenereffects: 0
-  bypassreverbzones: 0
-  ignorelistenervolume: 0
-  ignorelistenerpause: 0
-  ongGoing: 0
+  minDistance: 3.78
+  maxDistance: 35.6
+  spread: 253
+  dopplerLevel: 3.28
+  bypasseffects: 1
+  bypasslistenereffects: 1
+  bypassreverbzones: 1
+  ignorelistenervolume: 1
+  ignorelistenerpause: 1
+  onGoing: 1
   minTime: 0
   maxTime: 0
+  minRandomXYZ: 0
+  maxRandomXYZ: 0
+  measureEvent: 0
+  bpm: 120
+  tempo: 4
+  everyNBar: 1
