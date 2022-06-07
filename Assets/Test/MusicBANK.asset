@@ -10,12 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 157a0ea12d967624c92f27df862505b8, type: 3}
-  m_Name: TestBANK
+  m_Name: MusicBANK
   m_EditorClassIdentifier: 
   audioClipsGroups:
     sequenceMode: 0
-    audioClips:
-    - {fileID: 8300000, guid: 5c32398ea5165d749b7d081e88d2d5d8, type: 3}
-    - {fileID: 8300000, guid: 3e1d6510b62b61448b9aa9120308f376, type: 3}
-    - {fileID: 8300000, guid: c06937b253c04494b88c6e77a4241edd, type: 3}
+    audioClips: []
     Index: 0

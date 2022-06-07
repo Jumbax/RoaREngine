@@ -10,38 +10,38 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 956b715fe82263c4fb432624f0987eb8, type: 3}
-  m_Name: TestCONFIG
+  m_Name: MusicCONFIG
   m_EditorClassIdentifier: 
   parent: {fileID: 0}
   audioMixerGroup: {fileID: 0}
   priority: 128
-  loop: 1
-  mute: 1
-  startTime: 4.03
-  randomStartTime: 1
-  volume: 0.428
-  finalVolume: 0.465
-  fadeInTime: 2.78
-  fadeOutTime: 3.65
-  randomMinvolume: 0.428
-  randomMaxvolume: 0.608
-  pitch: -0.91
-  randomMinPitch: -0.5
+  loop: 0
+  mute: 0
+  startTime: 0
+  randomStartTime: 0
+  volume: 0.165
+  finalVolume: 1
+  fadeInTime: 0
+  fadeOutTime: 0
+  randomMinvolume: 0
+  randomMaxvolume: 0
+  pitch: 1
+  randomMinPitch: 0
   randomMaxPitch: 0
-  panStereo: 0.555
+  panStereo: 0
   reverbZoneMix: 1
-  spatialBlend: 0.64
+  spatialBlend: 0
   rolloffMode: 0
-  minDistance: 3.78
-  maxDistance: 35.6
-  spread: 253
-  dopplerLevel: 3.28
-  bypasseffects: 1
-  bypasslistenereffects: 1
-  bypassreverbzones: 1
-  ignorelistenervolume: 1
-  ignorelistenerpause: 1
-  onGoing: 1
+  minDistance: 0.1
+  maxDistance: 50
+  spread: 0
+  dopplerLevel: 0
+  bypasseffects: 0
+  bypasslistenereffects: 0
+  bypassreverbzones: 0
+  ignorelistenervolume: 0
+  ignorelistenerpause: 0
+  onGoing: 0
   minTime: 0
   maxTime: 0
   minRandomXYZ: 0

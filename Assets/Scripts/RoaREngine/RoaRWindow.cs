@@ -15,9 +15,10 @@ namespace RoaREngine
         private int oldIndex = 0;
 
         private string containerName;
-        private int clipsNumber = 1;
+        private RoaRConfigurationSO config = null;
+        private RoaRClipsBankSO bank = null;
+        private int clipsNumber = 0;
         private List<AudioClip> clips = new List<AudioClip>();
-
         private int clipIndex = 0;
         private Transform parent = null;
         private AudioMixerGroup audioMixerGroup = null;
@@ -61,8 +62,6 @@ namespace RoaREngine
         private void Awake()
         {
             clips.Clear();
-            AudioClip clip = null;
-            clips.Add(clip);
             containers.Clear();
             containersName.Clear();
             containersName.Add("New Container");
@@ -84,53 +83,11 @@ namespace RoaREngine
 
         private void OnGUI()
         {
-            index = EditorGUILayout.Popup(index, containersName.ToArray());
-
-
-            //texture = AssetPreview.GetAssetPreview(clips[0]);
-            //GUILayout.Label(texture);
-            scrollPos = GUILayout.BeginScrollView(scrollPos, false, false, GUIStyle.none, GUI.skin.verticalScrollbar);
-            using (new GUILayout.VerticalScope())
-            {
-                AudioClipConfiguration();
-
-                bool wasGUIEnabled = GUI.enabled;
-                if (GUILayout.Button("Add Clip"))
-                {
-                    AddClipField();
-                }
-                if (GUILayout.Button("Remove Clip"))
-                {
-                    RemoveClipField();
-                }
-                if (GUILayout.Button("Create Container"))
-                {
-                    CreateContainer();
-                }
-                if (GUILayout.Button("Default"))
-                {
-                    Default();
-                }
-                if (GUILayout.Button("Save"))
-                {
-                    SaveContainerSettings(containers[index-1]);
-                }
-                if (GUILayout.Button("Reload Containers"))
-                {
-                    ReloadContainers();
-                }
-                GUI.enabled = wasGUIEnabled;
-            }
-            GUILayout.EndScrollView();
-        }
-
-        private void AudioClipConfiguration()
-        {
             if (index != oldIndex)
             {
                 if (index == 0)
                 {
-                    Default();
+                    DefaultContainer();
                     oldIndex = index;
                 }
                 else
@@ -140,30 +97,74 @@ namespace RoaREngine
                 }
             }
 
-            #region settings
-            containerName = EditorGUILayout.TextField("ContainerName", containerName);
-            GUI.enabled = false;
-            clipsNumber = EditorGUILayout.IntField("ClipsNumber", clipsNumber);
-            GUI.enabled = true;
-            for (int i = 0; i < clipsNumber; i++)
+            //texture = AssetPreview.GetAssetPreview(clips[0]);
+            //GUILayout.Label(texture);
+            scrollPos = GUILayout.BeginScrollView(scrollPos, false, false, GUIStyle.none, GUI.skin.verticalScrollbar);
+            using (new GUILayout.HorizontalScope())
             {
-                clips[i] = EditorGUILayout.ObjectField("AudioClips", clips[i], typeof(AudioClip), false) as AudioClip;
+                //Container
+                using (new GUILayout.VerticalScope())
+                {
+                    EditorGUILayout.LabelField("Container: " + containersName[index]);
+                    index = EditorGUILayout.Popup(index, containersName.ToArray());
+                    ContainerSettings();
+                }
+                EditorGUILayout.Space(25f);
+                //Configuration
+                using (new GUILayout.VerticalScope())
+                {
+                    string bankName = bank != null ? bank.name : "None";
+                    EditorGUILayout.LabelField("Bank: " + bankName);
+                    BankSettings();
+                }
+                EditorGUILayout.Space(25f);
+                //Bank
+                using (new GUILayout.VerticalScope())
+                {
+                    string configName = config != null ? config.name : "None";
+                    EditorGUILayout.LabelField("Configuration: " + configName);
+                    ConfigurationSettings();
+                }
             }
+            GUILayout.EndScrollView();
+        }
+
+        private void ContainerSettings()
+        {
+            containerName = EditorGUILayout.TextField("ContainerName", containerName);
+            config = EditorGUILayout.ObjectField("Configuration", config, typeof(RoaRConfigurationSO), false) as RoaRConfigurationSO;
+            bank = EditorGUILayout.ObjectField("Bank", bank, typeof(RoaRClipsBankSO), false) as RoaRClipsBankSO;
+            if (GUILayout.Button("Create Container"))
+            {
+                CreateContainer();
+            }
+            if (GUILayout.Button("Default Container"))
+            {
+                DefaultContainer();
+            }
+            if (GUILayout.Button("Save Container"))
+            {
+                SaveContainerSettings(containers[index - 1]);
+            }
+            if (GUILayout.Button("Reload Containers"))
+            {
+                ReloadContainers();
+            }
+        }
+
+        private void ConfigurationSettings()
+        {
+
             parent = EditorGUILayout.ObjectField("Parent", parent, typeof(Transform), true) as Transform;
             audioMixerGroup = EditorGUILayout.ObjectField("AudioMixerGroup", audioMixerGroup, typeof(AudioMixerGroup), false) as AudioMixerGroup;
             priority = (PriorityLevel)EditorGUILayout.EnumPopup("Priority", priority);
-            sequenceMode = (AudioSequenceMode)EditorGUILayout.EnumPopup("SequenceMode", sequenceMode);
             using (new GUILayout.HorizontalScope())
             {
                 GUILayout.Label("StartTime", GUILayout.Width(145));
                 startTime = EditorGUILayout.FloatField(startTime, GUILayout.Width(25));
             }
             randomStartTime = EditorGUILayout.Toggle("RandomStartTime", randomStartTime);
-            using (new GUILayout.HorizontalScope())
-            {
-                GUILayout.Label("Index", GUILayout.Width(145));
-                clipIndex = EditorGUILayout.IntField(clipIndex, GUILayout.Width(25));
-            }
+
             loop = EditorGUILayout.Toggle("Loop", loop);
             mute = EditorGUILayout.Toggle("Mute", mute);
             using (new GUILayout.HorizontalScope())
@@ -316,12 +317,36 @@ namespace RoaREngine
                 everyNBar = EditorGUILayout.IntField(everyNBar, GUILayout.Width(25));
             }
             GUI.enabled = true;
-            #endregion settings
+        }
+
+        private void BankSettings()
+        {
+            sequenceMode = (AudioSequenceMode)EditorGUILayout.EnumPopup("SequenceMode", sequenceMode);
+            GUI.enabled = false;
+            clipsNumber = EditorGUILayout.IntField("ClipsNumber", clipsNumber);
+            GUI.enabled = true;
+            for (int i = 0; i < clipsNumber; i++)
+            {
+                clips[i] = EditorGUILayout.ObjectField("AudioClips", clips[i], typeof(AudioClip), false) as AudioClip;
+            }
+            using (new GUILayout.HorizontalScope())
+            {
+                GUILayout.Label("Start From", GUILayout.Width(145));
+                clipIndex = EditorGUILayout.IntField(clipIndex, GUILayout.Width(25));
+            }
+            if (GUILayout.Button("Add Clip"))
+            {
+                AddClipField();
+            }
+            if (GUILayout.Button("Remove Clip"))
+            {
+                RemoveClipField();
+            }
         }
 
         private void CreateContainer()
         {
-            if (containerName == "")
+            if (containerName == "" || containers.Find(container => container.Name == containerName))
             {
                 //TODO ERROR MESSAGE "A CONTAINER MUST HAVE A NAME"
                 return;
@@ -332,12 +357,26 @@ namespace RoaREngine
             AssetDatabase.CreateAsset(container, path);
 
             container.Name = containerName;
-            container.roarClipBank = CreateClipBank();
-            container.roarConfiguration = CreateConfiguration(container.roarClipBank);
-
+            if (bank == null || bank.name == "")
+            {
+                container.roarClipBank = CreateClipBank();
+            }
+            else
+            {
+                container.roarClipBank = bank;
+            }
+            if (config == null || config.name == "")
+            {
+                container.roarConfiguration = CreateConfiguration(container.roarClipBank);
+            }
+            else
+            {
+                container.roarConfiguration = config;
+            }
             AssetDatabase.SaveAssets();
             EditorUtility.FocusProjectWindow();
             Selection.activeObject = container;
+            ReloadContainers();
         }
 
         private RoaRClipsBankSO CreateClipBank()
@@ -426,7 +465,7 @@ namespace RoaREngine
 
         private void RemoveClipField()
         {
-            if (clipsNumber > 1)
+            if (clipsNumber > 0)
             {
                 clipsNumber--;
                 clips.RemoveAt(clipsNumber);
@@ -446,22 +485,14 @@ namespace RoaREngine
             }
         }
 
-        private void Default()
+        private void DefaultContainer()
         {
-            for (int i = 0; i < clips.Count; i++)
-            {
-                if (clipsNumber == 1)
-                {
-                    break;
-                }
-                clipsNumber--;
-                clips.RemoveAt(clipsNumber);
-            }
-
+            clips.Clear();
             parent = null;
+            bank = null;
+            config = null;
             containerName = "";
-            clipsNumber = 1;
-            clips[0] = null;
+            clipsNumber = 0;
             clipIndex = 0;
             audioMixerGroup = null;
             priority = PriorityLevel.Standard;
@@ -515,62 +546,77 @@ namespace RoaREngine
             AssetDatabase.SaveAssets();
             EditorUtility.FocusProjectWindow();
         }
-        
+
         private void GetSettingsFromContainer()
         {
             RoaRContainer container = containers[index - 1];
-            RoaRClipsBankSO containerBank = container.roarClipBank;
-            RoaRConfigurationSO containerConfiguration = container.roarConfiguration;
+            if (container.roarClipBank != null)
+            {
+                bank = container.roarClipBank;
+            }
+            else
+            {
+                bank = CreateInstance<RoaRClipsBankSO>();
+            }
+            if (container.roarConfiguration != null)
+            {
+                config = container.roarConfiguration;
+            }
+            else
+            {
+                config = CreateInstance<RoaRConfigurationSO>();
+            }
             containerName = container.Name;
-            clipsNumber = containerBank.audioClipsGroups.audioClips.Length;
+            clipsNumber = bank.audioClipsGroups.audioClips.Length;
             for (int i = 0; i < clipsNumber; i++)
             {
-                if (clips.Count < containerBank.audioClipsGroups.audioClips.Length)
+                if (clips.Count < bank.audioClipsGroups.audioClips.Length)
                 {
                     AudioClip clip = null;
                     clips.Add(clip);
                 }
-                clips[i] = containerBank.audioClipsGroups.audioClips[i];
+                clips[i] = bank.audioClipsGroups.audioClips[i];
             }
-            parent = containerConfiguration.parent;
-            audioMixerGroup = containerConfiguration.audioMixerGroup;
-            priority = containerConfiguration.priority;
-            sequenceMode = containerBank.audioClipsGroups.sequenceMode;
-            startTime = containerConfiguration.startTime;
-            randomStartTime = containerConfiguration.randomStartTime;
-            clipIndex = containerBank.audioClipsGroups.Index;
-            loop = containerConfiguration.loop;
-            mute = containerConfiguration.mute;
-            volume = containerConfiguration.volume;
-            fadeInTime = containerConfiguration.fadeInTime;
-            fadeOutTime = containerConfiguration.fadeOutTime;
-            randomMinVolume = containerConfiguration.randomMinvolume;
-            randomMaxVolume = containerConfiguration.randomMaxvolume;
-            pitch = containerConfiguration.pitch;
-            randomMinPitch = containerConfiguration.randomMinPitch;
-            randomMaxPitch = containerConfiguration.randomMaxPitch;
-            panStereo = containerConfiguration.panStereo;
-            reverbZoneMix = containerConfiguration.reverbZoneMix;
-            spatialBlend = containerConfiguration.spatialBlend;
-            rolloffMode = containerConfiguration.rolloffMode;
-            minDistance = containerConfiguration.minDistance;
-            maxDistance = containerConfiguration.maxDistance;
-            spread = containerConfiguration.spread;
-            dopplerLevel = containerConfiguration.dopplerLevel;
-            bypasseffects = containerConfiguration.bypasseffects;
-            bypasslistenereffects = containerConfiguration.bypasslistenereffects;
-            bypassreverbzones = containerConfiguration.bypassreverbzones;
-            ignorelistenervolume = containerConfiguration.ignorelistenervolume;
-            ignorelistenerpause = containerConfiguration.ignorelistenerpause;
-            onGoing = containerConfiguration.onGoing;
-            minTime = containerConfiguration.minTime;
-            maxTime = containerConfiguration.maxTime;
-            minRandomXYZ = containerConfiguration.minRandomXYZ;
-            maxRandomXYZ = containerConfiguration.maxRandomXYZ;
-            measureEvent = containerConfiguration.measureEvent;
-            bpm = containerConfiguration.bpm;
-            tempo = containerConfiguration.tempo;
-            everyNBar = containerConfiguration.everyNBar;
+            parent = config.parent;
+            audioMixerGroup = config.audioMixerGroup;
+            priority = config.priority;
+            sequenceMode = bank.audioClipsGroups.sequenceMode;
+            startTime = config.startTime;
+            randomStartTime = config.randomStartTime;
+            clipIndex = bank.audioClipsGroups.Index;
+            loop = config.loop;
+            mute = config.mute;
+            volume = config.volume;
+            fadeInTime = config.fadeInTime;
+            fadeOutTime = config.fadeOutTime;
+            randomMinVolume = config.randomMinvolume;
+            randomMaxVolume = config.randomMaxvolume;
+            pitch = config.pitch;
+            randomMinPitch = config.randomMinPitch;
+            randomMaxPitch = config.randomMaxPitch;
+            panStereo = config.panStereo;
+            reverbZoneMix = config.reverbZoneMix;
+            spatialBlend = config.spatialBlend;
+            rolloffMode = config.rolloffMode;
+            minDistance = config.minDistance;
+            maxDistance = config.maxDistance;
+            spread = config.spread;
+            dopplerLevel = config.dopplerLevel;
+            bypasseffects = config.bypasseffects;
+            bypasslistenereffects = config.bypasslistenereffects;
+            bypassreverbzones = config.bypassreverbzones;
+            ignorelistenervolume = config.ignorelistenervolume;
+            ignorelistenerpause = config.ignorelistenerpause;
+            onGoing = config.onGoing;
+            minTime = config.minTime;
+            maxTime = config.maxTime;
+            minRandomXYZ = config.minRandomXYZ;
+            maxRandomXYZ = config.maxRandomXYZ;
+            measureEvent = config.measureEvent;
+            bpm = config.bpm;
+            tempo = config.tempo;
+            everyNBar = config.everyNBar;
         }
+    
     }
 }

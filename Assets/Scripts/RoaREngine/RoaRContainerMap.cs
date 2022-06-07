@@ -14,6 +14,7 @@ namespace RoaREngine
         {
             foreach (RoaRContainer container in roarContainers)
             {
+                //CONTROLLO PER VEDERE SE CI SONO CONTAINER CON LO STESSO NOME
                 containerDict[container.Name] = container;
             }
         }
