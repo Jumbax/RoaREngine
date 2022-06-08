@@ -60,8 +60,8 @@ public class UserCall : MonoBehaviour
             {
                 manager.Resume(CueName);
                 Resume = true;
-                //manager.SetEffectProperty(CueName, EffectType.Chorus).density = 50;
-                //manager.SetAudioSourceProperty(CueName).volume = 0f;
+                manager.SetEffectProperty<AudioChorusFilter>(CueName).depth = 50;
+                manager.GetAudioSource(CueName).volume = 0f;
             }
         }
         if (Input.GetKey(KeyCode.F))
@@ -72,7 +72,6 @@ public class UserCall : MonoBehaviour
             Resume = false;
             C = false;
         }
-
         if (Input.GetKey(KeyCode.C))
         {
             if (!C)
