@@ -123,6 +123,16 @@ namespace RoaREngine
             return null;
         }
 
+        public AudioSource GetAudioSource(string musicID)
+        {
+            RoaREmitter emitterComponent = GetEmitter(musicID);
+            if (emitterComponent != null)
+            {
+                return emitterComponent.GetAudioSource();
+            }
+            return null;
+        }
+  
         public void AddMeasureEvent(string musicID, UnityAction measureAction)
         {
             if (RoarContainerMap.MusicIDIsValid(musicID))
@@ -147,16 +157,6 @@ namespace RoaREngine
             }
         }
 
-        public AudioSource GetAudioSource(string musicID)
-        {
-            RoaREmitter emitterComponent = GetEmitter(musicID);
-            if (emitterComponent != null)
-            {
-                return emitterComponent.GetAudioSource();
-            }
-            return null;
-        }
-        
         public void AddEffect(string musicID, EffectType type)
         {
             GameObject emitter = GetActiveEmitterObject(musicID);
@@ -189,39 +189,7 @@ namespace RoaREngine
             }
         }
 
-        public Behaviour SetEffectProperty(string musicID, EffectType type)
-        {
-            Behaviour filter = new Behaviour();
-            switch (type)
-            {
-                case EffectType.Chorus:
-                    filter = GetAudioSource(musicID).GetComponent<AudioChorusFilter>();
-                    break;
-                case EffectType.Distortion:
-                    filter = GetAudioSource(musicID).GetComponent<AudioDistortionFilter>();
-                    break;
-                case EffectType.Echo:
-                    filter = GetAudioSource(musicID).GetComponent<AudioEchoFilter>();
-                    break;
-                case EffectType.HF:
-                    filter = GetAudioSource(musicID).GetComponent<AudioHighPassFilter>();
-                    break;
-                case EffectType.LP:
-                    filter = GetAudioSource(musicID).GetComponent<AudioLowPassFilter>();
-                    break;
-                case EffectType.ReverbFilter:
-                    filter = GetAudioSource(musicID).GetComponent<AudioReverbFilter>();
-                    break;
-                case EffectType.ReverbZone:
-                    filter = GetAudioSource(musicID).GetComponent<AudioReverbZone>();
-                    break;
-                default:
-                    break;
-            }
-            return filter;
-        }
-
-        public T SetEffectProperty<T>(string musicID)
+        public T GetEffect<T>(string musicID)
         {
             T filter = GetAudioSource(musicID).GetComponent<T>();
             return filter;

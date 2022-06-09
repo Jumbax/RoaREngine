@@ -8,6 +8,7 @@ public class UserCall : MonoBehaviour
     private bool Pause;
     private bool Resume;
     private bool C;
+    private bool X;
     public RoaRManager manager;
     public string CueName;
     public float FadeInTime;
@@ -60,8 +61,6 @@ public class UserCall : MonoBehaviour
             {
                 manager.Resume(CueName);
                 Resume = true;
-                manager.SetEffectProperty<AudioChorusFilter>(CueName).depth = 50;
-                manager.GetAudioSource(CueName).volume = 0f;
             }
         }
         if (Input.GetKey(KeyCode.F))
@@ -71,12 +70,22 @@ public class UserCall : MonoBehaviour
             Pause = false;
             Resume = false;
             C = false;
+            X = false;
+        }
+        if (Input.GetKey(KeyCode.X))
+        {
+            if (!X)
+            {
+                manager.GetEffect<AudioChorusFilter>(CueName).depth = 1f;
+                //manager.GetAudioSource(CueName).volume = 0f;
+                X = true;
+            }
         }
         if (Input.GetKey(KeyCode.C))
         {
             if (!C)
             {
-                manager.AddEffect(CueName, EffectType.Chorus);
+                manager.AddEffect(CueName, EffectType.Distortion);
                 C = true;
             }
         }
