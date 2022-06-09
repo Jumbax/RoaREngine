@@ -1,63 +1,54 @@
-using System;
 using UnityEngine;
 
 namespace RoaREngine
 {
-    public enum AudioSequenceMode { Sequential, Random, Choise}
+    public enum AudioSequenceMode
+    {
+        Sequential,
+        Random,
+        Choise
+    }
+
     [CreateAssetMenu(fileName = "RoaRClipsBank", menuName = "RoaREngine/RoaRClipsBank")]
     public class RoaRClipsBankSO : ScriptableObject
     {
-        public AudioClipsGroup audioClipsGroups = default;
+        public AudioSequenceMode sequenceMode = AudioSequenceMode.Sequential;
+        public AudioClip[] audioClips;
+        private int currentIndex = -1;
+        private int previousIndex = -1;
+        private int index;
 
-        public AudioClip GetClip()
+        private AudioClip NextClip()
         {
-            return audioClipsGroups.NextClip();
-        }
+            if (audioClips.Length == 1) return audioClips[0];
 
-        public void SetClipIndex(int index)
-        {
-            audioClipsGroups.Index = index;
-        }
-
-        public int GetClipIndex()
-        {
-            return audioClipsGroups.Index;
-        }
-
-        [Serializable]
-        public class AudioClipsGroup
-        {
-            public AudioSequenceMode sequenceMode = AudioSequenceMode.Sequential;
-            public AudioClip[] audioClips;
-            private int currentIndex = -1;
-            private int previousIndex = -1;
-            public int Index;
-
-            public AudioClip NextClip()
+            switch (sequenceMode)
             {
-                if (audioClips.Length == 1) return audioClips[0];
-
-                switch (sequenceMode)
-                {
-                    case AudioSequenceMode.Sequential:
-                        currentIndex = (int)Mathf.Repeat(++currentIndex, audioClips.Length);
-                        break;
-                    case AudioSequenceMode.Random:
-                        do
-                        {
-                            currentIndex = UnityEngine.Random.Range(0, audioClips.Length);
-                        }
-                        while (currentIndex == previousIndex);
-                        break;
-                    case AudioSequenceMode.Choise:
-                        currentIndex = Index;
-                        break;
-                }
-
-                previousIndex = currentIndex;
-
-                return audioClips[currentIndex];
+                case AudioSequenceMode.Sequential:
+                    currentIndex = (int)Mathf.Repeat(++currentIndex, audioClips.Length);
+                    break;
+                case AudioSequenceMode.Random:
+                    do
+                    {
+                        currentIndex = UnityEngine.Random.Range(0, audioClips.Length);
+                    }
+                    while (currentIndex == previousIndex);
+                    break;
+                case AudioSequenceMode.Choise:
+                    currentIndex = index;
+                    break;
             }
+
+            previousIndex = currentIndex;
+
+            return audioClips[currentIndex];
         }
+
+        public AudioClip GetClip() => NextClip();
+
+        public int GetClipIndex() => index;
+
+        public void SetClipIndex(int index) => this.index = index;
+
     }
 }

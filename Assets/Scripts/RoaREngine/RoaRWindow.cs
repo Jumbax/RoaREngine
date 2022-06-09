@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEditor.AnimatedValues;
 using UnityEngine;
 using UnityEngine.Audio;
 
@@ -38,6 +39,8 @@ namespace RoaREngine
         private float randomMaxPitch = 0f;
         private float panStereo = 0f;
         private float reverbZoneMix = 1f;
+        private bool positional3D = false;
+        private bool is3D = false;
         private float spatialBlend = 0f;
         private AudioRolloffMode rolloffMode = AudioRolloffMode.Logarithmic;
         private float minDistance = 0.1f;
@@ -50,17 +53,34 @@ namespace RoaREngine
         private bool ignorelistenervolume = false;
         private bool ignorelistenerpause = false;
         private bool onGoing = false;
+        private bool isOnGoing = false;
         private float minTime = 0f;
         private float maxTime = 0f;
         private float minRandomXYZ = 0f;
         private float maxRandomXYZ = 0f;
         private bool measureEvent = false;
+        private bool isMeasureEvent = false;
         private int bpm = 120;
         private int tempo = 4;
         private int everyNBar = 1;
+        private bool addEffect = false;
+        private AnimBool chorus = new AnimBool(false);
+        private AnimBool distortion = new AnimBool(false);
+        private AnimBool echo = new AnimBool(false);
+        private AnimBool highPass = new AnimBool(false);
+        private AnimBool lowPass = new AnimBool(false);
+        private AnimBool reverbFilter = new AnimBool(false);
+        private AnimBool reverbZone = new AnimBool(false);
 
         private void Awake()
         {
+            chorus.valueChanged.AddListener(Repaint);
+            distortion.valueChanged.AddListener(Repaint);
+            echo.valueChanged.AddListener(Repaint);
+            highPass.valueChanged.AddListener(Repaint);
+            lowPass.valueChanged.AddListener(Repaint);
+            reverbFilter.valueChanged.AddListener(Repaint);
+            reverbZone.valueChanged.AddListener(Repaint);
             clips.Clear();
             containers.Clear();
             containersName.Clear();
@@ -79,7 +99,6 @@ namespace RoaREngine
             RoaRWindow w = GetWindow<RoaRWindow>("RoaRWindow");
             w.Show();
         }
-
 
         private void OnGUI()
         {
@@ -152,9 +171,34 @@ namespace RoaREngine
             }
         }
 
+        private void BankSettings()
+        {
+            sequenceMode = (AudioSequenceMode)EditorGUILayout.EnumPopup("SequenceMode", sequenceMode);
+            GUI.enabled = false;
+            clipsNumber = EditorGUILayout.IntField("ClipsNumber", clipsNumber);
+            GUI.enabled = true;
+            for (int i = 0; i < clipsNumber; i++)
+            {
+                clips[i] = EditorGUILayout.ObjectField("AudioClips", clips[i], typeof(AudioClip), false) as AudioClip;
+            }
+            using (new GUILayout.HorizontalScope())
+            {
+                GUILayout.Label("Start From", GUILayout.Width(145));
+                clipIndex = EditorGUILayout.IntField(clipIndex, GUILayout.Width(25));
+                clipIndex = Mathf.Clamp(clipIndex, 0, clips.Count);
+            }
+            if (GUILayout.Button("Add Clip"))
+            {
+                AddClipField();
+            }
+            if (GUILayout.Button("Remove Clip"))
+            {
+                RemoveClipField();
+            }
+        }
+
         private void ConfigurationSettings()
         {
-
             parent = EditorGUILayout.ObjectField("Parent", parent, typeof(Transform), true) as Transform;
             audioMixerGroup = EditorGUILayout.ObjectField("AudioMixerGroup", audioMixerGroup, typeof(AudioMixerGroup), false) as AudioMixerGroup;
             priority = (PriorityLevel)EditorGUILayout.EnumPopup("Priority", priority);
@@ -164,7 +208,6 @@ namespace RoaREngine
                 startTime = EditorGUILayout.FloatField(startTime, GUILayout.Width(25));
             }
             randomStartTime = EditorGUILayout.Toggle("RandomStartTime", randomStartTime);
-
             loop = EditorGUILayout.Toggle("Loop", loop);
             mute = EditorGUILayout.Toggle("Mute", mute);
             using (new GUILayout.HorizontalScope())
@@ -233,115 +276,153 @@ namespace RoaREngine
                 reverbZoneMix = GUILayout.HorizontalSlider(reverbZoneMix, 0f, 1f);
                 reverbZoneMix = Mathf.Clamp(reverbZoneMix, 0f, 1f);
             }
-            using (new GUILayout.HorizontalScope())
-            {
-                GUILayout.Label("SpatialBlend", GUILayout.Width(145));
-                spatialBlend = EditorGUILayout.FloatField(spatialBlend, GUILayout.Width(25));
-                spatialBlend = GUILayout.HorizontalSlider(spatialBlend, 0f, 1f);
-                spatialBlend = Mathf.Clamp(spatialBlend, 0f, 1f);
-            }
-            rolloffMode = (AudioRolloffMode)EditorGUILayout.EnumPopup("Mode", rolloffMode);
-            using (new GUILayout.HorizontalScope())
-            {
-                GUILayout.Label("MinDistance", GUILayout.Width(145));
-                minDistance = EditorGUILayout.FloatField(minDistance, GUILayout.Width(25));
-                minDistance = GUILayout.HorizontalSlider(minDistance, 0.01f, 5f);
-                minDistance = Mathf.Clamp(minDistance, 0.01f, 5f);
-            }
-            using (new GUILayout.HorizontalScope())
-            {
-                GUILayout.Label("MaxDistance", GUILayout.Width(145));
-                maxDistance = EditorGUILayout.FloatField(maxDistance, GUILayout.Width(25));
-                maxDistance = GUILayout.HorizontalSlider(maxDistance, 5f, 100f);
-                maxDistance = Mathf.Clamp(maxDistance, 5f, 100f);
-            }
-            using (new GUILayout.HorizontalScope())
-            {
-                GUILayout.Label("Spread", GUILayout.Width(145));
-                spread = EditorGUILayout.IntField(spread, GUILayout.Width(25));
-                spread = Mathf.RoundToInt(GUILayout.HorizontalSlider(spread, 0, 360));
-                spread = Mathf.Clamp(spread, 0, 360);
-            }
-            using (new GUILayout.HorizontalScope())
-            {
-                GUILayout.Label("DopplerLevel", GUILayout.Width(145));
-                dopplerLevel = EditorGUILayout.FloatField(dopplerLevel, GUILayout.Width(25));
-                dopplerLevel = GUILayout.HorizontalSlider(dopplerLevel, 0f, 5f);
-                dopplerLevel = Mathf.Clamp(dopplerLevel, 0f, 5f);
-            }
             bypasseffects = EditorGUILayout.Toggle("BypassEffects", bypasseffects);
             bypasslistenereffects = EditorGUILayout.Toggle("BypassListenerEffects", bypasslistenereffects);
             bypassreverbzones = EditorGUILayout.Toggle("BypassRevebZones", bypassreverbzones);
             ignorelistenervolume = EditorGUILayout.Toggle("IgnoreListenerVolume", ignorelistenervolume);
             ignorelistenerpause = EditorGUILayout.Toggle("IgnoreListenerPause", ignorelistenerpause);
-            onGoing = EditorGUILayout.Toggle("OnGoing", onGoing);
-            GUI.enabled = onGoing;
-            using (new GUILayout.HorizontalScope())
-            {
-                GUILayout.Label("MinTime", GUILayout.Width(145));
-                minTime = EditorGUILayout.FloatField(minTime, GUILayout.Width(25));
-            }
-            using (new GUILayout.HorizontalScope())
-            {
-                GUILayout.Label("MaxTime", GUILayout.Width(145));
-                maxTime = EditorGUILayout.FloatField(maxTime, GUILayout.Width(25));
-            }
-            GUI.enabled = true;
-            using (new GUILayout.HorizontalScope())
-            {
-                GUILayout.Label("MinRandomXYZ", GUILayout.Width(145));
-                minRandomXYZ = EditorGUILayout.FloatField(minRandomXYZ, GUILayout.Width(35));
-                minRandomXYZ = GUILayout.HorizontalSlider(minRandomXYZ, -500f, 500f);
-            }
-            using (new GUILayout.HorizontalScope())
-            {
-                GUILayout.Label("MaxRandomXYZ", GUILayout.Width(145));
-                maxRandomXYZ = EditorGUILayout.FloatField(maxRandomXYZ, GUILayout.Width(35));
-                maxRandomXYZ = GUILayout.HorizontalSlider(maxRandomXYZ, -500f, 500f);
-            }
-            measureEvent = EditorGUILayout.Toggle("MeasureEvent", measureEvent);
-            GUI.enabled = measureEvent;
-            using (new GUILayout.HorizontalScope())
-            {
-                GUILayout.Label("BPM", GUILayout.Width(145));
-                bpm = EditorGUILayout.IntField(bpm, GUILayout.Width(35));
-            }
-            using (new GUILayout.HorizontalScope())
-            {
-                GUILayout.Label("Tempo", GUILayout.Width(145));
-                tempo = EditorGUILayout.IntField(tempo, GUILayout.Width(25));
-            }
-            using (new GUILayout.HorizontalScope())
-            {
-                GUILayout.Label("EveryNBar", GUILayout.Width(145));
-                everyNBar = EditorGUILayout.IntField(everyNBar, GUILayout.Width(25));
-            }
-            GUI.enabled = true;
-        }
 
-        private void BankSettings()
-        {
-            sequenceMode = (AudioSequenceMode)EditorGUILayout.EnumPopup("SequenceMode", sequenceMode);
-            GUI.enabled = false;
-            clipsNumber = EditorGUILayout.IntField("ClipsNumber", clipsNumber);
-            GUI.enabled = true;
-            for (int i = 0; i < clipsNumber; i++)
+            is3D = EditorGUILayout.BeginFoldoutHeaderGroup(is3D, "3D");
+            if (is3D)
             {
-                clips[i] = EditorGUILayout.ObjectField("AudioClips", clips[i], typeof(AudioClip), false) as AudioClip;
+                positional3D = EditorGUILayout.Toggle("3D", positional3D);
+                using (new GUILayout.HorizontalScope())
+                {
+                    GUILayout.Label("SpatialBlend", GUILayout.Width(145));
+                    spatialBlend = EditorGUILayout.FloatField(spatialBlend, GUILayout.Width(25));
+                    spatialBlend = GUILayout.HorizontalSlider(spatialBlend, 0f, 1f);
+                    spatialBlend = Mathf.Clamp(spatialBlend, 0f, 1f);
+                }
+                rolloffMode = (AudioRolloffMode)EditorGUILayout.EnumPopup("Mode", rolloffMode);
+                using (new GUILayout.HorizontalScope())
+                {
+                    GUILayout.Label("MinDistance", GUILayout.Width(145));
+                    minDistance = EditorGUILayout.FloatField(minDistance, GUILayout.Width(25));
+                    minDistance = GUILayout.HorizontalSlider(minDistance, 0.01f, 5f);
+                    minDistance = Mathf.Clamp(minDistance, 0.01f, 5f);
+                }
+                using (new GUILayout.HorizontalScope())
+                {
+                    GUILayout.Label("MaxDistance", GUILayout.Width(145));
+                    maxDistance = EditorGUILayout.FloatField(maxDistance, GUILayout.Width(25));
+                    maxDistance = GUILayout.HorizontalSlider(maxDistance, 5f, 100f);
+                    maxDistance = Mathf.Clamp(maxDistance, 5f, 100f);
+                }
+                using (new GUILayout.HorizontalScope())
+                {
+                    GUILayout.Label("Spread", GUILayout.Width(145));
+                    spread = EditorGUILayout.IntField(spread, GUILayout.Width(25));
+                    spread = Mathf.RoundToInt(GUILayout.HorizontalSlider(spread, 0, 360));
+                    spread = Mathf.Clamp(spread, 0, 360);
+                }
+                using (new GUILayout.HorizontalScope())
+                {
+                    GUILayout.Label("DopplerLevel", GUILayout.Width(145));
+                    dopplerLevel = EditorGUILayout.FloatField(dopplerLevel, GUILayout.Width(25));
+                    dopplerLevel = GUILayout.HorizontalSlider(dopplerLevel, 0f, 5f);
+                    dopplerLevel = Mathf.Clamp(dopplerLevel, 0f, 5f);
+                }
+                using (new GUILayout.HorizontalScope())
+                {
+                    GUILayout.Label("MinRandomXYZ", GUILayout.Width(145));
+                    minRandomXYZ = EditorGUILayout.FloatField(minRandomXYZ, GUILayout.Width(35));
+                    minRandomXYZ = GUILayout.HorizontalSlider(minRandomXYZ, -500f, 500f);
+                }
+                using (new GUILayout.HorizontalScope())
+                {
+                    GUILayout.Label("MaxRandomXYZ", GUILayout.Width(145));
+                    maxRandomXYZ = EditorGUILayout.FloatField(maxRandomXYZ, GUILayout.Width(35));
+                    maxRandomXYZ = GUILayout.HorizontalSlider(maxRandomXYZ, -500f, 500f);
+                }
             }
-            using (new GUILayout.HorizontalScope())
+            EditorGUILayout.EndFoldoutHeaderGroup();
+
+            isOnGoing = EditorGUILayout.BeginFoldoutHeaderGroup(isOnGoing, "OnGoing");
+            if (isOnGoing)
             {
-                GUILayout.Label("Start From", GUILayout.Width(145));
-                clipIndex = EditorGUILayout.IntField(clipIndex, GUILayout.Width(25));
+                onGoing = EditorGUILayout.Toggle("OnGoing", onGoing);
+                using (new GUILayout.HorizontalScope())
+                {
+                    GUILayout.Label("MinTime", GUILayout.Width(145));
+                    minTime = EditorGUILayout.FloatField(minTime, GUILayout.Width(25));
+                }
+                using (new GUILayout.HorizontalScope())
+                {
+                    GUILayout.Label("MaxTime", GUILayout.Width(145));
+                    maxTime = EditorGUILayout.FloatField(maxTime, GUILayout.Width(25));
+                }
             }
-            if (GUILayout.Button("Add Clip"))
+            EditorGUILayout.EndFoldoutHeaderGroup();
+
+            isMeasureEvent = EditorGUILayout.BeginFoldoutHeaderGroup(isMeasureEvent, "MeasureEvent");
+            if (isMeasureEvent)
             {
-                AddClipField();
+                measureEvent = EditorGUILayout.Toggle("MeasureEvent", measureEvent);
+                using (new GUILayout.HorizontalScope())
+                {
+                    GUILayout.Label("BPM", GUILayout.Width(145));
+                    bpm = EditorGUILayout.IntField(bpm, GUILayout.Width(35));
+                }
+                using (new GUILayout.HorizontalScope())
+                {
+                    GUILayout.Label("Tempo", GUILayout.Width(145));
+                    tempo = EditorGUILayout.IntField(tempo, GUILayout.Width(25));
+                }
+                using (new GUILayout.HorizontalScope())
+                {
+                    GUILayout.Label("EveryNBar", GUILayout.Width(145));
+                    everyNBar = EditorGUILayout.IntField(everyNBar, GUILayout.Width(25));
+                }
             }
-            if (GUILayout.Button("Remove Clip"))
+            EditorGUILayout.EndFoldoutHeaderGroup();
+
+            addEffect = EditorGUILayout.BeginFoldoutHeaderGroup(addEffect, "Add Effect");
+            if (addEffect)
             {
-                RemoveClipField();
+                chorus.target = EditorGUILayout.Toggle("Chorus", chorus.target);
+                if (EditorGUILayout.BeginFadeGroup(chorus.faded))
+                {
+
+                }
+                EditorGUILayout.EndFadeGroup();
+                distortion.target = EditorGUILayout.Toggle("Distortion", distortion.target);
+                if (EditorGUILayout.BeginFadeGroup(distortion.faded))
+                {
+
+                }
+                EditorGUILayout.EndFadeGroup();
+                echo.target = EditorGUILayout.Toggle("Echo", echo.target);
+                if (EditorGUILayout.BeginFadeGroup(echo.faded))
+                {
+
+                }
+                EditorGUILayout.EndFadeGroup();
+                highPass.target = EditorGUILayout.Toggle("HighPass", highPass.target);
+                if (EditorGUILayout.BeginFadeGroup(highPass.faded))
+                {
+
+                }
+                EditorGUILayout.EndFadeGroup();
+                lowPass.target = EditorGUILayout.Toggle("LowPass", lowPass.target);
+                if (EditorGUILayout.BeginFadeGroup(lowPass.faded))
+                {
+
+                }
+                EditorGUILayout.EndFadeGroup();
+                reverbFilter.target = EditorGUILayout.Toggle("ReverbFilter", reverbFilter.target);
+                if (EditorGUILayout.BeginFadeGroup(reverbFilter.faded))
+                {
+
+                }
+                EditorGUILayout.EndFadeGroup();
+                reverbZone.target = EditorGUILayout.Toggle("ReverbZone", reverbZone.target);
+                if (EditorGUILayout.BeginFadeGroup(reverbZone.faded))
+                {
+
+                }
+                EditorGUILayout.EndFadeGroup();
             }
+            EditorGUILayout.EndFoldoutHeaderGroup();
         }
 
         private void CreateContainer()
@@ -386,7 +467,7 @@ namespace RoaREngine
             string path = AssetDatabase.GenerateUniqueAssetPath(string.Concat("Assets/Test/", containerName, "BANK.asset"));
             AssetDatabase.CreateAsset(bank, path);
 
-            bank.audioClipsGroups.audioClips = clips.ToArray();
+            bank.audioClips = clips.ToArray();
 
             AssetDatabase.SaveAssets();
             EditorUtility.FocusProjectWindow();
@@ -398,7 +479,7 @@ namespace RoaREngine
         private void ApplySettings(RoaRClipsBankSO bank, RoaRConfigurationSO config)
         {
 
-            bank.audioClipsGroups.sequenceMode = sequenceMode;
+            bank.sequenceMode = sequenceMode;
             bank.SetClipIndex(clipIndex);
 
             config.parent = parent;
@@ -511,6 +592,8 @@ namespace RoaREngine
             randomMaxPitch = 0f;
             panStereo = 0f;
             reverbZoneMix = 1f;
+            positional3D = false;
+            is3D = false;
             spatialBlend = 0f;
             rolloffMode = AudioRolloffMode.Logarithmic;
             minDistance = 0.1f;
@@ -523,14 +606,24 @@ namespace RoaREngine
             ignorelistenervolume = false;
             ignorelistenerpause = false;
             onGoing = false;
+            isOnGoing = false;
             minTime = 0f;
             maxTime = 0f;
             minRandomXYZ = 0f;
             maxRandomXYZ = 0f;
             measureEvent = false;
+            isMeasureEvent = false;
             bpm = 120;
             tempo = 4;
             everyNBar = 1;
+            addEffect = false;
+            chorus = new AnimBool(false);
+            distortion = new AnimBool(false);
+            echo = new AnimBool(false);
+            highPass = new AnimBool(false);
+            lowPass = new AnimBool(false);
+            reverbFilter = new AnimBool(false);
+            reverbZone = new AnimBool(false);
         }
 
         private void SaveContainerSettings(RoaRContainer container)
@@ -541,7 +634,7 @@ namespace RoaREngine
                 return;
             }
             container.Name = containerName;
-            container.roarClipBank.audioClipsGroups.audioClips = clips.ToArray();
+            container.roarClipBank.audioClips = clips.ToArray();
             ApplySettings(container.roarClipBank, container.roarConfiguration);
             AssetDatabase.SaveAssets();
             EditorUtility.FocusProjectWindow();
@@ -567,23 +660,23 @@ namespace RoaREngine
                 config = CreateInstance<RoaRConfigurationSO>();
             }
             containerName = container.Name;
-            clipsNumber = bank.audioClipsGroups.audioClips.Length;
+            clipsNumber = bank.audioClips.Length;
             for (int i = 0; i < clipsNumber; i++)
             {
-                if (clips.Count < bank.audioClipsGroups.audioClips.Length)
+                if (clips.Count < bank.audioClips.Length)
                 {
                     AudioClip clip = null;
                     clips.Add(clip);
                 }
-                clips[i] = bank.audioClipsGroups.audioClips[i];
+                clips[i] = bank.audioClips[i];
             }
             parent = config.parent;
             audioMixerGroup = config.audioMixerGroup;
             priority = config.priority;
-            sequenceMode = bank.audioClipsGroups.sequenceMode;
+            sequenceMode = bank.sequenceMode;
             startTime = config.startTime;
             randomStartTime = config.randomStartTime;
-            clipIndex = bank.audioClipsGroups.Index;
+            clipIndex = bank.GetClipIndex();
             loop = config.loop;
             mute = config.mute;
             volume = config.volume;
@@ -617,6 +710,6 @@ namespace RoaREngine
             tempo = config.tempo;
             everyNBar = config.everyNBar;
         }
-    
+
     }
 }

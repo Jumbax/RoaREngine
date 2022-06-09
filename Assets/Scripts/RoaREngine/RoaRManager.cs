@@ -122,7 +122,7 @@ namespace RoaREngine
             }
             return null;
         }
-
+        
         public AudioSource GetAudioSource(string musicID)
         {
             RoaREmitter emitterComponent = GetEmitter(musicID);
@@ -133,30 +133,6 @@ namespace RoaREngine
             return null;
         }
   
-        public void AddMeasureEvent(string musicID, UnityAction measureAction)
-        {
-            if (RoarContainerMap.MusicIDIsValid(musicID))
-            {
-                RoaRContainer container = RoarContainerMap.GetContainer(musicID);
-                if (container != null)
-                {
-                    container.MeasureEvent += measureAction;
-                }
-            }
-        }
-
-        public void StopMeasureEvent(string musicID, UnityAction measureAction)
-        {
-            if (RoarContainerMap.MusicIDIsValid(musicID))
-            {
-                RoaRContainer container = RoarContainerMap.GetContainer(musicID);
-                if (container != null)
-                {
-                    container.MeasureEvent -= measureAction;
-                }
-            }
-        }
-
         public void AddEffect(string musicID, EffectType type)
         {
             GameObject emitter = GetActiveEmitterObject(musicID);
@@ -188,11 +164,35 @@ namespace RoaREngine
                 }
             }
         }
-
-        public T GetEffect<T>(string musicID)
+        
+        public T GetAudioSourceEffect<T>(string musicID)
         {
             T filter = GetAudioSource(musicID).GetComponent<T>();
             return filter;
+        }
+        
+        public void AddMeasureEvent(string musicID, UnityAction measureAction)
+        {
+            if (RoarContainerMap.MusicIDIsValid(musicID))
+            {
+                RoaRContainer container = RoarContainerMap.GetContainer(musicID);
+                if (container != null)
+                {
+                    container.MeasureEvent += measureAction;
+                }
+            }
+        }
+
+        public void StopMeasureEvent(string musicID, UnityAction measureAction)
+        {
+            if (RoarContainerMap.MusicIDIsValid(musicID))
+            {
+                RoaRContainer container = RoarContainerMap.GetContainer(musicID);
+                if (container != null)
+                {
+                    container.MeasureEvent -= measureAction;
+                }
+            }
         }
     }
 }

@@ -15,6 +15,7 @@ public class UserCall : MonoBehaviour
     public float FadeOutTime;
 
     public float hSliderValue = 0.0F;
+    
     private void OnGUI()
     {
         //hSliderValue = GUI.HorizontalSlider(new Rect(25, 25, 100, 30), hSliderValue, 0f, 1f);
@@ -22,11 +23,6 @@ public class UserCall : MonoBehaviour
         //{
         //    manager.SetProperty(CueName).volume = hSliderValue;
         //}
-    }
-
-    void Test()
-    {
-        Debug.Log("test");
     }
 
     void Update()
@@ -76,7 +72,7 @@ public class UserCall : MonoBehaviour
         {
             if (!X)
             {
-                manager.GetEffect<AudioChorusFilter>(CueName).depth = 1f;
+                manager.GetAudioSourceEffect<AudioChorusFilter>(CueName).depth = 1f;
                 //manager.GetAudioSource(CueName).volume = 0f;
                 X = true;
             }
