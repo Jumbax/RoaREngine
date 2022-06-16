@@ -12,9 +12,9 @@ namespace RoaREngine
         public RoaRConfigurationSO roarConfiguration;
         public UnityAction MeasureEvent;
 
-        public void SetConfiguration(AudioSource audioSource, GameObject roarEmitter)
+        public void SetConfiguration(AudioSource audioSource)
         {
-            roarConfiguration.ApplyTo(audioSource, roarEmitter);
+            roarConfiguration.ApplyTo(audioSource);
         }
     }
 }

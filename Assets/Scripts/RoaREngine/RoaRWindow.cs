@@ -39,7 +39,6 @@ namespace RoaREngine
         private float randomMaxPitch = 0f;
         private float panStereo = 0f;
         private float reverbZoneMix = 1f;
-        private bool positional3D = false;
         private bool is3D = false;
         private float spatialBlend = 0f;
         private AudioRolloffMode rolloffMode = AudioRolloffMode.Logarithmic;
@@ -59,18 +58,63 @@ namespace RoaREngine
         private float minRandomXYZ = 0f;
         private float maxRandomXYZ = 0f;
         private bool measureEvent = false;
-        private bool isMeasureEvent = false;
+        private bool hasMeasureEvent = false;
         private int bpm = 120;
         private int tempo = 4;
         private int everyNBar = 1;
         private bool addEffect = false;
         private AnimBool chorus = new AnimBool(false);
+        private float chorusDryMix = 0.5f;
+        private float chorusWetMix1 = 0.5f;
+        private float chorusWetMix2 = 0.5f;
+        private float chorusWetMix3 = 0.5f;
+        private float chorusDelay = 40f;
+        private float chorusRate = 0.8f;
+        private float chorusDepth = 0.03f;
         private AnimBool distortion = new AnimBool(false);
+        private float distortionLevel = 0.5f;
         private AnimBool echo = new AnimBool(false);
+        private int echoDelay = 500;
+        private float echoDecayRatio = 0.5f;
+        private float echoDryMix = 1f;
+        private float echoWetMix = 1f;
         private AnimBool highPass = new AnimBool(false);
+        private int highPassCutoffFrequency = 5000;
+        private float highPassResonanceQ = 1;
         private AnimBool lowPass = new AnimBool(false);
+        private int lowPassCutoffFrequency = 5000;
+        private float lowPassResonanceQ = 1;
         private AnimBool reverbFilter = new AnimBool(false);
+        private int reverbFilterDryLevel = 0;
+        private int reverbFilterRoom = 0;
+        private int reverbFilterRoomHF = 0;
+        private int reverbFilterRoomLF = 0;
+        private float reverbFilterDecayTime = 1f;
+        private float reverbFilterDecayHFRatio = 0.5f;
+        private int reverbFilterReflectionsLevel = -10000;
+        private float reverbFilterReflectionsDelay = 0f;
+        private int reverbFilterReverbLevel = 0;
+        private float reverbFilterReverDelay = 0.04f;
+        private int reverbFilterHFReference = 5000;
+        private int reverbFilterLFReference = 250;
+        private float reverbFilterDiffusion = 100f;
+        private float reverbFilterDensity = 100f;
         private AnimBool reverbZone = new AnimBool(false);
+        private float reverbZoneMinDistance = 10f;
+        private float reverbZoneMaxDistance = 15f;
+        private int reverbZoneRoom = -1000;
+        private int reverbZoneRoomHF = -100;
+        private int reverbZoneRoomLF = 0;
+        private float reverbZoneDecayTime = 1.49f;
+        private float reverbZoneDecayHFRatio = 0.83f;
+        private int reverbZoneReflections = -2602;
+        private float reverbZoneReflectionsDelay = 0.007f;
+        private int reverbZoneReverb = 200;
+        private float reverbZoneReverbDelay = 0.011f;
+        private int reverbZoneHFReference = 5000;
+        private int reverbZoneLFReference = 250;
+        private float reverbZoneDiffusion = 100f;
+        private float reverbZoneDensity = 100f;
 
         private void Awake()
         {
@@ -207,75 +251,27 @@ namespace RoaREngine
                 GUILayout.Label("StartTime", GUILayout.Width(145));
                 startTime = EditorGUILayout.FloatField(startTime, GUILayout.Width(25));
             }
-            randomStartTime = EditorGUILayout.Toggle("RandomStartTime", randomStartTime);
+            randomStartTime = EditorGUILayout.Toggle("Random Start Time", randomStartTime);
             loop = EditorGUILayout.Toggle("Loop", loop);
             mute = EditorGUILayout.Toggle("Mute", mute);
+            volume = EditorGUILayout.Slider("Volume", volume, 0f, 1f);
             using (new GUILayout.HorizontalScope())
             {
-                GUILayout.Label("Volume", GUILayout.Width(145));
-                volume = EditorGUILayout.FloatField(volume, GUILayout.Width(25));
-                volume = GUILayout.HorizontalSlider(volume, 0f, 1f);
-                volume = Mathf.Clamp(volume, 0f, 1f);
-            }
-            using (new GUILayout.HorizontalScope())
-            {
-                GUILayout.Label("FadeInVolume", GUILayout.Width(145));
+                GUILayout.Label("FadeIn Volume", GUILayout.Width(145));
                 fadeInTime = EditorGUILayout.FloatField(fadeInTime, GUILayout.Width(25));
             }
             using (new GUILayout.HorizontalScope())
             {
-                GUILayout.Label("FadeOutVolume", GUILayout.Width(145));
+                GUILayout.Label("FadeOut Volume", GUILayout.Width(145));
                 fadeOutTime = EditorGUILayout.FloatField(fadeOutTime, GUILayout.Width(25));
             }
-            using (new GUILayout.HorizontalScope())
-            {
-                GUILayout.Label("RandomMinVolume", GUILayout.Width(145));
-                randomMinVolume = EditorGUILayout.FloatField(randomMinVolume, GUILayout.Width(25));
-                randomMinVolume = GUILayout.HorizontalSlider(randomMinVolume, 0f, 1f);
-                randomMinVolume = Mathf.Clamp(randomMinVolume, 0f, 1f);
-            }
-            using (new GUILayout.HorizontalScope())
-            {
-                GUILayout.Label("RandomMaxVolume", GUILayout.Width(145));
-                randomMaxVolume = EditorGUILayout.FloatField(randomMaxVolume, GUILayout.Width(25));
-                randomMaxVolume = GUILayout.HorizontalSlider(randomMaxVolume, 0f, 1f);
-                randomMaxVolume = Mathf.Clamp(randomMaxVolume, 0f, 1f);
-            }
-            using (new GUILayout.HorizontalScope())
-            {
-                GUILayout.Label("Pitch", GUILayout.Width(145));
-                pitch = EditorGUILayout.FloatField(pitch, GUILayout.Width(25));
-                pitch = GUILayout.HorizontalSlider(pitch, -3f, 3f);
-                pitch = Mathf.Clamp(pitch, -3f, 3f);
-            }
-            using (new GUILayout.HorizontalScope())
-            {
-                GUILayout.Label("RandomMinPitch", GUILayout.Width(145));
-                randomMinPitch = EditorGUILayout.FloatField(randomMinPitch, GUILayout.Width(25));
-                randomMinPitch = GUILayout.HorizontalSlider(randomMinPitch, -3f, 3f);
-                randomMinPitch = Mathf.Clamp(randomMinPitch, -3f, 3f);
-            }
-            using (new GUILayout.HorizontalScope())
-            {
-                GUILayout.Label("randomMaxPitch", GUILayout.Width(145));
-                randomMaxPitch = EditorGUILayout.FloatField(randomMaxPitch, GUILayout.Width(25));
-                randomMaxPitch = GUILayout.HorizontalSlider(randomMaxPitch, -3f, 3f);
-                randomMaxPitch = Mathf.Clamp(randomMaxPitch, -3f, 3f);
-            }
-            using (new GUILayout.HorizontalScope())
-            {
-                GUILayout.Label("PanStereo", GUILayout.Width(145));
-                panStereo = EditorGUILayout.FloatField(panStereo, GUILayout.Width(25));
-                panStereo = GUILayout.HorizontalSlider(panStereo, 0f, 1f);
-                panStereo = Mathf.Clamp(panStereo, 0f, 1f);
-            }
-            using (new GUILayout.HorizontalScope())
-            {
-                GUILayout.Label("ReverbZoneMix", GUILayout.Width(145));
-                reverbZoneMix = EditorGUILayout.FloatField(reverbZoneMix, GUILayout.Width(25));
-                reverbZoneMix = GUILayout.HorizontalSlider(reverbZoneMix, 0f, 1f);
-                reverbZoneMix = Mathf.Clamp(reverbZoneMix, 0f, 1f);
-            }
+            randomMinVolume = EditorGUILayout.Slider("Random Min Volume", randomMinVolume, 0f, 1f);
+            randomMaxVolume = EditorGUILayout.Slider("Random Max Volume", randomMaxVolume, 0f, 1f);
+            pitch = EditorGUILayout.Slider("Pitch", pitch, -3f, 3f);
+            randomMinPitch = EditorGUILayout.Slider("Random Min Pitch", randomMinPitch, -3f, 3f);
+            randomMaxPitch = EditorGUILayout.Slider("Random Max Pitch", randomMaxPitch, -3f, 3f);
+            panStereo = EditorGUILayout.Slider("Pan Stereo", panStereo, 0f, 1f);
+            reverbZoneMix = EditorGUILayout.Slider("Reverb Zone Mix", reverbZoneMix, 0f, 1f);
             bypasseffects = EditorGUILayout.Toggle("BypassEffects", bypasseffects);
             bypasslistenereffects = EditorGUILayout.Toggle("BypassListenerEffects", bypasslistenereffects);
             bypassreverbzones = EditorGUILayout.Toggle("BypassRevebZones", bypassreverbzones);
@@ -285,55 +281,14 @@ namespace RoaREngine
             is3D = EditorGUILayout.BeginFoldoutHeaderGroup(is3D, "3D");
             if (is3D)
             {
-                positional3D = EditorGUILayout.Toggle("3D", positional3D);
-                using (new GUILayout.HorizontalScope())
-                {
-                    GUILayout.Label("SpatialBlend", GUILayout.Width(145));
-                    spatialBlend = EditorGUILayout.FloatField(spatialBlend, GUILayout.Width(25));
-                    spatialBlend = GUILayout.HorizontalSlider(spatialBlend, 0f, 1f);
-                    spatialBlend = Mathf.Clamp(spatialBlend, 0f, 1f);
-                }
+                spatialBlend = EditorGUILayout.Slider("Spatial Blend", spatialBlend, 0f, 1f);
+                minDistance = EditorGUILayout.Slider("Min Distance", minDistance, 0.01f, 5f);
                 rolloffMode = (AudioRolloffMode)EditorGUILayout.EnumPopup("Mode", rolloffMode);
-                using (new GUILayout.HorizontalScope())
-                {
-                    GUILayout.Label("MinDistance", GUILayout.Width(145));
-                    minDistance = EditorGUILayout.FloatField(minDistance, GUILayout.Width(25));
-                    minDistance = GUILayout.HorizontalSlider(minDistance, 0.01f, 5f);
-                    minDistance = Mathf.Clamp(minDistance, 0.01f, 5f);
-                }
-                using (new GUILayout.HorizontalScope())
-                {
-                    GUILayout.Label("MaxDistance", GUILayout.Width(145));
-                    maxDistance = EditorGUILayout.FloatField(maxDistance, GUILayout.Width(25));
-                    maxDistance = GUILayout.HorizontalSlider(maxDistance, 5f, 100f);
-                    maxDistance = Mathf.Clamp(maxDistance, 5f, 100f);
-                }
-                using (new GUILayout.HorizontalScope())
-                {
-                    GUILayout.Label("Spread", GUILayout.Width(145));
-                    spread = EditorGUILayout.IntField(spread, GUILayout.Width(25));
-                    spread = Mathf.RoundToInt(GUILayout.HorizontalSlider(spread, 0, 360));
-                    spread = Mathf.Clamp(spread, 0, 360);
-                }
-                using (new GUILayout.HorizontalScope())
-                {
-                    GUILayout.Label("DopplerLevel", GUILayout.Width(145));
-                    dopplerLevel = EditorGUILayout.FloatField(dopplerLevel, GUILayout.Width(25));
-                    dopplerLevel = GUILayout.HorizontalSlider(dopplerLevel, 0f, 5f);
-                    dopplerLevel = Mathf.Clamp(dopplerLevel, 0f, 5f);
-                }
-                using (new GUILayout.HorizontalScope())
-                {
-                    GUILayout.Label("MinRandomXYZ", GUILayout.Width(145));
-                    minRandomXYZ = EditorGUILayout.FloatField(minRandomXYZ, GUILayout.Width(35));
-                    minRandomXYZ = GUILayout.HorizontalSlider(minRandomXYZ, -500f, 500f);
-                }
-                using (new GUILayout.HorizontalScope())
-                {
-                    GUILayout.Label("MaxRandomXYZ", GUILayout.Width(145));
-                    maxRandomXYZ = EditorGUILayout.FloatField(maxRandomXYZ, GUILayout.Width(35));
-                    maxRandomXYZ = GUILayout.HorizontalSlider(maxRandomXYZ, -500f, 500f);
-                }
+                maxDistance = EditorGUILayout.Slider("Max Distance", maxDistance, 5f, 100f);
+                spread = EditorGUILayout.IntSlider("Spread", spread, 0, 360);
+                dopplerLevel = EditorGUILayout.Slider("Doopler Level", dopplerLevel, 0f, 5f);
+                minRandomXYZ = EditorGUILayout.Slider("Min Random XYZ", minRandomXYZ, -500f, 500f);
+                maxRandomXYZ = EditorGUILayout.Slider("Max Random XYZ", maxRandomXYZ, -500f, 500f);
             }
             EditorGUILayout.EndFoldoutHeaderGroup();
 
@@ -341,6 +296,7 @@ namespace RoaREngine
             if (isOnGoing)
             {
                 onGoing = EditorGUILayout.Toggle("OnGoing", onGoing);
+                GUI.enabled = onGoing;
                 using (new GUILayout.HorizontalScope())
                 {
                     GUILayout.Label("MinTime", GUILayout.Width(145));
@@ -351,13 +307,15 @@ namespace RoaREngine
                     GUILayout.Label("MaxTime", GUILayout.Width(145));
                     maxTime = EditorGUILayout.FloatField(maxTime, GUILayout.Width(25));
                 }
+                GUI.enabled = true;
             }
             EditorGUILayout.EndFoldoutHeaderGroup();
 
-            isMeasureEvent = EditorGUILayout.BeginFoldoutHeaderGroup(isMeasureEvent, "MeasureEvent");
-            if (isMeasureEvent)
+            hasMeasureEvent = EditorGUILayout.BeginFoldoutHeaderGroup(hasMeasureEvent, "MeasureEvent");
+            if (hasMeasureEvent)
             {
                 measureEvent = EditorGUILayout.Toggle("MeasureEvent", measureEvent);
+                GUI.enabled = measureEvent;
                 using (new GUILayout.HorizontalScope())
                 {
                     GUILayout.Label("BPM", GUILayout.Width(145));
@@ -373,6 +331,7 @@ namespace RoaREngine
                     GUILayout.Label("EveryNBar", GUILayout.Width(145));
                     everyNBar = EditorGUILayout.IntField(everyNBar, GUILayout.Width(25));
                 }
+                GUI.enabled = true;
             }
             EditorGUILayout.EndFoldoutHeaderGroup();
 
@@ -382,43 +341,200 @@ namespace RoaREngine
                 chorus.target = EditorGUILayout.Toggle("Chorus", chorus.target);
                 if (EditorGUILayout.BeginFadeGroup(chorus.faded))
                 {
-
+                    using (new GUILayout.HorizontalScope())
+                    {
+                        GUILayout.Label("Dry Mix", GUILayout.Width(145));
+                        chorusDryMix = EditorGUILayout.FloatField(chorusDryMix, GUILayout.Width(25));
+                        chorusDryMix = Mathf.Clamp(chorusDryMix, 0f, 1f);
+                    }
+                    using (new GUILayout.HorizontalScope())
+                    {
+                        GUILayout.Label("Wet Mix 1", GUILayout.Width(145));
+                        chorusWetMix1 = EditorGUILayout.FloatField(chorusWetMix1, GUILayout.Width(25));
+                        chorusWetMix1 = Mathf.Clamp(chorusWetMix1, 0f, 1f);
+                    }
+                    using (new GUILayout.HorizontalScope())
+                    {
+                        GUILayout.Label("Wet Mix 2", GUILayout.Width(145));
+                        chorusWetMix2 = EditorGUILayout.FloatField(chorusWetMix2, GUILayout.Width(25));
+                        chorusWetMix2 = Mathf.Clamp(chorusWetMix2, 0f, 1f);
+                    }
+                    using (new GUILayout.HorizontalScope())
+                    {
+                        GUILayout.Label("Wet Mix 3", GUILayout.Width(145));
+                        chorusWetMix3 = EditorGUILayout.FloatField(chorusWetMix3, GUILayout.Width(25));
+                        chorusWetMix3 = Mathf.Clamp(chorusWetMix3, 0f, 1f);
+                    }
+                    using (new GUILayout.HorizontalScope())
+                    {
+                        GUILayout.Label("Delay", GUILayout.Width(145));
+                        chorusDelay = EditorGUILayout.FloatField(chorusDelay, GUILayout.Width(25));
+                        chorusDelay = Mathf.Clamp(chorusDelay, 0.1f, 100f);
+                    }
+                    using (new GUILayout.HorizontalScope())
+                    {
+                        GUILayout.Label("Rate", GUILayout.Width(145));
+                        chorusRate = EditorGUILayout.FloatField(chorusRate, GUILayout.Width(25));
+                        chorusRate = Mathf.Clamp(chorusRate, 0f, 20f);
+                    }
+                    using (new GUILayout.HorizontalScope())
+                    {
+                        GUILayout.Label("Depth", GUILayout.Width(145));
+                        chorusDepth = EditorGUILayout.FloatField(chorusDepth, GUILayout.Width(25));
+                        chorusDepth = Mathf.Clamp(chorusDepth, 0f, 1f);
+                    }
                 }
                 EditorGUILayout.EndFadeGroup();
                 distortion.target = EditorGUILayout.Toggle("Distortion", distortion.target);
                 if (EditorGUILayout.BeginFadeGroup(distortion.faded))
                 {
-
+                    using (new GUILayout.HorizontalScope())
+                    {
+                        GUILayout.Label("Distortion Level", GUILayout.Width(145));
+                        distortionLevel = EditorGUILayout.FloatField(distortionLevel, GUILayout.Width(25));
+                        distortionLevel = Mathf.Clamp(distortionLevel, 0f, 1f);
+                    }
                 }
                 EditorGUILayout.EndFadeGroup();
                 echo.target = EditorGUILayout.Toggle("Echo", echo.target);
                 if (EditorGUILayout.BeginFadeGroup(echo.faded))
                 {
-
+                    using (new GUILayout.HorizontalScope())
+                    {
+                        GUILayout.Label("Delay", GUILayout.Width(145));
+                        echoDelay = EditorGUILayout.IntField(echoDelay, GUILayout.Width(25));
+                        echoDelay = Mathf.Clamp(echoDelay, 10, 5000);
+                    }
+                    using (new GUILayout.HorizontalScope())
+                    {
+                        GUILayout.Label("Decay Ratio", GUILayout.Width(145));
+                        echoDecayRatio = EditorGUILayout.FloatField(echoDecayRatio, GUILayout.Width(25));
+                        echoDecayRatio = Mathf.Clamp(echoDecayRatio, 0f, 1f);
+                    }
+                    using (new GUILayout.HorizontalScope())
+                    {
+                        GUILayout.Label("Dry Mix", GUILayout.Width(145));
+                        echoDryMix = EditorGUILayout.FloatField(echoDryMix, GUILayout.Width(25));
+                        echoDryMix = Mathf.Clamp(echoDryMix, 0f, 1f);
+                    }
+                    using (new GUILayout.HorizontalScope())
+                    {
+                        GUILayout.Label("Wet Mix", GUILayout.Width(145));
+                        echoWetMix = EditorGUILayout.FloatField(echoWetMix, GUILayout.Width(25));
+                        echoWetMix = Mathf.Clamp(echoWetMix, 0f, 1f);
+                    }
                 }
                 EditorGUILayout.EndFadeGroup();
                 highPass.target = EditorGUILayout.Toggle("HighPass", highPass.target);
                 if (EditorGUILayout.BeginFadeGroup(highPass.faded))
                 {
-
+                    highPassCutoffFrequency = EditorGUILayout.IntSlider("Cutoff Frequency", highPassCutoffFrequency, 10, 22000);
+                    using (new GUILayout.HorizontalScope())
+                    {
+                        GUILayout.Label("Highpass Resonance Q", GUILayout.Width(145));
+                        highPassResonanceQ = EditorGUILayout.FloatField(highPassResonanceQ, GUILayout.Width(25));
+                        highPassResonanceQ = Mathf.Clamp(highPassResonanceQ, 1f, 10f);
+                    }
                 }
                 EditorGUILayout.EndFadeGroup();
                 lowPass.target = EditorGUILayout.Toggle("LowPass", lowPass.target);
                 if (EditorGUILayout.BeginFadeGroup(lowPass.faded))
                 {
-
+                    lowPassCutoffFrequency = EditorGUILayout.IntSlider("Cutoff Frequency", lowPassCutoffFrequency, 10, 22000);
+                    using (new GUILayout.HorizontalScope())
+                    {
+                        GUILayout.Label("Highpass Resonance Q", GUILayout.Width(145));
+                        lowPassResonanceQ = EditorGUILayout.FloatField(lowPassResonanceQ, GUILayout.Width(25));
+                        lowPassResonanceQ = Mathf.Clamp(lowPassResonanceQ, 1f, 10f);
+                    }
                 }
                 EditorGUILayout.EndFadeGroup();
                 reverbFilter.target = EditorGUILayout.Toggle("ReverbFilter", reverbFilter.target);
                 if (EditorGUILayout.BeginFadeGroup(reverbFilter.faded))
                 {
-
+                    reverbFilterDryLevel = EditorGUILayout.IntSlider("Dry Level", reverbFilterDryLevel, -10000, 0);
+                    reverbFilterRoom = EditorGUILayout.IntSlider("Filter Room", reverbFilterRoom, -10000, 0);
+                    reverbFilterRoomHF = EditorGUILayout.IntSlider("Room HF", reverbFilterRoomHF, -10000, 0);
+                    reverbFilterRoomLF = EditorGUILayout.IntSlider("Room LF", reverbFilterRoomLF, -10000, 0);
+                    reverbFilterDecayTime = EditorGUILayout.Slider("Decay Time", reverbFilterDecayTime, 0.1f, 20f);
+                    reverbFilterDecayHFRatio = EditorGUILayout.Slider("Decay HF Ratio", reverbFilterDecayHFRatio, 0.1f, 2f);
+                    using (new GUILayout.HorizontalScope())
+                    {
+                        GUILayout.Label("Reflections Level", GUILayout.Width(145));
+                        reverbFilterReflectionsLevel = EditorGUILayout.IntField(reverbFilterReflectionsLevel, GUILayout.Width(25));
+                    }
+                    using (new GUILayout.HorizontalScope())
+                    {
+                        GUILayout.Label("Reflections Delay", GUILayout.Width(145));
+                        reverbFilterReflectionsDelay = EditorGUILayout.FloatField(reverbFilterReflectionsDelay, GUILayout.Width(25));
+                        reverbFilterReflectionsDelay = Mathf.Clamp(reverbFilterReflectionsDelay, 0f, 0.3f);
+                    }
+                    using (new GUILayout.HorizontalScope())
+                    {
+                        GUILayout.Label("Reverb Level", GUILayout.Width(145));
+                        reverbFilterReverbLevel = EditorGUILayout.IntField(reverbFilterReverbLevel, GUILayout.Width(25));
+                        reverbFilterReverbLevel = Mathf.Clamp(reverbFilterReverbLevel, -10000, 2000);
+                    }
+                    using (new GUILayout.HorizontalScope())
+                    {
+                        GUILayout.Label("Reverb Delay", GUILayout.Width(145));
+                        reverbFilterReverDelay = EditorGUILayout.FloatField(reverbFilterReverDelay, GUILayout.Width(25));
+                        reverbFilterReverDelay = Mathf.Clamp(reverbFilterReverDelay, 0f, 0.1f);
+                    }
+                    using (new GUILayout.HorizontalScope())
+                    {
+                        GUILayout.Label("HF Reference", GUILayout.Width(145));
+                        reverbFilterHFReference = EditorGUILayout.IntField(reverbFilterHFReference, GUILayout.Width(25));
+                        reverbFilterHFReference = Mathf.Clamp(reverbFilterHFReference, 1000, 20000);
+                    }
+                    using (new GUILayout.HorizontalScope())
+                    {
+                        GUILayout.Label("LF Reference", GUILayout.Width(145));
+                        reverbFilterLFReference = EditorGUILayout.IntField(reverbFilterLFReference, GUILayout.Width(25));
+                        reverbFilterLFReference = Mathf.Clamp(reverbFilterLFReference, 20, 1000);
+                    }
+                    using (new GUILayout.HorizontalScope())
+                    {
+                        GUILayout.Label("Diffusion", GUILayout.Width(145));
+                        reverbFilterDiffusion = EditorGUILayout.FloatField(reverbFilterDiffusion, GUILayout.Width(25));
+                        reverbFilterDiffusion = Mathf.Clamp(reverbFilterDiffusion, 0f, 100f);
+                    }
+                    using (new GUILayout.HorizontalScope())
+                    {
+                        GUILayout.Label("Density", GUILayout.Width(145));
+                        reverbFilterDensity = EditorGUILayout.FloatField(reverbFilterDensity, GUILayout.Width(25));
+                        reverbFilterDensity = Mathf.Clamp(reverbFilterDensity, 0f, 100f);
+                    }
                 }
                 EditorGUILayout.EndFadeGroup();
                 reverbZone.target = EditorGUILayout.Toggle("ReverbZone", reverbZone.target);
                 if (EditorGUILayout.BeginFadeGroup(reverbZone.faded))
                 {
-
+                    using (new GUILayout.HorizontalScope())
+                    {
+                        GUILayout.Label("MinDistance", GUILayout.Width(145));
+                        reverbZoneMinDistance = EditorGUILayout.FloatField(reverbZoneMinDistance, GUILayout.Width(25));
+                        reverbZoneMinDistance = Mathf.Clamp(reverbZoneMinDistance, 0f, 1000000f);
+                    }
+                    using (new GUILayout.HorizontalScope())
+                    {
+                        GUILayout.Label("MaxDistance", GUILayout.Width(145));
+                        reverbZoneMaxDistance = EditorGUILayout.FloatField(reverbZoneMaxDistance, GUILayout.Width(25));
+                        reverbZoneMaxDistance = Mathf.Clamp(reverbZoneMinDistance, reverbZoneMaxDistance, 1000000);
+                    }
+                    reverbZoneRoom = EditorGUILayout.IntSlider("Room", reverbZoneRoom, -10000, 0);
+                    reverbZoneRoomHF = EditorGUILayout.IntSlider("Room HF", reverbZoneRoomHF, -10000, 0);
+                    reverbZoneRoomLF = EditorGUILayout.IntSlider("Room LF", reverbZoneRoomLF, -10000, 0);
+                    reverbZoneDecayTime = EditorGUILayout.Slider("Decay Time", reverbZoneDecayTime, 0.1f, 20f);
+                    reverbZoneDecayHFRatio = EditorGUILayout.Slider("Decay HF Ratio", reverbZoneDecayHFRatio, 0.1f, 2f);
+                    reverbZoneReflections = EditorGUILayout.IntSlider("Reflections", reverbZoneReflections, -10000, 1000);
+                    reverbZoneReflectionsDelay = EditorGUILayout.Slider("Reflections Delay", reverbZoneReflectionsDelay, 0f, 0.3f);
+                    reverbZoneReverb = EditorGUILayout.IntSlider("Reverb", reverbZoneReverb, -10000, 2000);
+                    reverbZoneReverbDelay = EditorGUILayout.Slider("Reverb Delay", reverbZoneReverbDelay, 0f, 0.1f);
+                    reverbZoneHFReference = EditorGUILayout.IntSlider("HF Reference", reverbZoneHFReference, 1000, 20000);
+                    reverbZoneLFReference = EditorGUILayout.IntSlider("LF Reference", reverbZoneLFReference, 20, 1000);
+                    reverbZoneDiffusion = EditorGUILayout.Slider("Diffusion", reverbZoneDiffusion, 0f, 100f);
+                    reverbZoneDensity = EditorGUILayout.Slider("Density", reverbZoneDensity, 0f, 100f);
                 }
                 EditorGUILayout.EndFadeGroup();
             }
@@ -592,7 +708,6 @@ namespace RoaREngine
             randomMaxPitch = 0f;
             panStereo = 0f;
             reverbZoneMix = 1f;
-            positional3D = false;
             is3D = false;
             spatialBlend = 0f;
             rolloffMode = AudioRolloffMode.Logarithmic;
@@ -612,7 +727,7 @@ namespace RoaREngine
             minRandomXYZ = 0f;
             maxRandomXYZ = 0f;
             measureEvent = false;
-            isMeasureEvent = false;
+            hasMeasureEvent = false;
             bpm = 120;
             tempo = 4;
             everyNBar = 1;
@@ -711,5 +826,34 @@ namespace RoaREngine
             everyNBar = config.everyNBar;
         }
 
+        private void AddEffect(EffectType type)
+        {
+            switch (type)
+            {
+                //case EffectType.Chorus:
+                //    config.chorusFilter = new AudioChorusFilter();
+                    
+                //    break;
+                //case EffectType.Distortion:
+                //    emitter.AddComponent<AudioDistortionFilter>();
+                //    break;
+                //case EffectType.Echo:
+                //    emitter.AddComponent<AudioEchoFilter>();
+                //    break;
+                //case EffectType.HF:
+                //    emitter.AddComponent<AudioHighPassFilter>();
+                //    break;
+                //case EffectType.LP:
+                //    emitter.AddComponent<AudioLowPassFilter>();
+                //    break;
+                //case EffectType.ReverbFilter:
+                //    emitter.AddComponent<AudioReverbFilter>();
+                //    break;
+                //case EffectType.ReverbZone:
+                //    emitter.AddComponent<AudioReverbZone>();
+                //    break;
+            }
+
+        }
     }
 }

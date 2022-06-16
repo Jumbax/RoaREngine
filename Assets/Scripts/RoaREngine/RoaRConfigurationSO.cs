@@ -69,7 +69,16 @@ namespace RoaREngine
         public int tempo = 4;
         public int everyNBar = 1;
         
-        public void ApplyTo(AudioSource audioSource, GameObject roarEmitter)
+        [Header("Effects")]
+        public AudioChorusFilter chorusFilter = null;
+        public AudioDistortionFilter distortionFilter = null;
+        public AudioEchoFilter echoFilter = null;
+        public AudioHighPassFilter hpFilter = null;
+        public AudioLowPassFilter lpFilter = null;
+        public AudioReverbFilter reverbFilter = null;
+        public AudioReverbZone reverbZone = null;
+
+        public void ApplyTo(AudioSource audioSource)
         {
             audioSource.outputAudioMixerGroup = this.audioMixerGroup;
             audioSource.loop = this.loop;

@@ -20,7 +20,7 @@ namespace RoaREngine
         {
             container = otherContainer;
             audioSource.clip = container.Clip;
-            container.SetConfiguration(audioSource, transform.gameObject);  
+            container.SetConfiguration(audioSource);  
         }
 
         public bool CheckForContainerName(string containerName)
