@@ -635,7 +635,60 @@ namespace RoaREngine
             config.bpm = bpm;
             config.tempo = tempo;
             config.everyNBar = everyNBar;
-        }
+            config.chorusFilter = chorus.target;
+            config.chorusDryMix = chorusDryMix;
+            config.chorusWetMix1 = chorusWetMix1;
+            config.chorusWetMix2 = chorusWetMix2;
+            config.chorusWetMix3 = chorusWetMix3;
+            config.chorusDelay = chorusDelay;
+            config.chorusRate = chorusRate;
+            config.chorusDepth = chorusDepth;
+            config.chorusFilter = chorus.target;
+            config.distortionFilter = distortion.target;
+            config.distortionLevel = distortionLevel;
+            config.echoFilter = echo.target;
+            config.echoDelay = echoDelay;
+            config.echoDecayRatio = echoDecayRatio;
+            config.echoDryMix = echoDryMix;
+            config.echoWetMix = echoWetMix;
+            config.hpFilter = highPass.target;
+            config.highPassCutoffFrequency = highPassCutoffFrequency;
+            config.highPassResonanceQ = highPassResonanceQ;
+            config.lpFilter = lowPass.target;
+            config.lowPassCutoffFrequency = lowPassCutoffFrequency;
+            config.lowPassResonanceQ = lowPassResonanceQ;
+            config.reverbFilter = reverbFilter.target;
+            config.reverbFilterDryLevel = reverbFilterDryLevel;
+            config.reverbFilterRoom = reverbFilterRoom;
+            config.reverbFilterRoomHF = reverbFilterRoomHF;
+            config.reverbFilterRoomLF = reverbFilterRoomLF;
+            config.reverbFilterDecayTime = reverbFilterDecayTime;
+            config.reverbFilterDecayHFRatio = reverbFilterDecayHFRatio;
+            config.reverbFilterReflectionsLevel = reverbFilterReflectionsLevel;
+            config.reverbFilterReflectionsDelay = reverbFilterReflectionsDelay;
+            config.reverbFilterReverbLevel = reverbFilterReverbLevel;
+            config.reverbFilterReverbDelay = reverbFilterReverDelay;
+            config.reverbFilterHFReference = reverbFilterHFReference;
+            config.reverbFilterLFReference = reverbFilterLFReference;
+            config.reverbFilterDiffusion = reverbFilterDiffusion;
+            config.reverbFilterDensity = reverbFilterDensity;
+            config.reverbZone = reverbZone.target;
+            config.reverbZoneMinDistance = reverbZoneMinDistance;
+            config.reverbZoneMaxDistance = reverbZoneMaxDistance;
+            config.reverbZoneRoom = reverbZoneRoom;
+            config.reverbZoneRoomHF = reverbZoneRoomHF;
+            config.reverbZoneRoomLF = reverbZoneRoomLF;
+            config.reverbZoneDecayTime = reverbZoneDecayTime;
+            config.reverbZoneDecayHFRatio = reverbZoneDecayHFRatio;
+            config.reverbZoneReflections = reverbZoneReflections;
+            config.reverbZoneReflectionsDelay = reverbZoneReflectionsDelay;
+            config.reverbZoneReverb = reverbZoneReverb;
+            config.reverbZoneReverbDelay = reverbZoneReverbDelay;
+            config.reverbZoneHFReference = reverbZoneHFReference;
+            config.reverbZoneLFReference = reverbZoneLFReference;
+            config.reverbZoneDiffusion = reverbZoneDiffusion;
+            config.reverbZoneDensity = reverbZoneDensity;
+    }
 
         private RoaRConfigurationSO CreateConfiguration(RoaRClipsBankSO bank)
         {
@@ -824,36 +877,59 @@ namespace RoaREngine
             bpm = config.bpm;
             tempo = config.tempo;
             everyNBar = config.everyNBar;
-        }
-
-        private void AddEffect(EffectType type)
-        {
-            switch (type)
-            {
-                //case EffectType.Chorus:
-                //    config.chorusFilter = new AudioChorusFilter();
-                    
-                //    break;
-                //case EffectType.Distortion:
-                //    emitter.AddComponent<AudioDistortionFilter>();
-                //    break;
-                //case EffectType.Echo:
-                //    emitter.AddComponent<AudioEchoFilter>();
-                //    break;
-                //case EffectType.HF:
-                //    emitter.AddComponent<AudioHighPassFilter>();
-                //    break;
-                //case EffectType.LP:
-                //    emitter.AddComponent<AudioLowPassFilter>();
-                //    break;
-                //case EffectType.ReverbFilter:
-                //    emitter.AddComponent<AudioReverbFilter>();
-                //    break;
-                //case EffectType.ReverbZone:
-                //    emitter.AddComponent<AudioReverbZone>();
-                //    break;
-            }
-
+            chorus.target = config.chorusFilter;
+            chorusDryMix = config.chorusDryMix;
+            chorusWetMix1 = config.chorusWetMix1;
+            chorusWetMix2 = config.chorusWetMix2;
+            chorusWetMix3 = config.chorusWetMix3;
+            chorusDelay = config.chorusDelay;
+            chorusRate = config.chorusRate;
+            chorusDepth = config.chorusDepth;
+            chorus.target = config.chorusFilter;
+            distortion.target = config.distortionFilter;
+            distortionLevel = config.distortionLevel;
+            echo.target = config.echoFilter;
+            echoDelay = config.echoDelay;
+            echoDecayRatio = config.echoDecayRatio;
+            echoDryMix = config.echoDryMix;
+            echoWetMix = config.echoWetMix;
+            highPass.target = config.hpFilter;
+            highPassCutoffFrequency = config.highPassCutoffFrequency;
+            highPassResonanceQ = config.highPassResonanceQ;
+            lowPass.target = config.lpFilter;
+            lowPassCutoffFrequency = config.lowPassCutoffFrequency;
+            lowPassResonanceQ = config.lowPassResonanceQ;
+            reverbFilter.target = config.reverbFilter;
+            reverbFilterDryLevel = config.reverbFilterDryLevel;
+            reverbFilterRoom = config.reverbFilterRoom;
+            reverbFilterRoomHF = config.reverbFilterRoomHF;
+            reverbFilterRoomLF = config.reverbFilterRoomLF;
+            reverbFilterDecayTime = config.reverbFilterDecayTime;
+            reverbFilterDecayHFRatio = config.reverbFilterDecayHFRatio;
+            reverbFilterReflectionsLevel = config.reverbFilterReflectionsLevel;
+            reverbFilterReflectionsDelay = config.reverbFilterReflectionsDelay;
+            reverbFilterReverbLevel = config.reverbFilterReverbLevel;
+            reverbFilterReverDelay = config.reverbFilterReverbDelay;
+            reverbFilterHFReference = config.reverbFilterHFReference;
+            reverbFilterLFReference = config.reverbFilterLFReference;
+            reverbFilterDiffusion = config.reverbFilterDiffusion;
+            reverbFilterDensity = config.reverbFilterDensity;
+            reverbZone.target = config.reverbZone;
+            reverbZoneMinDistance = config.reverbZoneMinDistance;
+            reverbZoneMaxDistance = config.reverbZoneMaxDistance;
+            reverbZoneRoom = config.reverbZoneRoom;
+            reverbZoneRoomHF = config.reverbZoneRoomHF;
+            reverbZoneRoomLF = config.reverbZoneRoomLF;
+            reverbZoneDecayTime = config.reverbZoneDecayTime;
+            reverbZoneDecayHFRatio = config.reverbZoneDecayHFRatio;
+            reverbZoneReflections = config.reverbZoneReflections;
+            reverbZoneReflectionsDelay = config.reverbZoneReflectionsDelay;
+            reverbZoneReverb = config.reverbZoneReverb;
+            reverbZoneReverbDelay = config.reverbZoneReverbDelay;
+            reverbZoneHFReference = config.reverbZoneHFReference;
+            reverbZoneLFReference = config.reverbZoneLFReference;
+            reverbZoneDiffusion = config.reverbZoneDiffusion;
+            reverbZoneDensity = config.reverbZoneDensity;
         }
     }
 }

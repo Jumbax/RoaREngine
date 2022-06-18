@@ -15,12 +15,12 @@ namespace RoaREngine
             audioSource = GetComponent<AudioSource>();
             initialParent = transform.parent;
         }
-        
+
         public void SetContainer(RoaRContainer otherContainer)
         {
             container = otherContainer;
             audioSource.clip = container.Clip;
-            container.SetConfiguration(audioSource);  
+            container.SetConfiguration(audioSource);
         }
 
         public bool CheckForContainerName(string containerName)
@@ -88,6 +88,7 @@ namespace RoaREngine
             {
                 AudioClipFinishPlaying();
             }
+            AddEffect();
             audioSource.Play();
         }
 
@@ -100,7 +101,7 @@ namespace RoaREngine
             if (fadeTime <= 0)
             {
                 audioSource.Stop();
-                
+
                 audioSource.gameObject.SetActive(false);
                 ResetParent();
             }
@@ -113,7 +114,7 @@ namespace RoaREngine
         public bool IsPlaying() => audioSource.isPlaying;
 
         public bool IsInPause() => paused;
-        
+
         public void Pause(float fadeTime)
         {
             if (fadeTime <= 0)
@@ -168,7 +169,7 @@ namespace RoaREngine
         }
 
         public void AudioClipFinishPlaying() => StartCoroutine(AudioClipFinishPlayingCoroutine());
-        
+
         public void SetParent(Transform parent)
         {
             transform.parent = parent;
@@ -187,7 +188,119 @@ namespace RoaREngine
         }
 
         private void MeasureEvent() => StartCoroutine(MeasureEventCoroutine());
-        
+
+        public void AddEffect(EffectType type)
+        {
+            switch (type)
+            {
+                case EffectType.Chorus:
+                    gameObject.AddComponent<AudioChorusFilter>();
+                    container.roarConfiguration.chorusFilter = true;
+                    break;
+                case EffectType.Distortion:
+                    gameObject.AddComponent<AudioDistortionFilter>();
+                    container.roarConfiguration.distortionFilter = true;
+                    break;
+                case EffectType.Echo:
+                    gameObject.AddComponent<AudioEchoFilter>();
+                    container.roarConfiguration.echoFilter = true;
+                    break;
+                case EffectType.HP:
+                    gameObject.AddComponent<AudioHighPassFilter>();
+                    container.roarConfiguration.hpFilter = true;
+                    break;
+                case EffectType.LP:
+                    gameObject.AddComponent<AudioLowPassFilter>();
+                    container.roarConfiguration.lpFilter = true;
+                    break;
+                case EffectType.ReverbFilter:
+                    gameObject.AddComponent<AudioReverbFilter>();
+                    container.roarConfiguration.reverbFilter = true;
+                    break;
+                case EffectType.ReverbZone:
+                    gameObject.AddComponent<AudioReverbZone>();
+                    container.roarConfiguration.reverbZone = true;
+                    break;
+            }
+        }
+
+        private void AddEffect()
+        {
+            if (container.roarConfiguration.chorusFilter)
+            {
+                AudioChorusFilter chorusFilter = gameObject.AddComponent<AudioChorusFilter>();
+                chorusFilter.dryMix = container.roarConfiguration.chorusDryMix;
+                chorusFilter.wetMix1 = container.roarConfiguration.chorusWetMix1;
+                chorusFilter.wetMix2 = container.roarConfiguration.chorusWetMix2;
+                chorusFilter.wetMix3 = container.roarConfiguration.chorusWetMix3;
+                chorusFilter.delay = container.roarConfiguration.chorusDelay;
+                chorusFilter.rate = container.roarConfiguration.chorusRate;
+                chorusFilter.depth = container.roarConfiguration.chorusDepth;
+            }
+            if (container.roarConfiguration.distortionFilter)
+            {
+                AudioDistortionFilter distortionFilter = gameObject.AddComponent<AudioDistortionFilter>();
+                distortionFilter.distortionLevel = container.roarConfiguration.distortionLevel;
+            }
+            if (container.roarConfiguration.echoFilter)
+            {
+                AudioEchoFilter echoFilter = gameObject.AddComponent<AudioEchoFilter>();
+                echoFilter.delay = container.roarConfiguration.echoDelay;
+                echoFilter.decayRatio = container.roarConfiguration.echoDecayRatio;
+                echoFilter.dryMix = container.roarConfiguration.echoDryMix;
+                echoFilter.wetMix = container.roarConfiguration.echoWetMix;
+            }
+            if (container.roarConfiguration.hpFilter)
+            {
+                AudioHighPassFilter hpFilter = gameObject.AddComponent<AudioHighPassFilter>();
+                hpFilter.cutoffFrequency = container.roarConfiguration.highPassCutoffFrequency;
+                hpFilter.highpassResonanceQ = container.roarConfiguration.highPassResonanceQ;
+            }
+            if (container.roarConfiguration.lpFilter)
+            {
+                AudioLowPassFilter lpFilter = gameObject.AddComponent<AudioLowPassFilter>();
+                lpFilter.cutoffFrequency = container.roarConfiguration.lowPassCutoffFrequency;
+                lpFilter.lowpassResonanceQ = container.roarConfiguration.lowPassResonanceQ;
+            }
+            if (container.roarConfiguration.reverbFilter)
+            {
+                AudioReverbFilter reverbFilter = gameObject.AddComponent<AudioReverbFilter>();
+                reverbFilter.dryLevel = container.roarConfiguration.reverbFilterDryLevel;
+                reverbFilter.room = container.roarConfiguration.reverbFilterRoom;
+                reverbFilter.roomHF = container.roarConfiguration.reverbFilterRoomHF;
+                reverbFilter.roomLF = container.roarConfiguration.reverbFilterRoomLF;
+                reverbFilter.decayTime = container.roarConfiguration.reverbFilterDecayTime;
+                reverbFilter.decayHFRatio = container.roarConfiguration.reverbFilterDecayHFRatio;
+                reverbFilter.reflectionsLevel = container.roarConfiguration.reverbFilterReflectionsLevel;
+                reverbFilter.reflectionsDelay = container.roarConfiguration.reverbFilterReflectionsDelay;
+                reverbFilter.reverbLevel = container.roarConfiguration.reverbFilterReverbLevel;
+                reverbFilter.reverbDelay = container.roarConfiguration.reverbFilterReverbDelay;
+                reverbFilter.hfReference = container.roarConfiguration.reverbFilterHFReference;
+                reverbFilter.lfReference = container.roarConfiguration.reverbFilterLFReference;
+                reverbFilter.diffusion = container.roarConfiguration.reverbFilterDiffusion;
+                reverbFilter.density = container.roarConfiguration.reverbFilterDensity;
+            }
+            if (container.roarConfiguration.reverbZone)
+            {
+                AudioReverbZone reverbZone = gameObject.AddComponent<AudioReverbZone>();
+                reverbZone.minDistance = container.roarConfiguration.reverbZoneMinDistance;
+                reverbZone.maxDistance = container.roarConfiguration.reverbZoneMaxDistance;
+                reverbZone.room = container.roarConfiguration.reverbZoneRoom;
+                reverbZone.roomHF = container.roarConfiguration.reverbZoneRoomHF;
+                reverbZone.roomLF = container.roarConfiguration.reverbZoneRoomLF;
+                reverbZone.decayTime = container.roarConfiguration.reverbZoneDecayTime;
+                reverbZone.decayHFRatio = container.roarConfiguration.reverbZoneDecayHFRatio;
+                reverbZone.reflections = container.roarConfiguration.reverbZoneReflections;
+                reverbZone.reflectionsDelay = container.roarConfiguration.reverbZoneReflectionsDelay;
+                reverbZone.reverb = container.roarConfiguration.reverbZoneReverb;
+                reverbZone.reverbDelay = container.roarConfiguration.reverbZoneReverbDelay;
+                reverbZone.HFReference = container.roarConfiguration.reverbZoneHFReference;
+                reverbZone.LFReference = container.roarConfiguration.reverbZoneLFReference;
+                reverbZone.diffusion = container.roarConfiguration.reverbZoneDiffusion;
+                reverbZone.density = container.roarConfiguration.reverbZoneDensity;
+            }
+        }
+
         private IEnumerator FadeCoroutine(float fadeTime, float volume, bool resume = false, bool stop = false, bool pause = false)
         {
             float time = 0f;
@@ -227,7 +340,7 @@ namespace RoaREngine
                 audioSource.gameObject.SetActive(false);
                 ResetParent();
             }
-            
+
             if (pause)
             {
                 StopAllCoroutines();

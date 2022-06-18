@@ -3,16 +3,6 @@ using UnityEngine.Events;
 
 namespace RoaREngine
 {
-    public enum EffectType
-    {
-        Chorus,
-        Distortion,
-        Echo,
-        HF,
-        LP,
-        ReverbFilter,
-        ReverbZone
-    }
 
     public class RoaRManager : MonoBehaviour
     {
@@ -138,30 +128,8 @@ namespace RoaREngine
             GameObject emitter = GetActiveEmitterObject(musicID);
             if (emitter != null)
             {
-                switch (type)
-                {
-                    case EffectType.Chorus:
-                        emitter.AddComponent<AudioChorusFilter>();
-                        break;
-                    case EffectType.Distortion:
-                        emitter.AddComponent<AudioDistortionFilter>();
-                        break;
-                    case EffectType.Echo:
-                        emitter.AddComponent<AudioEchoFilter>();
-                        break;
-                    case EffectType.HF:
-                        emitter.AddComponent<AudioHighPassFilter>();
-                        break;
-                    case EffectType.LP:
-                        emitter.AddComponent<AudioLowPassFilter>();
-                        break;
-                    case EffectType.ReverbFilter:
-                        emitter.AddComponent<AudioReverbFilter>();
-                        break;
-                    case EffectType.ReverbZone:
-                        emitter.AddComponent<AudioReverbZone>();
-                        break;
-                }
+                RoaREmitter emitterComponent = emitter.GetComponent<RoaREmitter>();
+                emitterComponent.AddEffect(type);
             }
         }
         

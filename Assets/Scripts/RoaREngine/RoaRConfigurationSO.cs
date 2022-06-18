@@ -5,6 +5,17 @@ using UnityEngine.Audio;
 
 namespace RoaREngine
 {
+    public enum EffectType
+    {
+        Chorus,
+        Distortion,
+        Echo,
+        HP,
+        LP,
+        ReverbFilter,
+        ReverbZone,
+    }
+
     public enum PriorityLevel
     {
         Highest = 0,
@@ -68,15 +79,67 @@ namespace RoaREngine
         public int bpm = 120;
         public int tempo = 4;
         public int everyNBar = 1;
-        
+
         [Header("Effects")]
-        public AudioChorusFilter chorusFilter = null;
-        public AudioDistortionFilter distortionFilter = null;
-        public AudioEchoFilter echoFilter = null;
-        public AudioHighPassFilter hpFilter = null;
-        public AudioLowPassFilter lpFilter = null;
-        public AudioReverbFilter reverbFilter = null;
-        public AudioReverbZone reverbZone = null;
+        [Header("Chorus Filter")]
+        public bool chorusFilter = false;
+        public float chorusDryMix = 0.5f;
+        public float chorusWetMix1 = 0.5f;
+        public float chorusWetMix2 = 0.5f;
+        public float chorusWetMix3 = 0.5f;
+        public float chorusDelay = 40f;
+        public float chorusRate = 0.8f;
+        public float chorusDepth = 0.03f;
+        [Header("Distortion Filter")]
+        public bool distortionFilter = false;
+        public float distortionLevel = 0.5f;
+        [Header("Echo Filter")]
+        public bool echoFilter = false;
+        public int echoDelay = 500;
+        public float echoDecayRatio = 0.5f;
+        public float echoDryMix = 1f;
+        public float echoWetMix = 1f;
+        [Header("High Pass Filter")]
+        public bool hpFilter = false;
+        public int highPassCutoffFrequency = 5000;
+        public float highPassResonanceQ = 1;
+        [Header("Low Pass Filter")]
+        public bool lpFilter = false;
+        public int lowPassCutoffFrequency = 5000;
+        public float lowPassResonanceQ = 1;
+        [Header("Reverb Filter")]
+        public bool reverbFilter = false;
+        public int reverbFilterDryLevel = 0;
+        public int reverbFilterRoom = 0;
+        public int reverbFilterRoomHF = 0;
+        public int reverbFilterRoomLF = 0;
+        public float reverbFilterDecayTime = 1f;
+        public float reverbFilterDecayHFRatio = 0.5f;
+        public int reverbFilterReflectionsLevel = -10000;
+        public float reverbFilterReflectionsDelay = 0f;
+        public int reverbFilterReverbLevel = 0;
+        public float reverbFilterReverbDelay = 0.04f;
+        public int reverbFilterHFReference = 5000;
+        public int reverbFilterLFReference = 250;
+        public float reverbFilterDiffusion = 100f;
+        public float reverbFilterDensity = 100f;
+        [Header("Reverb Zone")]
+        public bool reverbZone = false;
+        public float reverbZoneMinDistance = 10f;
+        public float reverbZoneMaxDistance = 15f;
+        public int reverbZoneRoom = -1000;
+        public int reverbZoneRoomHF = -100;
+        public int reverbZoneRoomLF = 0;
+        public float reverbZoneDecayTime = 1.49f;
+        public float reverbZoneDecayHFRatio = 0.83f;
+        public int reverbZoneReflections = -2602;
+        public float reverbZoneReflectionsDelay = 0.007f;
+        public int reverbZoneReverb = 200;
+        public float reverbZoneReverbDelay = 0.011f;
+        public int reverbZoneHFReference = 5000;
+        public int reverbZoneLFReference = 250;
+        public float reverbZoneDiffusion = 100f;
+        public float reverbZoneDensity = 100f;
 
         public void ApplyTo(AudioSource audioSource)
         {
