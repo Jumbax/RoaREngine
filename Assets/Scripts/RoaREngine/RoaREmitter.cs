@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace RoaREngine
 {
+    [ExecuteInEditMode]
     public class RoaREmitter : MonoBehaviour
     {
         private Transform initialParent;
@@ -86,7 +87,9 @@ namespace RoaREngine
             }
             if (!audioSource.loop && !container.roarConfiguration.onGoing)
             {
+#if !UNITY_EDITOR
                 AudioClipFinishPlaying();
+#endif
             }
             AddEffect();
             audioSource.Play();
@@ -159,6 +162,8 @@ namespace RoaREngine
         }
 
         public AudioSource GetAudioSource() => audioSource;
+
+        public void SetAudioSource(AudioSource audioSource) => this.audioSource = audioSource;
 
         public RoaRContainer GetContainer() => container;
 
@@ -394,5 +399,17 @@ namespace RoaREngine
             yield return new WaitForSeconds((float)TrackInfo.GetTimeBeforeNextBar(audioSource, container.roarConfiguration.bpm, container.roarConfiguration.tempo));
             StartCoroutine(MeasureEventCoroutine());
         }
+
+
+#if UNITY_EDITOR
+        private void Update()
+        {
+            UnityEditor.EditorApplication.delayCall += UnityEditor.EditorApplication.QueuePlayerLoopUpdate;
+            if (!Application.isPlaying)
+            {
+                Debug.Log("test");
+            }
+        }
+#endif
     }
 }

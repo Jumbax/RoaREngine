@@ -15,6 +15,8 @@ namespace RoaREngine
         private int index = 0;
         private int oldIndex = 0;
 
+        private GameObject emitterEditor;
+
         private string containerName;
         private RoaRConfigurationSO config = null;
         private RoaRClipsBankSO bank = null;
@@ -146,6 +148,22 @@ namespace RoaREngine
 
         private void OnGUI()
         {
+            if (GUILayout.Button("Play"))
+            {
+                PlayInEditor();
+            }
+            if (GUILayout.Button("Stop"))
+            {
+                StopInEditor();
+            }
+            if (GUILayout.Button("Pause"))
+            {
+                PauseInEditor();
+            }
+            if (GUILayout.Button("Resume"))
+            {
+                ResumeInEditor();
+            }
             if (index != oldIndex)
             {
                 if (index == 0)
@@ -930,6 +948,36 @@ namespace RoaREngine
             reverbZoneLFReference = config.reverbZoneLFReference;
             reverbZoneDiffusion = config.reverbZoneDiffusion;
             reverbZoneDensity = config.reverbZoneDensity;
+        }
+    
+        private void PlayInEditor()
+        {
+            emitterEditor = new GameObject();
+            emitterEditor.name = "EmitterEditor";
+            RoaREmitter emitterComponent = emitterEditor.AddComponent<RoaREmitter>();
+            AudioSource audiosource = emitterEditor.AddComponent<AudioSource>();
+            emitterComponent.SetAudioSource(audiosource);
+            emitterComponent.SetContainer(containers[index - 1]);
+            emitterComponent.Play(fadeInTime, volume, randomStartTime, startTime, parent,minRandomXYZ, maxRandomXYZ);
+        }
+
+        private void StopInEditor()
+        {
+            RoaREmitter emitterComponent = emitterEditor.GetComponent<RoaREmitter>();
+            emitterComponent.Stop(fadeOutTime);
+            DestroyImmediate(emitterEditor);
+        }
+
+        private void PauseInEditor()
+        {
+            RoaREmitter emitterComponent = emitterEditor.GetComponent<RoaREmitter>();
+            emitterComponent.Pause(fadeOutTime);
+        }
+
+        private void ResumeInEditor()
+        {
+            RoaREmitter emitterComponent = emitterEditor.GetComponent<RoaREmitter>();
+            emitterComponent.Resume(fadeInTime, 1f);
         }
     }
 }
