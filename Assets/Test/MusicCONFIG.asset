@@ -18,10 +18,10 @@ MonoBehaviour:
   loop: 0
   mute: 0
   startTime: 0
-  randomStartTime: 0
-  volume: 0.165
-  finalVolume: 1
-  fadeInTime: 0
+  randomStartTime: 1
+  volume: 1
+  finalVolume: 0
+  fadeInTime: 3
   fadeOutTime: 0
   randomMinvolume: 0
   randomMaxvolume: 0
@@ -50,7 +50,7 @@ MonoBehaviour:
   bpm: 120
   tempo: 4
   everyNBar: 1
-  chorusFilter: 1
+  chorusFilter: 0
   chorusDryMix: 1
   chorusWetMix1: 1
   chorusWetMix2: 1
@@ -66,7 +66,7 @@ MonoBehaviour:
   echoDryMix: 1
   echoWetMix: 1
   hpFilter: 0
-  highPassCutoffFrequency: 5000
+  highPassCutoffFrequency: 96
   highPassResonanceQ: 1
   lpFilter: 0
   lowPassCutoffFrequency: 5000
@@ -81,7 +81,7 @@ MonoBehaviour:
   reverbFilterReflectionsLevel: -10000
   reverbFilterReflectionsDelay: 0
   reverbFilterReverbLevel: 0
-  reverbFilterReverDelay: 0.04
+  reverbFilterReverbDelay: 0.04
   reverbFilterHFReference: 5000
   reverbFilterLFReference: 250
   reverbFilterDiffusion: 100

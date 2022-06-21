@@ -3,17 +3,23 @@ using UnityEngine;
 
 namespace RoaREngine
 {
-    public class RoaREmitter : MonoBehaviour
+#if UNITY_EDITOR
+    [ExecuteInEditMode]
+    public class RoaREmitterEditor : MonoBehaviour
     {
-        private Transform initialParent;
         private AudioSource audioSource;
         private RoaRContainer container;
         private bool paused;
+        public float fadeTime;
+        public float finalVolume;
+        public bool randomStartTime;
+        public float startTime;
+        public Transform parent;
+        public float minRandomXYZ, maxRandomXYZ;
 
         private void Awake()
         {
-            audioSource = GetComponent<AudioSource>();
-            initialParent = transform.parent;
+            audioSource = gameObject.AddComponent<AudioSource>();
         }
 
         public void SetContainer(RoaRContainer otherContainer)
@@ -23,76 +29,42 @@ namespace RoaREngine
             container.SetConfiguration(audioSource);
         }
 
-        public bool CheckForContainerName(string containerName)
+        public void Play()
         {
-            return container.Name == containerName;
-        }
-
-        public void Play(float fadeTime, float finalVolume, bool randomStartTime, float startTime, Transform parent, float minRandomXYZ, float maxRandomXYZ)
-        {
-            if (finalVolume <= 0f)
+            if (container.roarConfiguration.fadeInTime > 0)
             {
-                finalVolume = container.roarConfiguration.finalVolume;
-            }
-            if (fadeTime <= 0)
-            {
-                fadeTime = container.roarConfiguration.fadeInTime;
-            }
-            if (fadeTime > 0)
-            {
-                Fade(fadeTime, finalVolume);
-            }
-            if (!randomStartTime)
-            {
-                randomStartTime = container.roarConfiguration.randomStartTime;
+                Fade(container.roarConfiguration.fadeInTime, finalVolume);
             }
             if (randomStartTime)
             {
                 audioSource.time = Random.Range(0f, audioSource.clip.length);
-            }
-            if (startTime <= 0)
-            {
-                startTime = container.roarConfiguration.startTime;
             }
             if (startTime > 0 && !randomStartTime)
             {
                 startTime = Mathf.Clamp(startTime, 0f, audioSource.clip.length - 0.01f);
                 audioSource.time = startTime;
             }
-            if (parent == null)
-            {
-                parent = container.roarConfiguration.parent;
-            }
             if (parent != null)
             {
                 SetParent(parent);
-            }
-            if (minRandomXYZ == 0 || maxRandomXYZ == 0)
-            {
-                minRandomXYZ = container.roarConfiguration.minRandomXYZ;
-                maxRandomXYZ = container.roarConfiguration.maxRandomXYZ;
             }
             if (minRandomXYZ != 0 || maxRandomXYZ != 0)
             {
                 GenerateRandomPosition(minRandomXYZ, maxRandomXYZ);
             }
-            if (container.roarConfiguration.measureEvent)
-            {
-                MeasureEvent();
-            }
-            if (container.roarConfiguration.onGoing)
-            {
-                StartCoroutine(PlayOnGoing());
-            }
-            if (!audioSource.loop && !container.roarConfiguration.onGoing)
-            {
-                AudioClipFinishPlaying();
-            }
-            AddEffect();
+            //if (container.roarConfiguration.measureEvent)
+            //{
+            //    MeasureEvent();
+            //}
+            //if (container.roarConfiguration.onGoing)
+            //{
+            //    StartCoroutine(PlayOnGoing());
+            //}
+            //AddEffect();
             audioSource.Play();
         }
 
-        public void Stop(float fadeTime)
+        public void Stop()
         {
             if (fadeTime <= 0)
             {
@@ -101,8 +73,8 @@ namespace RoaREngine
             if (fadeTime <= 0)
             {
                 audioSource.Stop();
-                audioSource.gameObject.SetActive(false);
-                ResetParent();
+
+                DestroyImmediate(gameObject);
             }
             else
             {
@@ -110,11 +82,7 @@ namespace RoaREngine
             }
         }
 
-        public bool IsPlaying() => audioSource.isPlaying;
-
-        public bool IsInPause() => paused;
-
-        public void Pause(float fadeTime)
+        public void Pause()
         {
             if (fadeTime <= 0)
             {
@@ -128,16 +96,12 @@ namespace RoaREngine
             }
         }
 
-        public void Resume(float fadeTime, float finalVolume)
+        public void Resume()
         {
             if (fadeTime <= 0)
             {
                 paused = false;
                 audioSource.UnPause();
-                if (!audioSource.loop || !container.roarConfiguration.onGoing)
-                {
-                    AudioClipFinishPlaying();
-                }
                 if (container.roarConfiguration.measureEvent)
                 {
                     StartCoroutine(SyncMeasureEvent());
@@ -156,18 +120,14 @@ namespace RoaREngine
                 Fade(fadeTime, container.roarConfiguration.finalVolume, true);
             }
         }
-
+        
         public AudioSource GetAudioSource() => audioSource;
-
-        public RoaRContainer GetContainer() => container;
-
+        
         public void Fade(float fadeTime, float volume, bool resume = false, bool stop = false, bool pause = false)
         {
             StopAllCoroutines();
             StartCoroutine(FadeCoroutine(fadeTime, volume, resume, stop, pause));
         }
-
-        public void AudioClipFinishPlaying() => StartCoroutine(AudioClipFinishPlayingCoroutine());
 
         public void SetParent(Transform parent)
         {
@@ -175,8 +135,6 @@ namespace RoaREngine
             transform.position = parent.position;
             transform.position = Vector3.zero;
         }
-
-        public void ResetParent() => transform.parent = initialParent;
 
         public void GenerateRandomPosition(float minRandomXYZ, float maxRandomXYZ)
         {
@@ -187,41 +145,6 @@ namespace RoaREngine
         }
 
         private void MeasureEvent() => StartCoroutine(MeasureEventCoroutine());
-
-        public void AddEffect(EffectType type)
-        {
-            switch (type)
-            {
-                case EffectType.Chorus:
-                    gameObject.AddComponent<AudioChorusFilter>();
-                    container.roarConfiguration.chorusFilter = true;
-                    break;
-                case EffectType.Distortion:
-                    gameObject.AddComponent<AudioDistortionFilter>();
-                    container.roarConfiguration.distortionFilter = true;
-                    break;
-                case EffectType.Echo:
-                    gameObject.AddComponent<AudioEchoFilter>();
-                    container.roarConfiguration.echoFilter = true;
-                    break;
-                case EffectType.HP:
-                    gameObject.AddComponent<AudioHighPassFilter>();
-                    container.roarConfiguration.hpFilter = true;
-                    break;
-                case EffectType.LP:
-                    gameObject.AddComponent<AudioLowPassFilter>();
-                    container.roarConfiguration.lpFilter = true;
-                    break;
-                case EffectType.ReverbFilter:
-                    gameObject.AddComponent<AudioReverbFilter>();
-                    container.roarConfiguration.reverbFilter = true;
-                    break;
-                case EffectType.ReverbZone:
-                    gameObject.AddComponent<AudioReverbZone>();
-                    container.roarConfiguration.reverbZone = true;
-                    break;
-            }
-        }
 
         private void AddEffect()
         {
@@ -310,10 +233,6 @@ namespace RoaREngine
             {
                 paused = false;
                 audioSource.UnPause();
-                if (!audioSource.loop || !container.roarConfiguration.onGoing)
-                {
-                    AudioClipFinishPlaying();
-                }
                 if (container.roarConfiguration.measureEvent)
                 {
                     StartCoroutine(SyncMeasureEvent());
@@ -336,8 +255,7 @@ namespace RoaREngine
             if (stop)
             {
                 audioSource.Stop();
-                audioSource.gameObject.SetActive(false);
-                ResetParent();
+                DestroyImmediate(gameObject);
             }
 
             if (pause)
@@ -346,15 +264,6 @@ namespace RoaREngine
                 paused = true;
                 audioSource.Pause();
             }
-        }
-
-        private IEnumerator AudioClipFinishPlayingCoroutine()
-        {
-            float clipLengthRemaining = audioSource.clip.length - audioSource.time;
-            yield return new WaitForSeconds(clipLengthRemaining);
-            audioSource.Stop();
-            audioSource.gameObject.SetActive(false);
-            ResetParent();
         }
 
         private IEnumerator PlayOnGoing()
@@ -393,5 +302,15 @@ namespace RoaREngine
             yield return new WaitForSeconds((float)TrackInfo.GetTimeBeforeNextBar(audioSource, container.roarConfiguration.bpm, container.roarConfiguration.tempo));
             StartCoroutine(MeasureEventCoroutine());
         }
+
+        private void Update()
+        {
+            UnityEditor.EditorApplication.delayCall += UnityEditor.EditorApplication.QueuePlayerLoopUpdate;
+            if (!Application.isPlaying)
+            {
+                container.roarConfiguration.ApplyTo(audioSource);
+            }
+        }
     }
+#endif
 }

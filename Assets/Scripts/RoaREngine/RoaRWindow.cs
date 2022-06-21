@@ -10,16 +10,18 @@ namespace RoaREngine
     {
         Vector2 scrollPos = Vector2.zero;
 
+        private RoaRContainer containerEditor = null;
         private List<RoaRContainer> containers = new List<RoaRContainer>();
         private List<string> containersName = new List<string>();
-        private int index = 0;
-        private int oldIndex = 0;
-
+        private int containerIndex = 0;
+        private int containerOldIndex = 0;
         private GameObject emitterEditor;
 
         private string containerName;
         private RoaRConfigurationSO config = null;
+        private RoaRConfigurationSO oldConfig = null;
         private RoaRClipsBankSO bank = null;
+        private RoaRClipsBankSO oldBank = null;
         private int clipsNumber = 0;
         private List<AudioClip> clips = new List<AudioClip>();
         private int clipIndex = 0;
@@ -164,20 +166,45 @@ namespace RoaREngine
             {
                 ResumeInEditor();
             }
-            if (index != oldIndex)
+            if (containerIndex != containerOldIndex)
             {
-                if (index == 0)
+                if (containerIndex == 0)
                 {
                     DefaultContainer();
-                    oldIndex = index;
+                    containerOldIndex = containerIndex;
                 }
                 else
                 {
                     GetSettingsFromContainer();
-                    oldIndex = index;
+                    containerOldIndex = containerIndex;
                 }
             }
-
+            if (bank != oldBank)
+            {
+                if (bank == null)
+                {
+                    DefaultBank();
+                    oldBank = bank;
+                }
+                else
+                {
+                    GetSettingsFromBank();
+                    oldBank = bank;
+                }
+            }
+            if (config != oldConfig)
+            {
+                if (config == null)
+                {
+                    DefaultConfiguration();
+                    oldConfig = config;
+                }
+                else
+                {
+                    GetSettingsFromConfiguration();
+                    oldConfig = config;
+                }
+            }
             //texture = AssetPreview.GetAssetPreview(clips[0]);
             //GUILayout.Label(texture);
             scrollPos = GUILayout.BeginScrollView(scrollPos, false, false, GUIStyle.none, GUI.skin.verticalScrollbar);
@@ -186,12 +213,12 @@ namespace RoaREngine
                 //Container
                 using (new GUILayout.VerticalScope())
                 {
-                    EditorGUILayout.LabelField("Container: " + containersName[index]);
-                    index = EditorGUILayout.Popup(index, containersName.ToArray());
+                    EditorGUILayout.LabelField("Container: " + containersName[containerIndex]);
+                    containerIndex = EditorGUILayout.Popup(containerIndex, containersName.ToArray());
                     ContainerSettings();
                 }
                 EditorGUILayout.Space(25f);
-                //Configuration
+                //Bank
                 using (new GUILayout.VerticalScope())
                 {
                     string bankName = bank != null ? bank.name : "None";
@@ -199,7 +226,7 @@ namespace RoaREngine
                     BankSettings();
                 }
                 EditorGUILayout.Space(25f);
-                //Bank
+                //Configuration
                 using (new GUILayout.VerticalScope())
                 {
                     string configName = config != null ? config.name : "None";
@@ -208,6 +235,8 @@ namespace RoaREngine
                 }
             }
             GUILayout.EndScrollView();
+            
+            ControlAudioSource();
         }
 
         private void ContainerSettings()
@@ -225,7 +254,7 @@ namespace RoaREngine
             }
             if (GUILayout.Button("Save Container"))
             {
-                SaveContainerSettings(containers[index - 1]);
+                SaveContainerSettings(containers[containerIndex - 1]);
             }
             if (GUILayout.Button("Reload Containers"))
             {
@@ -706,7 +735,7 @@ namespace RoaREngine
             config.reverbZoneLFReference = reverbZoneLFReference;
             config.reverbZoneDiffusion = reverbZoneDiffusion;
             config.reverbZoneDensity = reverbZoneDensity;
-    }
+        }
 
         private RoaRConfigurationSO CreateConfiguration(RoaRClipsBankSO bank)
         {
@@ -751,17 +780,37 @@ namespace RoaREngine
                 containers.Add((RoaRContainer)AssetDatabase.LoadMainAssetAtPath(path));
                 containersName.Add(AssetDatabase.LoadMainAssetAtPath(path).name);
             }
+            if (containerIndex == 0)
+            {
+                DefaultContainer();
+                containerOldIndex = containerIndex;
+            }
+            else
+            {
+                GetSettingsFromContainer();
+                containerOldIndex = containerIndex;
+            }
         }
 
         private void DefaultContainer()
         {
-            clips.Clear();
-            parent = null;
-            bank = null;
-            config = null;
             containerName = "";
+            DefaultBank();
+            DefaultConfiguration();
+        }
+
+        private void DefaultBank()
+        {
+            bank = null;
+            clips.Clear();
             clipsNumber = 0;
             clipIndex = 0;
+        }
+
+        private void DefaultConfiguration()
+        {
+            config = null;
+            parent = null;
             audioMixerGroup = null;
             priority = PriorityLevel.Standard;
             sequenceMode = AudioSequenceMode.Sequential;
@@ -814,7 +863,7 @@ namespace RoaREngine
 
         private void SaveContainerSettings(RoaRContainer container)
         {
-            if (containerName == "" || index == 0)
+            if (containerName == "" || containerIndex == 0)
             {
                 //TODO ERROR MESSAGE "A CONTAINER MUST HAVE A NAME"
                 return;
@@ -828,7 +877,7 @@ namespace RoaREngine
 
         private void GetSettingsFromContainer()
         {
-            RoaRContainer container = containers[index - 1];
+            RoaRContainer container = containers[containerIndex - 1];
             if (container.roarClipBank != null)
             {
                 bank = container.roarClipBank;
@@ -846,138 +895,181 @@ namespace RoaREngine
                 config = CreateInstance<RoaRConfigurationSO>();
             }
             containerName = container.Name;
-            clipsNumber = bank.audioClips.Length;
-            for (int i = 0; i < clipsNumber; i++)
-            {
-                if (clips.Count < bank.audioClips.Length)
-                {
-                    AudioClip clip = null;
-                    clips.Add(clip);
-                }
-                clips[i] = bank.audioClips[i];
-            }
-            parent = config.parent;
-            audioMixerGroup = config.audioMixerGroup;
-            priority = config.priority;
-            sequenceMode = bank.sequenceMode;
-            startTime = config.startTime;
-            randomStartTime = config.randomStartTime;
-            clipIndex = bank.GetClipIndex();
-            loop = config.loop;
-            mute = config.mute;
-            volume = config.volume;
-            fadeInTime = config.fadeInTime;
-            fadeOutTime = config.fadeOutTime;
-            randomMinVolume = config.randomMinvolume;
-            randomMaxVolume = config.randomMaxvolume;
-            pitch = config.pitch;
-            randomMinPitch = config.randomMinPitch;
-            randomMaxPitch = config.randomMaxPitch;
-            panStereo = config.panStereo;
-            reverbZoneMix = config.reverbZoneMix;
-            spatialBlend = config.spatialBlend;
-            rolloffMode = config.rolloffMode;
-            minDistance = config.minDistance;
-            maxDistance = config.maxDistance;
-            spread = config.spread;
-            dopplerLevel = config.dopplerLevel;
-            bypasseffects = config.bypasseffects;
-            bypasslistenereffects = config.bypasslistenereffects;
-            bypassreverbzones = config.bypassreverbzones;
-            ignorelistenervolume = config.ignorelistenervolume;
-            ignorelistenerpause = config.ignorelistenerpause;
-            onGoing = config.onGoing;
-            minTime = config.minTime;
-            maxTime = config.maxTime;
-            minRandomXYZ = config.minRandomXYZ;
-            maxRandomXYZ = config.maxRandomXYZ;
-            measureEvent = config.measureEvent;
-            bpm = config.bpm;
-            tempo = config.tempo;
-            everyNBar = config.everyNBar;
-            chorus.target = config.chorusFilter;
-            chorusDryMix = config.chorusDryMix;
-            chorusWetMix1 = config.chorusWetMix1;
-            chorusWetMix2 = config.chorusWetMix2;
-            chorusWetMix3 = config.chorusWetMix3;
-            chorusDelay = config.chorusDelay;
-            chorusRate = config.chorusRate;
-            chorusDepth = config.chorusDepth;
-            chorus.target = config.chorusFilter;
-            distortion.target = config.distortionFilter;
-            distortionLevel = config.distortionLevel;
-            echo.target = config.echoFilter;
-            echoDelay = config.echoDelay;
-            echoDecayRatio = config.echoDecayRatio;
-            echoDryMix = config.echoDryMix;
-            echoWetMix = config.echoWetMix;
-            highPass.target = config.hpFilter;
-            highPassCutoffFrequency = config.highPassCutoffFrequency;
-            highPassResonanceQ = config.highPassResonanceQ;
-            lowPass.target = config.lpFilter;
-            lowPassCutoffFrequency = config.lowPassCutoffFrequency;
-            lowPassResonanceQ = config.lowPassResonanceQ;
-            reverbFilter.target = config.reverbFilter;
-            reverbFilterDryLevel = config.reverbFilterDryLevel;
-            reverbFilterRoom = config.reverbFilterRoom;
-            reverbFilterRoomHF = config.reverbFilterRoomHF;
-            reverbFilterRoomLF = config.reverbFilterRoomLF;
-            reverbFilterDecayTime = config.reverbFilterDecayTime;
-            reverbFilterDecayHFRatio = config.reverbFilterDecayHFRatio;
-            reverbFilterReflectionsLevel = config.reverbFilterReflectionsLevel;
-            reverbFilterReflectionsDelay = config.reverbFilterReflectionsDelay;
-            reverbFilterReverbLevel = config.reverbFilterReverbLevel;
-            reverbFilterReverDelay = config.reverbFilterReverbDelay;
-            reverbFilterHFReference = config.reverbFilterHFReference;
-            reverbFilterLFReference = config.reverbFilterLFReference;
-            reverbFilterDiffusion = config.reverbFilterDiffusion;
-            reverbFilterDensity = config.reverbFilterDensity;
-            reverbZone.target = config.reverbZone;
-            reverbZoneMinDistance = config.reverbZoneMinDistance;
-            reverbZoneMaxDistance = config.reverbZoneMaxDistance;
-            reverbZoneRoom = config.reverbZoneRoom;
-            reverbZoneRoomHF = config.reverbZoneRoomHF;
-            reverbZoneRoomLF = config.reverbZoneRoomLF;
-            reverbZoneDecayTime = config.reverbZoneDecayTime;
-            reverbZoneDecayHFRatio = config.reverbZoneDecayHFRatio;
-            reverbZoneReflections = config.reverbZoneReflections;
-            reverbZoneReflectionsDelay = config.reverbZoneReflectionsDelay;
-            reverbZoneReverb = config.reverbZoneReverb;
-            reverbZoneReverbDelay = config.reverbZoneReverbDelay;
-            reverbZoneHFReference = config.reverbZoneHFReference;
-            reverbZoneLFReference = config.reverbZoneLFReference;
-            reverbZoneDiffusion = config.reverbZoneDiffusion;
-            reverbZoneDensity = config.reverbZoneDensity;
+            GetSettingsFromBank();
+            GetSettingsFromConfiguration();
         }
-    
+
+        private void GetSettingsFromBank()
+        {
+            if (bank != null)
+            {
+                clipsNumber = bank.audioClips.Length;
+                for (int i = 0; i < clipsNumber; i++)
+                {
+                    if (clips.Count < bank.audioClips.Length)
+                    {
+                        AudioClip clip = null;
+                        clips.Add(clip);
+                    }
+                    clips[i] = bank.audioClips[i];
+                }
+                sequenceMode = bank.sequenceMode;
+                clipIndex = bank.GetClipIndex();
+            }
+        }
+
+        private void GetSettingsFromConfiguration()
+        {
+            if (config != null)
+            {
+                parent = config.parent;
+                audioMixerGroup = config.audioMixerGroup;
+                priority = config.priority;
+                startTime = config.startTime;
+                randomStartTime = config.randomStartTime;
+                loop = config.loop;
+                mute = config.mute;
+                volume = config.volume;
+                fadeInTime = config.fadeInTime;
+                fadeOutTime = config.fadeOutTime;
+                randomMinVolume = config.randomMinvolume;
+                randomMaxVolume = config.randomMaxvolume;
+                pitch = config.pitch;
+                randomMinPitch = config.randomMinPitch;
+                randomMaxPitch = config.randomMaxPitch;
+                panStereo = config.panStereo;
+                reverbZoneMix = config.reverbZoneMix;
+                spatialBlend = config.spatialBlend;
+                rolloffMode = config.rolloffMode;
+                minDistance = config.minDistance;
+                maxDistance = config.maxDistance;
+                spread = config.spread;
+                dopplerLevel = config.dopplerLevel;
+                bypasseffects = config.bypasseffects;
+                bypasslistenereffects = config.bypasslistenereffects;
+                bypassreverbzones = config.bypassreverbzones;
+                ignorelistenervolume = config.ignorelistenervolume;
+                ignorelistenerpause = config.ignorelistenerpause;
+                onGoing = config.onGoing;
+                minTime = config.minTime;
+                maxTime = config.maxTime;
+                minRandomXYZ = config.minRandomXYZ;
+                maxRandomXYZ = config.maxRandomXYZ;
+                measureEvent = config.measureEvent;
+                bpm = config.bpm;
+                tempo = config.tempo;
+                everyNBar = config.everyNBar;
+                chorus.target = config.chorusFilter;
+                chorusDryMix = config.chorusDryMix;
+                chorusWetMix1 = config.chorusWetMix1;
+                chorusWetMix2 = config.chorusWetMix2;
+                chorusWetMix3 = config.chorusWetMix3;
+                chorusDelay = config.chorusDelay;
+                chorusRate = config.chorusRate;
+                chorusDepth = config.chorusDepth;
+                chorus.target = config.chorusFilter;
+                distortion.target = config.distortionFilter;
+                distortionLevel = config.distortionLevel;
+                echo.target = config.echoFilter;
+                echoDelay = config.echoDelay;
+                echoDecayRatio = config.echoDecayRatio;
+                echoDryMix = config.echoDryMix;
+                echoWetMix = config.echoWetMix;
+                highPass.target = config.hpFilter;
+                highPassCutoffFrequency = config.highPassCutoffFrequency;
+                highPassResonanceQ = config.highPassResonanceQ;
+                lowPass.target = config.lpFilter;
+                lowPassCutoffFrequency = config.lowPassCutoffFrequency;
+                lowPassResonanceQ = config.lowPassResonanceQ;
+                reverbFilter.target = config.reverbFilter;
+                reverbFilterDryLevel = config.reverbFilterDryLevel;
+                reverbFilterRoom = config.reverbFilterRoom;
+                reverbFilterRoomHF = config.reverbFilterRoomHF;
+                reverbFilterRoomLF = config.reverbFilterRoomLF;
+                reverbFilterDecayTime = config.reverbFilterDecayTime;
+                reverbFilterDecayHFRatio = config.reverbFilterDecayHFRatio;
+                reverbFilterReflectionsLevel = config.reverbFilterReflectionsLevel;
+                reverbFilterReflectionsDelay = config.reverbFilterReflectionsDelay;
+                reverbFilterReverbLevel = config.reverbFilterReverbLevel;
+                reverbFilterReverDelay = config.reverbFilterReverbDelay;
+                reverbFilterHFReference = config.reverbFilterHFReference;
+                reverbFilterLFReference = config.reverbFilterLFReference;
+                reverbFilterDiffusion = config.reverbFilterDiffusion;
+                reverbFilterDensity = config.reverbFilterDensity;
+                reverbZone.target = config.reverbZone;
+                reverbZoneMinDistance = config.reverbZoneMinDistance;
+                reverbZoneMaxDistance = config.reverbZoneMaxDistance;
+                reverbZoneRoom = config.reverbZoneRoom;
+                reverbZoneRoomHF = config.reverbZoneRoomHF;
+                reverbZoneRoomLF = config.reverbZoneRoomLF;
+                reverbZoneDecayTime = config.reverbZoneDecayTime;
+                reverbZoneDecayHFRatio = config.reverbZoneDecayHFRatio;
+                reverbZoneReflections = config.reverbZoneReflections;
+                reverbZoneReflectionsDelay = config.reverbZoneReflectionsDelay;
+                reverbZoneReverb = config.reverbZoneReverb;
+                reverbZoneReverbDelay = config.reverbZoneReverbDelay;
+                reverbZoneHFReference = config.reverbZoneHFReference;
+                reverbZoneLFReference = config.reverbZoneLFReference;
+                reverbZoneDiffusion = config.reverbZoneDiffusion;
+                reverbZoneDensity = config.reverbZoneDensity;
+            }
+        }
+
         private void PlayInEditor()
         {
-            emitterEditor = new GameObject();
-            emitterEditor.name = "EmitterEditor";
-            RoaREmitter emitterComponent = emitterEditor.AddComponent<RoaREmitter>();
-            AudioSource audiosource = emitterEditor.AddComponent<AudioSource>();
-            emitterComponent.SetAudioSource(audiosource);
-            emitterComponent.SetContainer(containers[index - 1]);
-            emitterComponent.Play(fadeInTime, volume, randomStartTime, startTime, parent,minRandomXYZ, maxRandomXYZ);
+            if (clips.Count > 0)
+            {
+                emitterEditor = new GameObject();
+                emitterEditor.name = "EmitterEditor";
+                RoaREmitterEditor emitterComponent = emitterEditor.AddComponent<RoaREmitterEditor>();
+                if (containerIndex - 1 < 0)
+                {
+                    containerEditor = CreateInstance<RoaRContainer>();
+                }
+                else
+                {
+                    containerEditor = containers[containerIndex - 1];
+                }
+                containerEditor.roarClipBank = bank;
+                containerEditor.roarConfiguration = config;
+                emitterComponent.SetContainer(containerEditor);
+                emitterComponent.Play();
+            }
         }
 
         private void StopInEditor()
         {
-            RoaREmitter emitterComponent = emitterEditor.GetComponent<RoaREmitter>();
-            emitterComponent.Stop(fadeOutTime);
-            DestroyImmediate(emitterEditor);
+            if (emitterEditor != null)
+            {
+                RoaREmitterEditor emitterComponent = emitterEditor.GetComponent<RoaREmitterEditor>();
+                emitterComponent.Stop();
+            }
         }
 
         private void PauseInEditor()
         {
-            RoaREmitter emitterComponent = emitterEditor.GetComponent<RoaREmitter>();
-            emitterComponent.Pause(fadeOutTime);
+            if (emitterEditor != null)
+            {
+                RoaREmitterEditor emitterComponent = emitterEditor.GetComponent<RoaREmitterEditor>();
+                emitterComponent.Pause();
+            }
         }
 
         private void ResumeInEditor()
         {
-            RoaREmitter emitterComponent = emitterEditor.GetComponent<RoaREmitter>();
-            emitterComponent.Resume(fadeInTime, 1f);
+            if (emitterEditor != null)
+            {
+                RoaREmitterEditor emitterComponent = emitterEditor.GetComponent<RoaREmitterEditor>();
+                emitterComponent.Resume();
+            }
+        }
+
+        private void ControlAudioSource()
+        {
+            if (emitterEditor != null)
+            {
+                ApplySettings(bank, config);
+            }
         }
     }
 }
