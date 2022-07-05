@@ -18,9 +18,9 @@ MonoBehaviour:
   loop: 0
   mute: 0
   startTime: 0
-  randomStartTime: 1
+  randomStartTime: 0
   volume: 1
-  finalVolume: 0
+  finalVolume: 1
   fadeInTime: 3
   fadeOutTime: 0
   randomMinvolume: 0
