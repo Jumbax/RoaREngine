@@ -16,11 +16,11 @@ namespace RoaREngine
             initialParent = transform.parent;
         }
 
-        public void SetContainer(RoaRContainer otherContainer)
+        public void SetContainer(RoaRContainer container)
         {
-            container = otherContainer;
-            audioSource.clip = container.Clip;
-            container.SetConfiguration(audioSource);
+            this.container = container;
+            audioSource.clip = this.container.Clip;
+            this.container.SetConfiguration(audioSource);
         }
 
         public bool CheckForContainerName(string containerName)
@@ -151,7 +151,7 @@ namespace RoaREngine
             {
                 if (finalVolume <= 0)
                 {
-                    finalVolume = container.roarConfiguration.finalVolume;
+                    finalVolume = container.roarConfiguration.volume;
                 }
                 Fade(fadeTime, container.roarConfiguration.finalVolume, true);
             }
