@@ -9,10 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9391202ee6d382c4fb44c85f91c80e47, type: 3}
-  m_Name: MusicBANK
+  m_Script: {fileID: 11500000, guid: 1fa71d9cb49a0bc43860d9f5b734c035, type: 3}
+  m_Name: TestCONTAINER
   m_EditorClassIdentifier: 
-  sequenceMode: 1
-  audioClips:
-  - {fileID: 8300000, guid: 5c32398ea5165d749b7d081e88d2d5d8, type: 3}
-  IndexClip: 0
+  Name: 
+  roarClipBank: {fileID: 0}
+  roarConfiguration: {fileID: 0}

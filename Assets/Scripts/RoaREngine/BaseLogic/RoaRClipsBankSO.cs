@@ -16,7 +16,13 @@ namespace RoaREngine
         public AudioClip[] audioClips;
         private int currentIndex = -1;
         private int previousIndex = -1;
-        private int index;
+        public int IndexClip = 0;
+
+        public void ResetValue()
+        {
+            currentIndex = -1;
+            previousIndex = -1;
+        }
 
         private AudioClip NextClip()
         {
@@ -25,7 +31,11 @@ namespace RoaREngine
             switch (sequenceMode)
             {
                 case AudioSequenceMode.Sequential:
-                    currentIndex = (int)Mathf.Repeat(++currentIndex, audioClips.Length);
+                    currentIndex++;
+                    if (currentIndex >= audioClips.Length)
+                    {
+                        currentIndex = 0;
+                    }
                     break;
                 case AudioSequenceMode.Random:
                     do
@@ -35,7 +45,7 @@ namespace RoaREngine
                     while (currentIndex == previousIndex);
                     break;
                 case AudioSequenceMode.Choise:
-                    currentIndex = index;
+                    currentIndex = IndexClip = Mathf.Min(IndexClip, audioClips.Length - 1);
                     break;
             }
 
@@ -45,10 +55,5 @@ namespace RoaREngine
         }
 
         public AudioClip GetClip() => NextClip();
-
-        public int GetClipIndex() => index;
-
-        public void SetClipIndex(int index) => this.index = index;
-
     }
 }

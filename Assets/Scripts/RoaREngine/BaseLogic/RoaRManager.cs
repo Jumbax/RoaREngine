@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -12,14 +13,19 @@ namespace RoaREngine
         private void Start()
         {
             roarPooler = GetComponent<RoaRPooler>();
-            RoarContainerMap.SetNames();
+            RoarContainerMap.Init();
         }
 
         public void Play(string musicID, float fadeTime = 0f, float finalVolume = 0f, bool randomStartTime = false, float startTime = 0f, Transform parent = null, float minRandomXYZ = 0f, float maxRandomXYZ = 0f)
         {
             if (RoarContainerMap.MusicIDIsValid(musicID))
             {
-                GameObject roarEmitter = roarPooler.Get();
+                GameObject roarEmitter = GetActiveEmitterObject(musicID);
+                if (roarEmitter != null)
+                {
+                    Stop(musicID);
+                }
+                roarEmitter = roarPooler.Get();
                 if (roarEmitter != null)
                 {
                     RoarContainerMap.SetContainer(musicID, roarEmitter);
@@ -68,6 +74,15 @@ namespace RoaREngine
             }
         }
 
+        public void ChangeSequenceMode(string musicID, AudioSequenceMode audioSequenceMode)
+        {
+            RoaRContainer container = GetContainer(musicID);
+            if (container != null)
+            {
+                container.roarClipBank.sequenceMode = audioSequenceMode;
+            }
+        }
+
         private GameObject GetEmitterObjectInPlay(string musicID)
         {
             foreach (GameObject roarEmitter in roarPooler.RoarEmitters)
@@ -112,7 +127,7 @@ namespace RoaREngine
             }
             return null;
         }
-        
+
         public AudioSource GetAudioSource(string musicID)
         {
             RoaREmitter emitterComponent = GetEmitter(musicID);
@@ -122,7 +137,7 @@ namespace RoaREngine
             }
             return null;
         }
-  
+
         public void AddEffect(string musicID, EffectType type)
         {
             GameObject emitter = GetActiveEmitterObject(musicID);
@@ -132,13 +147,13 @@ namespace RoaREngine
                 emitterComponent.AddEffect(type);
             }
         }
-        
+
         public T GetAudioSourceEffect<T>(string musicID)
         {
             T filter = GetAudioSource(musicID).GetComponent<T>();
             return filter;
         }
-        
+
         public void AddMeasureEvent(string musicID, UnityAction measureAction)
         {
             if (RoarContainerMap.MusicIDIsValid(musicID))
@@ -160,6 +175,46 @@ namespace RoaREngine
                 {
                     container.MeasureEvent -= measureAction;
                 }
+            }
+        }
+
+        public void AddContainer(RoaRContainer container)
+        {
+            RoarContainerMap.AddContainer(container);
+        }
+
+        public void RemoveContainer(RoaRContainer container)
+        {
+            RoarContainerMap.RemoveContainer(container);
+        }
+
+        public RoaRContainer GetContainer(string musicID)
+        {
+            return RoarContainerMap.GetContainer(musicID);
+        }
+
+        public List<RoaRContainer> GetContainers()
+        {
+            return RoarContainerMap.roarContainers;
+        }
+
+        public int GetNumberContainers()
+        {
+            return RoarContainerMap.roarContainers.Count;
+        }
+
+        public int GetNumberAudioSources()
+        {
+            AudioSource[] sources = FindObjectsOfType(typeof(AudioSource)) as AudioSource[];
+            return sources.Length;
+        }
+
+        public void SetBankIndex(string musicID, int value)
+        {
+            RoaRContainer container = GetContainer(musicID);
+            if (container != null)
+            {
+                container.roarClipBank.IndexClip = Mathf.Min(value, container.roarClipBank.audioClips.Length);
             }
         }
     }

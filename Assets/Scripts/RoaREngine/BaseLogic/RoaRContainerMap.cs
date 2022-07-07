@@ -10,6 +10,12 @@ namespace RoaREngine
         public List<RoaRContainer> roarContainers;
         private Dictionary<string, RoaRContainer> containerDict = new Dictionary<string, RoaRContainer>();
 
+        public void Init()
+        {
+            SetNames();
+            ResetContainersBankValue();
+        }
+
         public void SetNames()
         {
             foreach (RoaRContainer container in roarContainers)
@@ -17,6 +23,35 @@ namespace RoaREngine
                 //CONTROLLO PER VEDERE SE CI SONO CONTAINER CON LO STESSO NOME
                 containerDict[container.Name] = container;
             }
+        }
+
+        public void ResetContainersBankValue()
+        {
+            foreach (RoaRContainer container in roarContainers)
+            {
+                container.ResetBankValue();
+            }
+        }
+
+        public void AddContainer(RoaRContainer container)
+        {
+            roarContainers.Add(container);
+            containerDict[container.Name] = container;
+        }
+
+        public void RemoveContainer(RoaRContainer container)
+        {
+            roarContainers.Remove(container);
+            containerDict.Remove(container.Name);
+        }
+
+        public RoaRContainer GetContainer(string musicID)
+        {
+            if (MusicIDIsValid(musicID))
+            {
+                return containerDict[musicID];
+            }
+            return null;
         }
 
         public void SetContainer(string musicID, GameObject roarEmitter)
@@ -29,9 +64,5 @@ namespace RoaREngine
             return containerDict.ContainsKey(musicID);
         }
 
-        public RoaRContainer GetContainer(string musicID)
-        {
-            return containerDict[musicID];
-        }
     }
 }

@@ -453,6 +453,7 @@ MonoBehaviour:
   FadeInTime: 0
   FadeOutTime: 0
   hSliderValue: 0
+  container: {fileID: 11400000, guid: dda82c49f90cfb0488d85283ef521f9d, type: 2}
 --- !u!4 &1259477260
 Transform:
   m_ObjectHideFlags: 0

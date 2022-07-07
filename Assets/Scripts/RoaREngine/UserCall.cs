@@ -15,6 +15,8 @@ public class UserCall : MonoBehaviour
     public float FadeOutTime;
 
     public float hSliderValue = 0.0F;
+
+    public RoaRContainer container;
     
     private void OnGUI()
     {
@@ -39,7 +41,7 @@ public class UserCall : MonoBehaviour
         {
             if (!Stop)
             {
-                manager.Stop(CueName, 10f);
+                manager.Stop(CueName);
                 Stop = true;
             }
         }

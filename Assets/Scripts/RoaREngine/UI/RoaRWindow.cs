@@ -641,9 +641,8 @@ namespace RoaREngine
 
         private void ApplySettings(RoaRClipsBankSO bank, RoaRConfigurationSO config)
         {
-
             bank.sequenceMode = sequenceMode;
-            bank.SetClipIndex(clipIndex);
+            bank.IndexClip = clipIndex;
 
             config.parent = parent;
             config.audioMixerGroup = audioMixerGroup;
@@ -914,7 +913,7 @@ namespace RoaREngine
                     clips[i] = bank.audioClips[i];
                 }
                 sequenceMode = bank.sequenceMode;
-                clipIndex = bank.GetClipIndex();
+                clipIndex = bank.IndexClip;
             }
         }
 

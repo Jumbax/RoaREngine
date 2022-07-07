@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 956b715fe82263c4fb432624f0987eb8, type: 3}
-  m_Name: MusicCONFIG
+  m_Name: TestCONFIG
   m_EditorClassIdentifier: 
   parent: {fileID: 0}
   audioMixerGroup: {fileID: 0}
@@ -51,13 +51,13 @@ MonoBehaviour:
   tempo: 4
   everyNBar: 1
   chorusFilter: 0
-  chorusDryMix: 1
-  chorusWetMix1: 1
-  chorusWetMix2: 1
-  chorusWetMix3: 1
-  chorusDelay: 1
-  chorusRate: 1
-  chorusDepth: 1
+  chorusDryMix: 0.5
+  chorusWetMix1: 0.5
+  chorusWetMix2: 0.5
+  chorusWetMix3: 0.5
+  chorusDelay: 40
+  chorusRate: 0.8
+  chorusDepth: 0.03
   distortionFilter: 0
   distortionLevel: 0.5
   echoFilter: 0
@@ -66,7 +66,7 @@ MonoBehaviour:
   echoDryMix: 1
   echoWetMix: 1
   hpFilter: 0
-  highPassCutoffFrequency: 96
+  highPassCutoffFrequency: 5000
   highPassResonanceQ: 1
   lpFilter: 0
   lowPassCutoffFrequency: 5000
