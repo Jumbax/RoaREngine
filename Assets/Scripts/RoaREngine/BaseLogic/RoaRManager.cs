@@ -218,12 +218,12 @@ namespace RoaREngine
             }
         }
     
-        public void Fade(string musicID, float fadeTime, float volume)
+        public void Fade(string musicID, float fadeTime, float finalVolume)
         {
             RoaREmitter emitter = GetEmitter(musicID);
             if (emitter != null)
             {
-                Coroutine fade = StartCoroutine(emitter.FadeCoroutine(fadeTime, volume));
+                emitter.Fade(fadeTime, finalVolume);
             }
         }
     }

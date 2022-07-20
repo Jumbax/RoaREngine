@@ -296,7 +296,7 @@ namespace RoaREngine
             }
         }
 
-        public IEnumerator FadeCoroutine(float fadeTime, float volume, bool resume = false, bool stop = false, bool pause = false)
+        private IEnumerator FadeCoroutine(float fadeTime, float volume, bool resume = false, bool stop = false, bool pause = false)
         {
             float time = 0f;
             float startVolume = audioSource.volume;
