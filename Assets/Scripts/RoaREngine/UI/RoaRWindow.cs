@@ -34,6 +34,7 @@ namespace RoaREngine
         private bool loop = false;
         private bool mute = false;
         private float volume = 1f;
+        private float fadeInFinalVolume = 1f;
         private float fadeInTime = 0f;
         private float fadeOutTime = 0f;
         private float randomMinVolume = 0f;
@@ -302,14 +303,15 @@ namespace RoaREngine
             loop = EditorGUILayout.Toggle("Loop", loop);
             mute = EditorGUILayout.Toggle("Mute", mute);
             volume = EditorGUILayout.Slider("Volume", volume, 0f, 1f);
+            fadeInFinalVolume = EditorGUILayout.Slider("FadeIn Final Volume", fadeInFinalVolume, 0f, 1f);
             using (new GUILayout.HorizontalScope())
             {
-                GUILayout.Label("FadeIn Volume", GUILayout.Width(145));
+                GUILayout.Label("FadeIn Time", GUILayout.Width(145));
                 fadeInTime = EditorGUILayout.FloatField(fadeInTime, GUILayout.Width(25));
             }
             using (new GUILayout.HorizontalScope())
             {
-                GUILayout.Label("FadeOut Volume", GUILayout.Width(145));
+                GUILayout.Label("FadeOut Time", GUILayout.Width(145));
                 fadeOutTime = EditorGUILayout.FloatField(fadeOutTime, GUILayout.Width(25));
             }
             randomMinVolume = EditorGUILayout.Slider("Random Min Volume", randomMinVolume, 0f, 1f);
@@ -655,6 +657,7 @@ namespace RoaREngine
             config.bypassreverbzones = bypassreverbzones;
             config.priority = priority;
             config.volume = volume;
+            config.fadeInFinalVolume = fadeInFinalVolume;
             config.fadeInTime = fadeInTime;
             config.fadeOutTime = fadeOutTime;
             config.randomMinvolume = randomMinVolume;
@@ -818,6 +821,7 @@ namespace RoaREngine
             loop = false;
             mute = false;
             volume = 1f;
+            fadeInFinalVolume = 1f;
             fadeInTime = 0f;
             fadeOutTime = 0f;
             randomMinVolume = 0f;
@@ -929,6 +933,7 @@ namespace RoaREngine
                 loop = config.loop;
                 mute = config.mute;
                 volume = config.volume;
+                fadeInFinalVolume = config.fadeInFinalVolume;
                 fadeInTime = config.fadeInTime;
                 fadeOutTime = config.fadeOutTime;
                 randomMinVolume = config.randomMinvolume;

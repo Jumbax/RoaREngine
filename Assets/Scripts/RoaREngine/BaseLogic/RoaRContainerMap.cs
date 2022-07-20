@@ -13,7 +13,7 @@ namespace RoaREngine
         public void Init()
         {
             SetNames();
-            ResetContainersBankValue();
+            ResetContainersBankIndex();
         }
 
         public void SetNames()
@@ -25,11 +25,11 @@ namespace RoaREngine
             }
         }
 
-        public void ResetContainersBankValue()
+        public void ResetContainersBankIndex()
         {
             foreach (RoaRContainer container in roarContainers)
             {
-                container.ResetBankValue();
+                container.ResetBankIndex();
             }
         }
 

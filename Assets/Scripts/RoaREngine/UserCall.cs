@@ -41,7 +41,7 @@ public class UserCall : MonoBehaviour
         {
             if (!Stop)
             {
-                manager.Stop(CueName);
+                manager.Fade(CueName, 3f, 0f);
                 Stop = true;
             }
         }
@@ -49,7 +49,8 @@ public class UserCall : MonoBehaviour
         {
             if (!Pause)
             {
-                manager.Pause(CueName);
+                //manager.Pause(CueName);
+                manager.Fade(CueName, 3f, 1f);
                 Pause = true;
             }
         }

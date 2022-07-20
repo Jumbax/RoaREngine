@@ -32,7 +32,7 @@ namespace RoaREngine
         {
             if (finalVolume <= 0f)
             {
-                finalVolume = container.roarConfiguration.finalVolume;
+                finalVolume = container.roarConfiguration.fadeInFinalVolume;
             }
             if (fadeTime <= 0)
             {
@@ -78,7 +78,7 @@ namespace RoaREngine
             }
             if (container.roarConfiguration.measureEvent)
             {
-                MeasureEvent();
+                StartCoroutine(MeasureEventCoroutine());
             }
             if (container.roarConfiguration.onGoing)
             {
@@ -86,7 +86,7 @@ namespace RoaREngine
             }
             if (!audioSource.loop && !container.roarConfiguration.onGoing)
             {
-                AudioClipFinishPlaying();
+                StartCoroutine(AudioClipFinishPlayingCoroutine());
             }
             AddEffect();
             audioSource.Play();
@@ -136,7 +136,7 @@ namespace RoaREngine
                 audioSource.UnPause();
                 if (!audioSource.loop || !container.roarConfiguration.onGoing)
                 {
-                    AudioClipFinishPlaying();
+                    StartCoroutine(AudioClipFinishPlayingCoroutine());
                 }
                 if (container.roarConfiguration.measureEvent)
                 {
@@ -153,7 +153,7 @@ namespace RoaREngine
                 {
                     finalVolume = container.roarConfiguration.volume;
                 }
-                Fade(fadeTime, container.roarConfiguration.finalVolume, true);
+                Fade(fadeTime, container.roarConfiguration.fadeInFinalVolume, true);
             }
         }
 
@@ -166,8 +166,6 @@ namespace RoaREngine
             StopAllCoroutines();
             StartCoroutine(FadeCoroutine(fadeTime, volume, resume, stop, pause));
         }
-
-        public void AudioClipFinishPlaying() => StartCoroutine(AudioClipFinishPlayingCoroutine());
 
         public void SetParent(Transform parent)
         {
@@ -185,8 +183,6 @@ namespace RoaREngine
             float posZ = Random.Range(minRandomXYZ, maxRandomXYZ);
             transform.position = new Vector3(posX, posY, posZ);
         }
-
-        private void MeasureEvent() => StartCoroutine(MeasureEventCoroutine());
 
         public void AddEffect(EffectType type)
         {
@@ -300,7 +296,7 @@ namespace RoaREngine
             }
         }
 
-        private IEnumerator FadeCoroutine(float fadeTime, float volume, bool resume = false, bool stop = false, bool pause = false)
+        public IEnumerator FadeCoroutine(float fadeTime, float volume, bool resume = false, bool stop = false, bool pause = false)
         {
             float time = 0f;
             float startVolume = audioSource.volume;
@@ -312,7 +308,7 @@ namespace RoaREngine
                 audioSource.UnPause();
                 if (!audioSource.loop || !container.roarConfiguration.onGoing)
                 {
-                    AudioClipFinishPlaying();
+                    StartCoroutine(AudioClipFinishPlayingCoroutine());
                 }
                 if (container.roarConfiguration.measureEvent)
                 {

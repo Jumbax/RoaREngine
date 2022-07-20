@@ -18,7 +18,7 @@ namespace RoaREngine
         private int previousIndex = -1;
         public int IndexClip = 0;
 
-        public void ResetValue()
+        public void ResetIndex()
         {
             currentIndex = -1;
             previousIndex = -1;

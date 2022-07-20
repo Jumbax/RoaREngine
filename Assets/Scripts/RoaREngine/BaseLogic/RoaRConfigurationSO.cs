@@ -39,7 +39,7 @@ namespace RoaREngine
         public float startTime = 0f;
         public bool randomStartTime = false;
         [Range(0f, 1f)] public float volume = 1f;
-        [Range(0f, 1f)] public float finalVolume = 1f;
+        [Range(0f, 1f)] public float fadeInFinalVolume = 1f; //Manca nella window
         public float fadeInTime = 0f;
         public float fadeOutTime = 0f;
         [Range(0f, 1f)] public float randomMinvolume = 0f;

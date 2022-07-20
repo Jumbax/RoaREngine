@@ -217,6 +217,15 @@ namespace RoaREngine
                 container.roarClipBank.IndexClip = Mathf.Min(value, container.roarClipBank.audioClips.Length);
             }
         }
+    
+        public void Fade(string musicID, float fadeTime, float volume)
+        {
+            RoaREmitter emitter = GetEmitter(musicID);
+            if (emitter != null)
+            {
+                Coroutine fade = StartCoroutine(emitter.FadeCoroutine(fadeTime, volume));
+            }
+        }
     }
 }
 

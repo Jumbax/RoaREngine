@@ -12,9 +12,9 @@ namespace RoaREngine
         public RoaRConfigurationSO roarConfiguration;
         public UnityAction MeasureEvent;
 
-        public void ResetBankValue()
+        public void ResetBankIndex()
         {
-            roarClipBank.ResetValue();
+            roarClipBank.ResetIndex();
         }
 
         public void SetConfiguration(AudioSource audioSource)

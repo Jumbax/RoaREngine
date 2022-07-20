@@ -115,9 +115,9 @@ namespace RoaREngine
             {
                 if (finalVolume <= 0)
                 {
-                    finalVolume = container.roarConfiguration.finalVolume;
+                    finalVolume = container.roarConfiguration.fadeInFinalVolume;
                 }
-                Fade(fadeTime, container.roarConfiguration.finalVolume, true);
+                Fade(fadeTime, container.roarConfiguration.fadeInFinalVolume, true);
             }
         }
         
