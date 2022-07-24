@@ -28,8 +28,17 @@ namespace RoaREngine
             return container.Name == containerName;
         }
 
-        public void Play(float fadeTime, float finalVolume, bool randomStartTime, float startTime, Transform parent, float minRandomXYZ, float maxRandomXYZ)
+        public void Play(float fadeTime, float finalVolume, bool randomStartTime, float startTime, Transform parent, float minRandomXYZ, float maxRandomXYZ, float delay)
         {
+            StartCoroutine(PlayCoroutine(fadeTime, finalVolume, randomStartTime, startTime, parent, minRandomXYZ, maxRandomXYZ, delay));
+        }
+
+        public IEnumerator PlayCoroutine(float fadeTime, float finalVolume, bool randomStartTime, float startTime, Transform parent, float minRandomXYZ, float maxRandomXYZ, float delay)
+        {
+            if (delay > 0)
+            {
+                yield return new WaitForSeconds(delay);
+            }
             if (finalVolume <= 0f)
             {
                 finalVolume = container.roarConfiguration.fadeInFinalVolume;

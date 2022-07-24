@@ -404,6 +404,8 @@ MonoBehaviour:
   RoarContainerMap:
     roarContainers:
     - {fileID: 11400000, guid: ef809eaca4e959b4da5611a1e8bad1a4, type: 2}
+    - {fileID: 11400000, guid: 9e15ed5b9e88b854fb5676b0073b811b, type: 2}
+    - {fileID: 11400000, guid: d4643b26745be2a4091ed749cdb025ba, type: 2}
 --- !u!4 &859925086
 Transform:
   m_ObjectHideFlags: 0
@@ -450,8 +452,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   manager: {fileID: 859925085}
   CueName: Music
-  FadeInTime: 0
-  FadeOutTime: 0
+  CueName2: Music1
+  CueNames:
+  - Music
+  params1:
+  - 0
+  - 0
+  - 0.3
+  - 0.6
+  params2:
+  - 0.3
+  - 0.6
+  - 0.6
+  - 1
+  params3:
+  - 0.6
+  - 1
+  - 1
+  - 0.6
   hSliderValue: 0
   container: {fileID: 11400000, guid: dda82c49f90cfb0488d85283ef521f9d, type: 2}
 --- !u!4 &1259477260

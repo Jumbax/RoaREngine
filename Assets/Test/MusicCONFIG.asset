@@ -20,7 +20,7 @@ MonoBehaviour:
   startTime: 0
   randomStartTime: 0
   volume: 1
-  finalVolume: 1
+  fadeInFinalVolume: 1
   fadeInTime: 0
   fadeOutTime: 0
   randomMinvolume: 0
@@ -102,3 +102,8 @@ MonoBehaviour:
   reverbZoneLFReference: 250
   reverbZoneDiffusion: 100
   reverbZoneDensity: 100
+  parameters:
+  - 0
+  - 0
+  - 0
+  - 0

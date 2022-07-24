@@ -11,29 +11,42 @@ public class UserCall : MonoBehaviour
     private bool X;
     public RoaRManager manager;
     public string CueName;
-    public float FadeInTime;
-    public float FadeOutTime;
-
-    public float hSliderValue = 0.0F;
+    public string CueName2;
+    public string[] CueNames;
+    public float[] params1;
+    public float[] params2;
+    public float[] params3;
+    public float[][] pparams = new float[3][];
+    public float hSliderValue = 0.0f;
 
     public RoaRContainer container;
-    
+
+    private void Start()
+    {
+        //pparams[0] = params1;
+        //pparams[1] = params2;
+        //pparams[2] = params3;
+        //foreach (var item in CueNames)
+        //{
+        //    manager.Play(item, delay:5f);
+        //}
+        
+    }
+
     private void OnGUI()
     {
-        //hSliderValue = GUI.HorizontalSlider(new Rect(25, 25, 100, 30), hSliderValue, 0f, 1f);
-        //if (manager.SetProperty(CueName) != null)
-        //{
-        //    manager.SetProperty(CueName).volume = hSliderValue;
-        //}
+        hSliderValue = GUI.HorizontalSlider(new Rect(25, 25, 100, 30), hSliderValue, 0f, 1f);
     }
 
     void Update()
     {
+        //manager.CrossFade(CueNames, hSliderValue);
+        //manager.CrossFadeByParameter(CueNames, pparams, hSliderValue);
         if (Input.GetKey(KeyCode.Alpha1))
         {
             if (!Play)
             {
-                manager.Play(CueName);
+                //manager.Play(CueName);
                 Play = true;
             }
         }
@@ -41,7 +54,7 @@ public class UserCall : MonoBehaviour
         {
             if (!Stop)
             {
-                manager.Fade(CueName, 3f, 0f);
+                manager.Stop(CueName);
                 Stop = true;
             }
         }
@@ -49,8 +62,7 @@ public class UserCall : MonoBehaviour
         {
             if (!Pause)
             {
-                //manager.Pause(CueName);
-                manager.Fade(CueName, 3f, 1f);
+                manager.Pause(CueName);
                 Pause = true;
             }
         }

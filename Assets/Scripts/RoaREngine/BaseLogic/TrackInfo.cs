@@ -4,6 +4,10 @@ namespace RoaREngine
 {
     public static class TrackInfo
     {
+        public static float Remap(float value, float min, float max)
+        {
+            return (value - min) * 1f / (max - min);
+        }
         public static double GetTrackDuration(AudioClip clip)
         {
             // Track Duration = samples / freq
