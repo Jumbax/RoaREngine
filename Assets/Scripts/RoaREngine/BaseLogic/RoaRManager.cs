@@ -227,26 +227,26 @@ namespace RoaREngine
             }
         }
 
-        public void CrossFadeByParameter(RoaRCrossFadeDataSO data, float param)
+        public void CrossFadeByParameter(RoaRCrossFadeDataSO crossFadeInput, float param)
         {
-            for (int i = 0; i < data.Names.Length; i++)
+            for (int i = 0; i < crossFadeInput.Names.Length; i++)
             {
-                if (param < data.Parameters[i].parameters[0])
+                if (param < crossFadeInput.Parameters[i].parameters[0])
                 {
                     return;
                 }
-                if (param >= data.Parameters[i].parameters[0] && param <= data.Parameters[i].parameters[1])
+                if (param >= crossFadeInput.Parameters[i].parameters[0] && param <= crossFadeInput.Parameters[i].parameters[1])
                 {
-                    if (data.Parameters[i].parameters[0] == 0 && data.Parameters[i].parameters[1] == 0)
+                    if (crossFadeInput.Parameters[i].parameters[0] == 0 && crossFadeInput.Parameters[i].parameters[1] == 0)
                     {
-                        GetAudioSource(data.Names[i]).volume = 1f;
+                        GetAudioSource(crossFadeInput.Names[i]).volume = 1f;
                         return;
                     }
-                    GetAudioSource(data.Names[i]).volume = TrackInfo.Remap(param, data.Parameters[i].parameters[0], data.Parameters[i].parameters[1]);
+                    GetAudioSource(crossFadeInput.Names[i]).volume = TrackInfo.Remap(param, crossFadeInput.Parameters[i].parameters[0], crossFadeInput.Parameters[i].parameters[1]);
                 }
                 else
                 {
-                    GetAudioSource(data.Names[i]).volume = 1f - TrackInfo.Remap(param, data.Parameters[i].parameters[2], data.Parameters[i].parameters[3]);
+                    GetAudioSource(crossFadeInput.Names[i]).volume = 1f - TrackInfo.Remap(param, crossFadeInput.Parameters[i].parameters[2], crossFadeInput.Parameters[i].parameters[3]);
                 }
             }
 
@@ -272,30 +272,6 @@ namespace RoaREngine
                 else
                 {
                     GetAudioSource(musicsID[i]).volume = 1f - TrackInfo.Remap(param, crossFadeInput[i][2], crossFadeInput[i][3]);
-                }
-            }
-        }
-    
-        public void CrossFadeByParameter(string[] musicsID, float param)
-        {
-            for (int i = 0; i < musicsID.Length; i++)
-            {
-                if (param < GetContainer(musicsID[i]).roarConfiguration.parameters[0])
-                {
-                    return;
-                }
-                if (param >= GetContainer(musicsID[i]).roarConfiguration.parameters[0] && param <= GetContainer(musicsID[i]).roarConfiguration.parameters[1])
-                {
-                    if (GetContainer(musicsID[i]).roarConfiguration.parameters[0] == 0 && GetContainer(musicsID[i]).roarConfiguration.parameters[1] == 0)
-                    {
-                        GetAudioSource(musicsID[i]).volume = 1f;
-                        return;
-                    }
-                    GetAudioSource(musicsID[i]).volume = TrackInfo.Remap(param, GetContainer(musicsID[i]).roarConfiguration.parameters[0], GetContainer(musicsID[i]).roarConfiguration.parameters[1]);
-                }
-                else
-                {
-                    GetAudioSource(musicsID[i]).volume = 1f - TrackInfo.Remap(param, GetContainer(musicsID[i]).roarConfiguration.parameters[2], GetContainer(musicsID[i]).roarConfiguration.parameters[3]);
                 }
             }
         }

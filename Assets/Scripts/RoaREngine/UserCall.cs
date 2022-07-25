@@ -40,13 +40,14 @@ public class UserCall : MonoBehaviour
 
     void Update()
     {
-        //manager.CrossFade(CueNames, hSliderValue);
         //manager.CrossFadeByParameter(CueNames, pparams, hSliderValue);
         if (Input.GetKey(KeyCode.Alpha1))
         {
             if (!Play)
             {
                 //manager.Play(CueName);
+                manager.Play(CueName);
+                manager.Play(CueName2, delay: manager.GetAudioSource(CueName).clip.length);
                 Play = true;
             }
         }

@@ -140,8 +140,7 @@ namespace RoaREngine
         public int reverbZoneLFReference = 250;
         public float reverbZoneDiffusion = 100f;
         public float reverbZoneDensity = 100f;
-        [Header("CrossFadeParameters")]
-        public float[] parameters = new float[4];
+
         public void ApplyTo(AudioSource audioSource)
         {
             audioSource.outputAudioMixerGroup = this.audioMixerGroup;

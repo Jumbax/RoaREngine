@@ -102,8 +102,3 @@ MonoBehaviour:
   reverbZoneLFReference: 250
   reverbZoneDiffusion: 100
   reverbZoneDensity: 100
-  parameters:
-  - 0
-  - 0
-  - 0
-  - 0
