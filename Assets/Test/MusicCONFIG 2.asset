@@ -102,3 +102,7 @@ MonoBehaviour:
   reverbZoneLFReference: 250
   reverbZoneDiffusion: 100
   reverbZoneDensity: 100
+  fadeInParamValueStart: 0.6
+  fadeInParamValueEnd: 1
+  fadeOutParamValueStart: 0.9
+  fadeOutParamValueEnd: 0.6

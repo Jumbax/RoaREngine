@@ -451,27 +451,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   manager: {fileID: 859925085}
-  CueName: Music
-  CueName2: Music1
   CueNames:
   - Music
-  params1:
-  - 0
-  - 0
-  - 0.3
-  - 0.6
-  params2:
-  - 0.3
-  - 0.6
-  - 0.6
-  - 1
-  params3:
-  - 0.6
-  - 1
-  - 1
-  - 0.6
+  - Music1
+  - Music2
   hSliderValue: 0
-  container: {fileID: 11400000, guid: dda82c49f90cfb0488d85283ef521f9d, type: 2}
 --- !u!4 &1259477260
 Transform:
   m_ObjectHideFlags: 0

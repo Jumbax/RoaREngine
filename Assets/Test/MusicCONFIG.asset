@@ -15,7 +15,7 @@ MonoBehaviour:
   parent: {fileID: 0}
   audioMixerGroup: {fileID: 0}
   priority: 128
-  loop: 0
+  loop: 1
   mute: 0
   startTime: 0
   randomStartTime: 0
@@ -102,3 +102,7 @@ MonoBehaviour:
   reverbZoneLFReference: 250
   reverbZoneDiffusion: 100
   reverbZoneDensity: 100
+  fadeInParamValueStart: 0
+  fadeInParamValueEnd: 0
+  fadeOutParamValueStart: 0.3
+  fadeOutParamValueEnd: 0.6

@@ -11,6 +11,7 @@ namespace RoaREngine
         public RoaRClipsBankSO roarClipBank;
         public RoaRConfigurationSO roarConfiguration;
         public UnityAction MeasureEvent;
+        public UnityAction MarkerEvent;
 
         public void ResetBankIndex()
         {

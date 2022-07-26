@@ -65,20 +65,25 @@ namespace RoaREngine
         public bool ignorelistenervolume = false;
         public bool ignorelistenerpause = false;
 
-        [Header("OnGoing")]
+        [Header("On Going")]
         public bool onGoing = false;
         public float minTime = 0f;
         public float maxTime = 0f;
 
-        [Header("RandomPosition")]
+        [Header("Random Position")]
         public float minRandomXYZ = 0f;
         public float maxRandomXYZ = 0f;
 
-        [Header("MeasureEvent")]
+        [Header("Measure Event")]
         public bool measureEvent = false;
         public int bpm = 120;
         public int tempo = 4;
         public int everyNBar = 1;
+
+        [Header("Marker Event")]
+        public bool markerEvent = false;
+        public bool repeat = false;
+        public float markerEventTime = 0f;
 
         [Header("Effects")]
         [Header("Chorus Filter")]
@@ -140,6 +145,11 @@ namespace RoaREngine
         public int reverbZoneLFReference = 250;
         public float reverbZoneDiffusion = 100f;
         public float reverbZoneDensity = 100f;
+        [Header("Cross Fade Input")]
+        public float fadeInParamValueStart = 0f;
+        public float fadeInParamValueEnd = 0f;
+        public float fadeOutParamValueStart = 0f;
+        public float fadeOutParamValueEnd = 0f;
 
         public void ApplyTo(AudioSource audioSource)
         {

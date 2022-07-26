@@ -89,6 +89,10 @@ namespace RoaREngine
             {
                 StartCoroutine(MeasureEventCoroutine());
             }
+            if (container.roarConfiguration.markerEvent)
+            {
+                StartCoroutine(MarkerEventCoroutine());
+            }
             if (container.roarConfiguration.onGoing)
             {
                 StartCoroutine(PlayOnGoing());
@@ -391,6 +395,17 @@ namespace RoaREngine
             yield return new WaitForSeconds(barNumber);
             container.MeasureEvent?.Invoke();
             StartCoroutine(MeasureEventCoroutine());
+        }
+
+        private IEnumerator MarkerEventCoroutine()
+        {
+            float eventTime = container.roarConfiguration.markerEventTime;
+            yield return new WaitForSeconds(eventTime);
+            container.MarkerEvent?.Invoke();
+            if (container.roarConfiguration.repeat)
+            {
+                StartCoroutine(MarkerEventCoroutine());
+            }
         }
 
         private IEnumerator SyncMeasureEvent()
