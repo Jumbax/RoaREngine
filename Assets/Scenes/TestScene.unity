@@ -401,11 +401,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ddad0b5ef0d372f49b234f285469fa62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RoarContainerMap:
-    roarContainers:
-    - {fileID: 11400000, guid: ef809eaca4e959b4da5611a1e8bad1a4, type: 2}
-    - {fileID: 11400000, guid: 9e15ed5b9e88b854fb5676b0073b811b, type: 2}
-    - {fileID: 11400000, guid: d4643b26745be2a4091ed749cdb025ba, type: 2}
+  roarContainers:
+  - {fileID: 11400000, guid: 9e15ed5b9e88b854fb5676b0073b811b, type: 2}
 --- !u!4 &859925086
 Transform:
   m_ObjectHideFlags: 0

@@ -34,7 +34,7 @@ namespace RoaREngine
         private bool loop = false;
         private bool mute = false;
         private float volume = 1f;
-        private float fadeInFinalVolume = 1f;
+        private float fadeInVolume = 0f;
         private float fadeInTime = 0f;
         private float fadeOutTime = 0f;
         private float randomMinVolume = 0f;
@@ -67,6 +67,10 @@ namespace RoaREngine
         private int bpm = 120;
         private int tempo = 4;
         private int everyNBar = 1;
+        private bool markerEvent = false;
+        private bool hasMarkerEvent = false;
+        private bool repeat;
+        public float markerEventTime = 0f;
         private bool addEffect = false;
         private AnimBool chorus = new AnimBool(false);
         private float chorusDryMix = 0.5f;
@@ -120,6 +124,12 @@ namespace RoaREngine
         private int reverbZoneLFReference = 250;
         private float reverbZoneDiffusion = 100f;
         private float reverbZoneDensity = 100f;
+        private bool isInACrossFade = false;
+        private bool crossFade = false;
+        private float fadeInParamValueStart = 0f;
+        private float fadeInParamValueEnd = 0f;
+        private float fadeOutParamValueStart = 0f;
+        private float fadeOutParamValueEnd = 0f;
 
         private void Awake()
         {
@@ -151,22 +161,6 @@ namespace RoaREngine
 
         private void OnGUI()
         {
-            if (GUILayout.Button("Play"))
-            {
-                PlayInEditor();
-            }
-            if (GUILayout.Button("Stop"))
-            {
-                StopInEditor();
-            }
-            if (GUILayout.Button("Pause"))
-            {
-                PauseInEditor();
-            }
-            if (GUILayout.Button("Resume"))
-            {
-                ResumeInEditor();
-            }
             if (containerIndex != containerOldIndex)
             {
                 if (containerIndex == 0)
@@ -236,7 +230,22 @@ namespace RoaREngine
                 }
             }
             GUILayout.EndScrollView();
-            
+            if (GUILayout.Button("Play"))
+            {
+                PlayInEditor();
+            }
+            if (GUILayout.Button("Stop"))
+            {
+                StopInEditor();
+            }
+            if (GUILayout.Button("Pause"))
+            {
+                PauseInEditor();
+            }
+            if (GUILayout.Button("Resume"))
+            {
+                ResumeInEditor();
+            }
             ControlAudioSource();
         }
 
@@ -303,7 +312,7 @@ namespace RoaREngine
             loop = EditorGUILayout.Toggle("Loop", loop);
             mute = EditorGUILayout.Toggle("Mute", mute);
             volume = EditorGUILayout.Slider("Volume", volume, 0f, 1f);
-            fadeInFinalVolume = EditorGUILayout.Slider("FadeIn Final Volume", fadeInFinalVolume, 0f, 1f);
+            fadeInVolume = EditorGUILayout.Slider("FadeIn Volume", fadeInVolume, 0f, 1f);
             using (new GUILayout.HorizontalScope())
             {
                 GUILayout.Label("FadeIn Time", GUILayout.Width(145));
@@ -379,6 +388,50 @@ namespace RoaREngine
                 {
                     GUILayout.Label("EveryNBar", GUILayout.Width(145));
                     everyNBar = EditorGUILayout.IntField(everyNBar, GUILayout.Width(25));
+                }
+                GUI.enabled = true;
+            }
+            EditorGUILayout.EndFoldoutHeaderGroup();
+
+            hasMarkerEvent = EditorGUILayout.BeginFoldoutHeaderGroup(hasMarkerEvent, "MarkerEvent");
+            if (hasMarkerEvent)
+            {
+                markerEvent = EditorGUILayout.Toggle("MarkerEvent", markerEvent);
+                GUI.enabled = markerEvent;
+                repeat = EditorGUILayout.Toggle("Repeat", repeat);
+                using (new GUILayout.HorizontalScope())
+                {
+                    GUILayout.Label("Marker Event Time", GUILayout.Width(145));
+                    markerEventTime = EditorGUILayout.FloatField(markerEventTime, GUILayout.Width(25));
+                }
+                GUI.enabled = true;
+            }
+            EditorGUILayout.EndFoldoutHeaderGroup();
+
+            isInACrossFade = EditorGUILayout.BeginFoldoutHeaderGroup(isInACrossFade, "Cross Fade");
+            if (isInACrossFade)
+            {
+                crossFade = EditorGUILayout.Toggle("Cross Fade", crossFade);
+                GUI.enabled = crossFade;
+                using (new GUILayout.HorizontalScope())
+                {
+                    GUILayout.Label("FadeIn Param Value Start", GUILayout.Width(145));
+                    fadeInParamValueStart = EditorGUILayout.FloatField(fadeInParamValueStart, GUILayout.Width(25));
+                }
+                using (new GUILayout.HorizontalScope())
+                {
+                    GUILayout.Label("FadeIn Param Value End", GUILayout.Width(145));
+                    fadeInParamValueEnd = EditorGUILayout.FloatField(fadeInParamValueEnd, GUILayout.Width(25));
+                }
+                using (new GUILayout.HorizontalScope())
+                {
+                    GUILayout.Label("FadeOut Param Value Start", GUILayout.Width(145));
+                    fadeOutParamValueStart = EditorGUILayout.FloatField(fadeOutParamValueStart, GUILayout.Width(25));
+                }
+                using (new GUILayout.HorizontalScope())
+                {
+                    GUILayout.Label("FadeOut Param Value Start", GUILayout.Width(145));
+                    fadeOutParamValueStart = EditorGUILayout.FloatField(fadeOutParamValueStart, GUILayout.Width(25));
                 }
                 GUI.enabled = true;
             }
@@ -657,7 +710,7 @@ namespace RoaREngine
             config.bypassreverbzones = bypassreverbzones;
             config.priority = priority;
             config.volume = volume;
-            config.fadeInFinalVolume = fadeInFinalVolume;
+            config.fadeInVolume = fadeInVolume;
             config.fadeInTime = fadeInTime;
             config.fadeOutTime = fadeOutTime;
             config.randomMinvolume = randomMinVolume;
@@ -681,9 +734,17 @@ namespace RoaREngine
             config.minRandomXYZ = minRandomXYZ;
             config.maxRandomXYZ = maxRandomXYZ;
             config.measureEvent = measureEvent;
+            config.crossFade = crossFade;
+            config.fadeInParamValueStart = fadeInParamValueStart;
+            config.fadeInParamValueEnd = fadeInParamValueEnd;
+            config.fadeOutParamValueStart = fadeOutParamValueStart;
+            config.fadeOutParamValueEnd = fadeOutParamValueEnd;
             config.bpm = bpm;
             config.tempo = tempo;
             config.everyNBar = everyNBar;
+            config.markerEvent = markerEvent;
+            config.repeat = repeat;
+            config.markerEventTime = markerEventTime;
             config.chorusFilter = chorus.target;
             config.chorusDryMix = chorusDryMix;
             config.chorusWetMix1 = chorusWetMix1;
@@ -821,7 +882,7 @@ namespace RoaREngine
             loop = false;
             mute = false;
             volume = 1f;
-            fadeInFinalVolume = 1f;
+            fadeInVolume = 0f;
             fadeInTime = 0f;
             fadeOutTime = 0f;
             randomMinVolume = 0f;
@@ -851,9 +912,18 @@ namespace RoaREngine
             maxRandomXYZ = 0f;
             measureEvent = false;
             hasMeasureEvent = false;
+            hasMarkerEvent = false;
+            repeat = false;
+            markerEventTime = 0f;
             bpm = 120;
             tempo = 4;
             everyNBar = 1;
+            isInACrossFade = false;
+            crossFade = false;
+            fadeInParamValueStart = 0f;
+            fadeInParamValueEnd = 0f;
+            fadeOutParamValueStart = 0f;
+            fadeOutParamValueEnd = 0f;
             addEffect = false;
             chorus = new AnimBool(false);
             distortion = new AnimBool(false);
@@ -933,7 +1003,7 @@ namespace RoaREngine
                 loop = config.loop;
                 mute = config.mute;
                 volume = config.volume;
-                fadeInFinalVolume = config.fadeInFinalVolume;
+                fadeInVolume = config.fadeInVolume;
                 fadeInTime = config.fadeInTime;
                 fadeOutTime = config.fadeOutTime;
                 randomMinVolume = config.randomMinvolume;
@@ -963,6 +1033,14 @@ namespace RoaREngine
                 bpm = config.bpm;
                 tempo = config.tempo;
                 everyNBar = config.everyNBar;
+                markerEvent = config.markerEvent;
+                repeat = config.repeat;
+                markerEventTime = config.markerEventTime;
+                crossFade = config.crossFade;
+                fadeInParamValueStart = config.fadeInParamValueStart;
+                fadeInParamValueEnd = config.fadeInParamValueEnd;
+                fadeOutParamValueStart = config.fadeOutParamValueStart;
+                fadeOutParamValueEnd = config.fadeOutParamValueEnd;
                 chorus.target = config.chorusFilter;
                 chorusDryMix = config.chorusDryMix;
                 chorusWetMix1 = config.chorusWetMix1;

@@ -28,20 +28,24 @@ namespace RoaREngine
             return container.Name == containerName;
         }
 
-        public void Play(float fadeTime, float finalVolume, bool randomStartTime, float startTime, Transform parent, float minRandomXYZ, float maxRandomXYZ, float delay)
+        public void Play(float fadeTime, float volume, float fadeInVolume,bool randomStartTime, float startTime, Transform parent, float minRandomXYZ, float maxRandomXYZ, float delay)
         {
-            StartCoroutine(PlayCoroutine(fadeTime, finalVolume, randomStartTime, startTime, parent, minRandomXYZ, maxRandomXYZ, delay));
+            StartCoroutine(PlayCoroutine(fadeTime, volume, fadeInVolume,randomStartTime, startTime, parent, minRandomXYZ, maxRandomXYZ, delay));
         }
 
-        public IEnumerator PlayCoroutine(float fadeTime, float finalVolume, bool randomStartTime, float startTime, Transform parent, float minRandomXYZ, float maxRandomXYZ, float delay)
+        public IEnumerator PlayCoroutine(float fadeTime, float volume, float fadeInVolume, bool randomStartTime, float startTime, Transform parent, float minRandomXYZ, float maxRandomXYZ, float delay)
         {
             if (delay > 0)
             {
                 yield return new WaitForSeconds(delay);
             }
-            if (finalVolume <= 0f)
+            if (volume <= 0f)
             {
-                finalVolume = container.roarConfiguration.fadeInFinalVolume;
+                volume = container.roarConfiguration.volume;
+            }
+            if (fadeInVolume <= 0f)
+            {
+                fadeInVolume = container.roarConfiguration.fadeInVolume;
             }
             if (fadeTime <= 0)
             {
@@ -49,7 +53,7 @@ namespace RoaREngine
             }
             if (fadeTime > 0)
             {
-                Fade(fadeTime, finalVolume);
+                Fade(fadeTime, fadeInVolume);
             }
             if (!randomStartTime)
             {
@@ -166,7 +170,7 @@ namespace RoaREngine
                 {
                     finalVolume = container.roarConfiguration.volume;
                 }
-                Fade(fadeTime, container.roarConfiguration.fadeInFinalVolume, true);
+                Fade(fadeTime, container.roarConfiguration.volume, true);
             }
         }
 

@@ -116,7 +116,7 @@ namespace RoaREngine
             roarEmitter.GetComponent<RoaREmitter>().SetContainer(containerDict[musicID]);
         }
 
-        public void Play(string musicID, float fadeTime = 0f, float finalVolume = 0f, bool randomStartTime = false, float startTime = 0f, Transform parent = null, float minRandomXYZ = 0f, float maxRandomXYZ = 0f, float delay = 0f)
+        public void Play(string musicID, float fadeTime = 0f, float volume = 0f, float fadeInVolume = 0f,bool randomStartTime = false, float startTime = 0f, Transform parent = null, float minRandomXYZ = 0f, float maxRandomXYZ = 0f, float delay = 0f)
         {
             if (MusicIDIsValid(musicID))
             {
@@ -130,7 +130,7 @@ namespace RoaREngine
                 {
                     SetContainer(musicID, roarEmitter);
                     RoaREmitter emitterComponent = roarEmitter.GetComponent<RoaREmitter>();
-                    emitterComponent.Play(fadeTime, finalVolume, randomStartTime, startTime, parent, minRandomXYZ, maxRandomXYZ, delay);
+                    emitterComponent.Play(fadeTime, volume, fadeInVolume,randomStartTime, startTime, parent, minRandomXYZ, maxRandomXYZ, delay);
                 }
             }
         }

@@ -15,12 +15,11 @@ MonoBehaviour:
   parent: {fileID: 0}
   audioMixerGroup: {fileID: 0}
   priority: 128
-  loop: 1
+  loop: 0
   mute: 0
   startTime: 0
   randomStartTime: 0
-  volume: 1
-  fadeInFinalVolume: 1
+  volume: 0
   fadeInTime: 0
   fadeOutTime: 0
   randomMinvolume: 0
@@ -50,6 +49,9 @@ MonoBehaviour:
   bpm: 120
   tempo: 4
   everyNBar: 1
+  markerEvent: 1
+  repeat: 1
+  markerEventTime: 3
   chorusFilter: 0
   chorusDryMix: 1
   chorusWetMix1: 1
@@ -102,6 +104,7 @@ MonoBehaviour:
   reverbZoneLFReference: 250
   reverbZoneDiffusion: 100
   reverbZoneDensity: 100
+  crossFade: 1
   fadeInParamValueStart: 0
   fadeInParamValueEnd: 0
   fadeOutParamValueStart: 0.3

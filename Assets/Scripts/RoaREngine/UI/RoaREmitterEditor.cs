@@ -7,15 +7,10 @@ namespace RoaREngine
     [ExecuteInEditMode]
     public class RoaREmitterEditor : MonoBehaviour
     {
+        private Transform initialParent;
         private AudioSource audioSource;
         private RoaRContainer container;
         private bool paused;
-        public float fadeTime;
-        public float finalVolume;
-        public bool randomStartTime;
-        public float startTime;
-        public Transform parent;
-        public float minRandomXYZ, maxRandomXYZ;
 
         private void Awake()
         {
@@ -33,58 +28,53 @@ namespace RoaREngine
         {
             if (container.roarConfiguration.fadeInTime > 0)
             {
-                Fade(container.roarConfiguration.fadeInTime, finalVolume);
+                Fade(container.roarConfiguration.fadeInTime, container.roarConfiguration.fadeInVolume);
             }
-            if (randomStartTime)
+            if (container.roarConfiguration.randomStartTime)
             {
                 audioSource.time = Random.Range(0f, audioSource.clip.length);
             }
-            if (startTime > 0 && !randomStartTime)
+            if (container.roarConfiguration.startTime > 0 && !container.roarConfiguration.randomStartTime)
             {
-                startTime = Mathf.Clamp(startTime, 0f, audioSource.clip.length - 0.01f);
-                audioSource.time = startTime;
+                container.roarConfiguration.startTime = Mathf.Clamp(container.roarConfiguration.startTime, 0f, audioSource.clip.length - 0.01f);
+                audioSource.time = container.roarConfiguration.startTime;
             }
-            if (parent != null)
+            if (initialParent != null)
             {
-                SetParent(parent);
+                SetParent(initialParent);
             }
-            if (minRandomXYZ != 0 || maxRandomXYZ != 0)
+            if (container.roarConfiguration.minRandomXYZ != 0 || container.roarConfiguration.maxRandomXYZ != 0)
             {
-                GenerateRandomPosition(minRandomXYZ, maxRandomXYZ);
+                GenerateRandomPosition(container.roarConfiguration.minRandomXYZ, container.roarConfiguration.maxRandomXYZ);
             }
-            //if (container.roarConfiguration.measureEvent)
-            //{
-            //    MeasureEvent();
-            //}
-            //if (container.roarConfiguration.onGoing)
-            //{
-            //    StartCoroutine(PlayOnGoing());
-            //}
-            //AddEffect();
+            if (container.roarConfiguration.onGoing)
+            {
+                StartCoroutine(PlayOnGoing());
+            }
+            if (!audioSource.loop && !container.roarConfiguration.onGoing)
+            {
+                StartCoroutine(AudioClipFinishPlayingCoroutine());
+            }
+            AddEffect();
             audioSource.Play();
         }
 
         public void Stop()
         {
-            if (fadeTime <= 0)
-            {
-                fadeTime = container.roarConfiguration.fadeOutTime;
-            }
-            if (fadeTime <= 0)
+            if (container.roarConfiguration.fadeOutTime <= 0)
             {
                 audioSource.Stop();
-
                 DestroyImmediate(gameObject);
             }
             else
             {
-                Fade(fadeTime, 0f, false, true);
+                Fade(container.roarConfiguration.fadeOutTime, 0f, false, true);
             }
         }
 
         public void Pause()
         {
-            if (fadeTime <= 0)
+            if (container.roarConfiguration.fadeOutTime <= 0)
             {
                 StopAllCoroutines();
                 paused = true;
@@ -92,20 +82,16 @@ namespace RoaREngine
             }
             else
             {
-                Fade(fadeTime, 0f, false, false, true);
+                Fade(container.roarConfiguration.fadeOutTime, 0f, false, false, true);
             }
         }
 
         public void Resume()
         {
-            if (fadeTime <= 0)
+            if (container.roarConfiguration.fadeOutTime <= 0)
             {
                 paused = false;
                 audioSource.UnPause();
-                if (container.roarConfiguration.measureEvent)
-                {
-                    StartCoroutine(SyncMeasureEvent());
-                }
                 if (container.roarConfiguration.onGoing)
                 {
                     StartCoroutine(PlayOnGoing());
@@ -113,11 +99,7 @@ namespace RoaREngine
             }
             else
             {
-                if (finalVolume <= 0)
-                {
-                    finalVolume = container.roarConfiguration.fadeInFinalVolume;
-                }
-                Fade(fadeTime, container.roarConfiguration.fadeInFinalVolume, true);
+                Fade(container.roarConfiguration.fadeOutTime, container.roarConfiguration.volume, true);
             }
         }
         
@@ -135,7 +117,9 @@ namespace RoaREngine
             transform.position = parent.position;
             transform.position = Vector3.zero;
         }
-
+        
+        public void ResetParent() => transform.parent = initialParent;
+        
         public void GenerateRandomPosition(float minRandomXYZ, float maxRandomXYZ)
         {
             float posX = Random.Range(minRandomXYZ, maxRandomXYZ);
@@ -143,8 +127,6 @@ namespace RoaREngine
             float posZ = Random.Range(minRandomXYZ, maxRandomXYZ);
             transform.position = new Vector3(posX, posY, posZ);
         }
-
-        private void MeasureEvent() => StartCoroutine(MeasureEventCoroutine());
 
         private void AddEffect()
         {
@@ -233,10 +215,6 @@ namespace RoaREngine
             {
                 paused = false;
                 audioSource.UnPause();
-                if (container.roarConfiguration.measureEvent)
-                {
-                    StartCoroutine(SyncMeasureEvent());
-                }
                 if (container.roarConfiguration.onGoing)
                 {
                     StartCoroutine(PlayOnGoing());
@@ -265,6 +243,14 @@ namespace RoaREngine
                 audioSource.Pause();
             }
         }
+        
+        private IEnumerator AudioClipFinishPlayingCoroutine()
+        {
+            float clipLengthRemaining = audioSource.clip.length - audioSource.time;
+            yield return new WaitForSeconds(clipLengthRemaining);
+            audioSource.Stop();
+            DestroyImmediate(gameObject);
+        }
 
         private IEnumerator PlayOnGoing()
         {
@@ -288,20 +274,7 @@ namespace RoaREngine
             }
         }
 
-        private IEnumerator MeasureEventCoroutine()
-        {
-            float seconds = (float)TrackInfo.GetTrackBarLength(container.roarConfiguration.bpm, container.roarConfiguration.tempo);
-            float barNumber = seconds * container.roarConfiguration.everyNBar;
-            yield return new WaitForSeconds(barNumber);
-            container.MeasureEvent?.Invoke();
-            StartCoroutine(MeasureEventCoroutine());
-        }
-
-        private IEnumerator SyncMeasureEvent()
-        {
-            yield return new WaitForSeconds((float)TrackInfo.GetTimeBeforeNextBar(audioSource, container.roarConfiguration.bpm, container.roarConfiguration.tempo));
-            StartCoroutine(MeasureEventCoroutine());
-        }
+        
 
         private void Update()
         {

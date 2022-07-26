@@ -24,7 +24,7 @@ public class UserCall : MonoBehaviour
         {
             if (!Play)
             {
-                manager.Play(CueNames[0]);
+                manager.Play(CueNames[1]);
                 Play = true;
             }
         }
@@ -32,7 +32,7 @@ public class UserCall : MonoBehaviour
         {
             if (!Stop)
             {
-                manager.Stop(CueNames[0]);
+                manager.Stop(CueNames[1]);
                 Stop = true;
             }
         }

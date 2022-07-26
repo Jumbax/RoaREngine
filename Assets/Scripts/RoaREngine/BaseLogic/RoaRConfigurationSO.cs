@@ -39,7 +39,7 @@ namespace RoaREngine
         public float startTime = 0f;
         public bool randomStartTime = false;
         [Range(0f, 1f)] public float volume = 1f;
-        [Range(0f, 1f)] public float fadeInFinalVolume = 1f; //Manca nella window
+        [Range(0f, 1f)] public float fadeInVolume = 1f;
         public float fadeInTime = 0f;
         public float fadeOutTime = 0f;
         [Range(0f, 1f)] public float randomMinvolume = 0f;
@@ -146,6 +146,7 @@ namespace RoaREngine
         public float reverbZoneDiffusion = 100f;
         public float reverbZoneDensity = 100f;
         [Header("Cross Fade Input")]
+        public bool crossFade = false;
         public float fadeInParamValueStart = 0f;
         public float fadeInParamValueEnd = 0f;
         public float fadeOutParamValueStart = 0f;
