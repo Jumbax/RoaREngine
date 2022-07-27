@@ -20,6 +20,7 @@ MonoBehaviour:
   startTime: 0
   randomStartTime: 0
   volume: 0
+  fadeInVolume: 1
   fadeInTime: 0
   fadeOutTime: 0
   randomMinvolume: 0

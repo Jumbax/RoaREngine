@@ -120,6 +120,10 @@ namespace RoaREngine
         {
             if (MusicIDIsValid(musicID))
             {
+                if (GetContainer(musicID).roarClipBank.GetClip() == null)
+                {
+                    return;
+                }
                 GameObject roarEmitter = GetActiveEmitterObject(musicID);
                 if (roarEmitter != null)
                 {

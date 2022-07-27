@@ -39,6 +39,10 @@ namespace RoaREngine
             {
                 yield return new WaitForSeconds(delay);
             }
+            if (audioSource.clip == null)
+            {
+                yield return null;
+            }
             if (volume <= 0f)
             {
                 volume = container.roarConfiguration.volume;
