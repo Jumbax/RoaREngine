@@ -125,7 +125,6 @@ namespace RoaREngine
         private float reverbZoneDiffusion = 100f;
         private float reverbZoneDensity = 100f;
         private bool isInACrossFade = false;
-        private bool crossFade = false;
         private float fadeInParamValueStart = 0f;
         private float fadeInParamValueEnd = 0f;
         private float fadeOutParamValueStart = 0f;
@@ -411,8 +410,6 @@ namespace RoaREngine
             isInACrossFade = EditorGUILayout.BeginFoldoutHeaderGroup(isInACrossFade, "Cross Fade");
             if (isInACrossFade)
             {
-                crossFade = EditorGUILayout.Toggle("Cross Fade", crossFade);
-                GUI.enabled = crossFade;
                 using (new GUILayout.HorizontalScope())
                 {
                     GUILayout.Label("FadeIn Param Value Start", GUILayout.Width(145));
@@ -433,7 +430,6 @@ namespace RoaREngine
                     GUILayout.Label("FadeOut Param Value Start", GUILayout.Width(145));
                     fadeOutParamValueStart = EditorGUILayout.FloatField(fadeOutParamValueStart, GUILayout.Width(25));
                 }
-                GUI.enabled = true;
             }
             EditorGUILayout.EndFoldoutHeaderGroup();
 
@@ -734,7 +730,6 @@ namespace RoaREngine
             config.minRandomXYZ = minRandomXYZ;
             config.maxRandomXYZ = maxRandomXYZ;
             config.measureEvent = measureEvent;
-            config.crossFade = crossFade;
             config.fadeInParamValueStart = fadeInParamValueStart;
             config.fadeInParamValueEnd = fadeInParamValueEnd;
             config.fadeOutParamValueStart = fadeOutParamValueStart;
@@ -919,7 +914,6 @@ namespace RoaREngine
             tempo = 4;
             everyNBar = 1;
             isInACrossFade = false;
-            crossFade = false;
             fadeInParamValueStart = 0f;
             fadeInParamValueEnd = 0f;
             fadeOutParamValueStart = 0f;
@@ -1036,7 +1030,6 @@ namespace RoaREngine
                 markerEvent = config.markerEvent;
                 repeat = config.repeat;
                 markerEventTime = config.markerEventTime;
-                crossFade = config.crossFade;
                 fadeInParamValueStart = config.fadeInParamValueStart;
                 fadeInParamValueEnd = config.fadeInParamValueEnd;
                 fadeOutParamValueStart = config.fadeOutParamValueStart;

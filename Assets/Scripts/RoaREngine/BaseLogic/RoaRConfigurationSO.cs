@@ -146,7 +146,6 @@ namespace RoaREngine
         public float reverbZoneDiffusion = 100f;
         public float reverbZoneDensity = 100f;
         [Header("Cross Fade Input")]
-        public bool crossFade = false;
         public float fadeInParamValueStart = 0f;
         public float fadeInParamValueEnd = 0f;
         public float fadeOutParamValueStart = 0f;

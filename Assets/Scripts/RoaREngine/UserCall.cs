@@ -18,13 +18,18 @@ public class UserCall : MonoBehaviour
         hSliderValue = GUI.HorizontalSlider(new Rect(25, 25, 100, 30), hSliderValue, 0f, 1f);
     }
 
+    private void Start()
+    {
+        manager.Play(CueNames[0]);
+        manager.Play(CueNames[1], delay: manager.GetAudioSource(CueNames[0]).clip.length);
+    }
+
     void Update()
     {
         if (Input.GetKey(KeyCode.Alpha1))
         {
             if (!Play)
             {
-                manager.Play(CueNames[0]);
                 Play = true;
             }
         }

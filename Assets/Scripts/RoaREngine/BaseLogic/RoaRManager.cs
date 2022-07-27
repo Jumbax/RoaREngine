@@ -116,7 +116,7 @@ namespace RoaREngine
             roarEmitter.GetComponent<RoaREmitter>().SetContainer(containerDict[musicID]);
         }
 
-        public void Play(string musicID, float fadeTime = 0f, float volume = 0f, float fadeInVolume = 0f,bool randomStartTime = false, float startTime = 0f, Transform parent = null, float minRandomXYZ = 0f, float maxRandomXYZ = 0f, float delay = 0f)
+        public void Play(string musicID, bool esclusive = false, float fadeTime = 0f, float volume = 0f, float fadeInVolume = 0f,bool randomStartTime = false, float startTime = 0f, Transform parent = null, float minRandomXYZ = 0f, float maxRandomXYZ = 0f, float delay = 0f)
         {
             if (MusicIDIsValid(musicID))
             {
@@ -124,10 +124,14 @@ namespace RoaREngine
                 {
                     return;
                 }
-                GameObject roarEmitter = GetActiveEmitterObject(musicID);
-                if (roarEmitter != null)
+                GameObject roarEmitter;
+                if (esclusive)
                 {
-                    Stop(musicID);
+                    roarEmitter = GetActiveEmitterObject(musicID);
+                    if (roarEmitter != null)
+                    {
+                        Stop(musicID);
+                    }
                 }
                 roarEmitter = roarPooler.Get();
                 if (roarEmitter != null)
@@ -165,7 +169,7 @@ namespace RoaREngine
             }
         }
 
-        public void Resume(string musicID, float fadeTime = 0f, float finalVolume = 0f)
+        public void Resume(string musicID, float fadeTime = 0f)
         {
             if (MusicIDIsValid(musicID))
             {
@@ -173,7 +177,7 @@ namespace RoaREngine
                 if (roarEmitter != null)
                 {
                     RoaREmitter emitterComponent = roarEmitter.GetComponent<RoaREmitter>();
-                    emitterComponent.Resume(fadeTime, finalVolume);
+                    emitterComponent.Resume(fadeTime);
                 }
             }
         }

@@ -149,7 +149,7 @@ namespace RoaREngine
             }
         }
 
-        public void Resume(float fadeTime, float finalVolume)
+        public void Resume(float fadeTime)
         {
             if (fadeTime <= 0)
             {
@@ -170,10 +170,6 @@ namespace RoaREngine
             }
             else
             {
-                if (finalVolume <= 0)
-                {
-                    finalVolume = container.roarConfiguration.volume;
-                }
                 Fade(fadeTime, container.roarConfiguration.volume, true);
             }
         }
@@ -182,10 +178,10 @@ namespace RoaREngine
 
         public RoaRContainer GetContainer() => container;
 
-        public void Fade(float fadeTime, float volume, bool resume = false, bool stop = false, bool pause = false)
+        public void Fade(float fadeTime, float volume, bool resume = false, bool stop = false, bool paused = false)
         {
             StopAllCoroutines();
-            StartCoroutine(FadeCoroutine(fadeTime, volume, resume, stop, pause));
+            StartCoroutine(FadeCoroutine(fadeTime, volume, resume, stop, paused));
         }
 
         public void SetParent(Transform parent)
@@ -317,7 +313,7 @@ namespace RoaREngine
             }
         }
 
-        private IEnumerator FadeCoroutine(float fadeTime, float volume, bool resume = false, bool stop = false, bool pause = false)
+        private IEnumerator FadeCoroutine(float fadeTime, float volume, bool resume = false, bool stop = false, bool paused = false)
         {
             float time = 0f;
             float startVolume = audioSource.volume;
@@ -357,7 +353,7 @@ namespace RoaREngine
                 ResetParent();
             }
 
-            if (pause)
+            if (paused)
             {
                 StopAllCoroutines();
                 paused = true;

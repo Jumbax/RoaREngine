@@ -10,7 +10,6 @@ namespace RoaREngine
         private Transform initialParent;
         private AudioSource audioSource;
         private RoaRContainer container;
-        private bool paused;
 
         private void Awake()
         {
@@ -77,7 +76,6 @@ namespace RoaREngine
             if (container.roarConfiguration.fadeOutTime <= 0)
             {
                 StopAllCoroutines();
-                paused = true;
                 audioSource.Pause();
             }
             else
@@ -90,7 +88,6 @@ namespace RoaREngine
         {
             if (container.roarConfiguration.fadeOutTime <= 0)
             {
-                paused = false;
                 audioSource.UnPause();
                 if (container.roarConfiguration.onGoing)
                 {
@@ -103,12 +100,10 @@ namespace RoaREngine
             }
         }
         
-        public AudioSource GetAudioSource() => audioSource;
-        
-        public void Fade(float fadeTime, float volume, bool resume = false, bool stop = false, bool pause = false)
+        public void Fade(float fadeTime, float volume, bool resume = false, bool stop = false, bool paused = false)
         {
             StopAllCoroutines();
-            StartCoroutine(FadeCoroutine(fadeTime, volume, resume, stop, pause));
+            StartCoroutine(FadeCoroutine(fadeTime, volume, resume, stop, paused));
         }
 
         public void SetParent(Transform parent)
@@ -205,7 +200,7 @@ namespace RoaREngine
             }
         }
 
-        private IEnumerator FadeCoroutine(float fadeTime, float volume, bool resume = false, bool stop = false, bool pause = false)
+        private IEnumerator FadeCoroutine(float fadeTime, float volume, bool resume = false, bool stop = false, bool paused = false)
         {
             float time = 0f;
             float startVolume = audioSource.volume;
@@ -236,7 +231,7 @@ namespace RoaREngine
                 DestroyImmediate(gameObject);
             }
 
-            if (pause)
+            if (paused)
             {
                 StopAllCoroutines();
                 paused = true;
