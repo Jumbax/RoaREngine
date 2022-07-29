@@ -20,8 +20,36 @@ public class UserCall : MonoBehaviour
 
     private void Start()
     {
-        manager.Play(CueNames[0]);
-        manager.Play(CueNames[1], delay: manager.GetAudioSource(CueNames[0]).clip.length);
+        manager.AddPlayEvent(CueNames[0], PlayEvent);
+        manager.AddPauseEvent(CueNames[0], PauseEvent);
+        manager.AddResumeEvent(CueNames[0], ResumeEvent);
+        manager.AddStopEvent(CueNames[0], StopEvent);
+        manager.AddFinishedEvent(CueNames[0], FinishEvent);
+    }
+
+    void FinishEvent()
+    {
+        Debug.Log("Finish  Event");
+    }
+
+    void PlayEvent()
+    {
+        Debug.Log("Play Event");
+    }
+
+    void PauseEvent()
+    {
+        Debug.Log("Pause Event");
+    }
+
+    void ResumeEvent()
+    {
+        Debug.Log("Resume Event");
+    }
+    
+    void StopEvent()
+    {
+        Debug.Log("Stop Event");
     }
 
     void Update()
@@ -30,6 +58,7 @@ public class UserCall : MonoBehaviour
         {
             if (!Play)
             {
+                manager.Play(CueNames[0]);
                 Play = true;
             }
         }
@@ -37,7 +66,7 @@ public class UserCall : MonoBehaviour
         {
             if (!Stop)
             {
-                manager.Stop(CueNames[1]);
+                manager.Stop(CueNames[0]);
                 Stop = true;
             }
         }

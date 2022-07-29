@@ -19,10 +19,12 @@ MonoBehaviour:
   mute: 0
   startTime: 0
   randomStartTime: 0
-  volume: 0
+  volume: 1
   fadeInVolume: 1
   fadeInTime: 0
   fadeOutTime: 0
+  delay: 0
+  esclusive: 0
   randomMinvolume: 0
   randomMaxvolume: 0
   pitch: 1
@@ -41,18 +43,23 @@ MonoBehaviour:
   bypassreverbzones: 0
   ignorelistenervolume: 0
   ignorelistenerpause: 0
-  onGoing: 0
+  onGoing: 1
   minTime: 0
   maxTime: 0
   minRandomXYZ: 0
   maxRandomXYZ: 0
+  playEvent: 0
+  pauseEvent: 0
+  stopEvent: 0
+  resumeEvent: 0
+  finishedEvent: 1
   measureEvent: 0
   bpm: 120
   tempo: 4
   everyNBar: 1
-  markerEvent: 1
-  repeat: 1
-  markerEventTime: 3
+  markerEvent: 0
+  repeat: 0
+  markerEventTime: 0
   chorusFilter: 0
   chorusDryMix: 1
   chorusWetMix1: 1
@@ -105,7 +112,6 @@ MonoBehaviour:
   reverbZoneLFReference: 250
   reverbZoneDiffusion: 100
   reverbZoneDensity: 100
-  crossFade: 1
   fadeInParamValueStart: 0
   fadeInParamValueEnd: 0
   fadeOutParamValueStart: 0.3

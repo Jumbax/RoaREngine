@@ -33,10 +33,12 @@ namespace RoaREngine
         private bool randomStartTime = false;
         private bool loop = false;
         private bool mute = false;
+        private bool esclusive = false;
         private float volume = 1f;
         private float fadeInVolume = 0f;
         private float fadeInTime = 0f;
         private float fadeOutTime = 0f;
+        private float delay = 0f;
         private float randomMinVolume = 0f;
         private float randomMaxVolume = 0f;
         private float pitch = 1f;
@@ -310,6 +312,7 @@ namespace RoaREngine
             randomStartTime = EditorGUILayout.Toggle("Random Start Time", randomStartTime);
             loop = EditorGUILayout.Toggle("Loop", loop);
             mute = EditorGUILayout.Toggle("Mute", mute);
+            esclusive = EditorGUILayout.Toggle("Esclusive", esclusive);
             volume = EditorGUILayout.Slider("Volume", volume, 0f, 1f);
             fadeInVolume = EditorGUILayout.Slider("FadeIn Volume", fadeInVolume, 0f, 1f);
             using (new GUILayout.HorizontalScope())
@@ -321,6 +324,11 @@ namespace RoaREngine
             {
                 GUILayout.Label("FadeOut Time", GUILayout.Width(145));
                 fadeOutTime = EditorGUILayout.FloatField(fadeOutTime, GUILayout.Width(25));
+            }
+            using (new GUILayout.HorizontalScope())
+            {
+                GUILayout.Label("Delay", GUILayout.Width(145));
+                delay = EditorGUILayout.FloatField(delay, GUILayout.Width(25));
             }
             randomMinVolume = EditorGUILayout.Slider("Random Min Volume", randomMinVolume, 0f, 1f);
             randomMaxVolume = EditorGUILayout.Slider("Random Max Volume", randomMaxVolume, 0f, 1f);
@@ -701,6 +709,7 @@ namespace RoaREngine
             config.randomStartTime = randomStartTime;
             config.loop = loop;
             config.mute = mute;
+            config.esclusive = esclusive;
             config.bypasseffects = bypasseffects;
             config.bypasslistenereffects = bypasslistenereffects;
             config.bypassreverbzones = bypassreverbzones;
@@ -709,6 +718,7 @@ namespace RoaREngine
             config.fadeInVolume = fadeInVolume;
             config.fadeInTime = fadeInTime;
             config.fadeOutTime = fadeOutTime;
+            config.delay = delay;
             config.randomMinvolume = randomMinVolume;
             config.randomMaxvolume = randomMaxVolume;
             config.pitch = pitch;
@@ -876,10 +886,12 @@ namespace RoaREngine
             randomStartTime = false;
             loop = false;
             mute = false;
+            esclusive = false;
             volume = 1f;
             fadeInVolume = 0f;
             fadeInTime = 0f;
             fadeOutTime = 0f;
+            delay = 0f;
             randomMinVolume = 0f;
             randomMaxVolume = 0f;
             pitch = 1f;
@@ -996,10 +1008,12 @@ namespace RoaREngine
                 randomStartTime = config.randomStartTime;
                 loop = config.loop;
                 mute = config.mute;
+                esclusive = config.esclusive;
                 volume = config.volume;
                 fadeInVolume = config.fadeInVolume;
                 fadeInTime = config.fadeInTime;
                 fadeOutTime = config.fadeOutTime;
+                delay = config.delay;
                 randomMinVolume = config.randomMinvolume;
                 randomMaxVolume = config.randomMaxvolume;
                 pitch = config.pitch;

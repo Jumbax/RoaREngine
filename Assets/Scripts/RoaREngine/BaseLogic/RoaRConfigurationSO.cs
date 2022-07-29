@@ -42,6 +42,8 @@ namespace RoaREngine
         [Range(0f, 1f)] public float fadeInVolume = 1f;
         public float fadeInTime = 0f;
         public float fadeOutTime = 0f;
+        public float delay = 0f;
+        public bool esclusive = false;
         [Range(0f, 1f)] public float randomMinvolume = 0f;
         [Range(0f, 1f)] public float randomMaxvolume = 0f;
         [Range(-3f, 3f)] public float pitch = 1f;
@@ -73,6 +75,13 @@ namespace RoaREngine
         [Header("Random Position")]
         public float minRandomXYZ = 0f;
         public float maxRandomXYZ = 0f;
+        
+        [Header("Controls Events")]
+        public bool playEvent = false;
+        public bool pauseEvent = false;
+        public bool stopEvent = false;
+        public bool resumeEvent = false;
+        public bool finishedEvent = false;
 
         [Header("Measure Event")]
         public bool measureEvent = false;
@@ -84,6 +93,7 @@ namespace RoaREngine
         public bool markerEvent = false;
         public bool repeat = false;
         public float markerEventTime = 0f;
+
 
         [Header("Effects")]
         [Header("Chorus Filter")]

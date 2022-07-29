@@ -9,7 +9,7 @@ namespace RoaREngine
         private AudioSource audioSource;
         private RoaRContainer container;
         private bool paused;
-
+        private float timeToWait;
         private void Awake()
         {
             audioSource = GetComponent<AudioSource>();
@@ -28,13 +28,14 @@ namespace RoaREngine
             return container.Name == containerName;
         }
 
-        public void Play(float fadeTime, float volume, float fadeInVolume,bool randomStartTime, float startTime, Transform parent, float minRandomXYZ, float maxRandomXYZ, float delay)
+        public void Play(float fadeTime, float volume, float fadeInVolume, bool randomStartTime, float startTime, Transform parent, float minRandomXYZ, float maxRandomXYZ, float delay)
         {
-            StartCoroutine(PlayCoroutine(fadeTime, volume, fadeInVolume,randomStartTime, startTime, parent, minRandomXYZ, maxRandomXYZ, delay));
+            StartCoroutine(PlayCoroutine(fadeTime, volume, fadeInVolume, randomStartTime, startTime, parent, minRandomXYZ, maxRandomXYZ, delay));
         }
 
         public IEnumerator PlayCoroutine(float fadeTime, float volume, float fadeInVolume, bool randomStartTime, float startTime, Transform parent, float minRandomXYZ, float maxRandomXYZ, float delay)
         {
+            timeToWait = 0f;
             if (delay > 0)
             {
                 yield return new WaitForSeconds(delay);
@@ -103,11 +104,15 @@ namespace RoaREngine
             }
             if (container.roarConfiguration.onGoing)
             {
-                StartCoroutine(PlayOnGoing());
+                StartCoroutine(OnGoingCoroutine());
             }
-            if (!audioSource.loop && !container.roarConfiguration.onGoing)
+            if (container.roarConfiguration.playEvent)
             {
-                StartCoroutine(AudioClipFinishPlayingCoroutine());
+                container.OnPlayEvent?.Invoke();
+            }
+            if ((!audioSource.loop && !container.roarConfiguration.onGoing) || container.roarConfiguration.finishedEvent)
+            {
+                StartCoroutine(AudioClipFinishPlaying());
             }
             AddEffect();
             audioSource.Play();
@@ -115,6 +120,10 @@ namespace RoaREngine
 
         public void Stop(float fadeTime)
         {
+            if (container.roarConfiguration.stopEvent)
+            {
+                container.OnStopEvent?.Invoke();
+            }
             if (fadeTime <= 0)
             {
                 fadeTime = container.roarConfiguration.fadeOutTime;
@@ -137,40 +146,62 @@ namespace RoaREngine
 
         public void Pause(float fadeTime)
         {
-            if (fadeTime <= 0)
+            if (!paused)
             {
-                StopAllCoroutines();
-                paused = true;
-                audioSource.Pause();
-            }
-            else
-            {
-                Fade(fadeTime, 0f, false, false, true);
+                if (container.roarConfiguration.pauseEvent)
+                {
+                    container.OnPauseEvent?.Invoke();
+                }
+                if (fadeTime <= 0)
+                {
+                    StopAllCoroutines();
+                    paused = true;
+                    audioSource.Pause();
+                }
+                else
+                {
+                    Fade(fadeTime, 0f, false, false, true);
+                }
             }
         }
 
         public void Resume(float fadeTime)
         {
-            if (fadeTime <= 0)
+            if (paused)
             {
-                paused = false;
-                audioSource.UnPause();
-                if (!audioSource.loop || !container.roarConfiguration.onGoing)
+                if (container.roarConfiguration.resumeEvent)
                 {
-                    StartCoroutine(AudioClipFinishPlayingCoroutine());
+                    container.OnResumeEvent?.Invoke();
                 }
-                if (container.roarConfiguration.measureEvent)
+                if (fadeTime <= 0)
                 {
-                    StartCoroutine(SyncMeasureEvent());
+                    paused = false;
+                    audioSource.UnPause();
+                    if (!audioSource.isPlaying)
+                    {
+                        audioSource.Play();
+                    }
+                    if (!audioSource.loop && !container.roarConfiguration.onGoing)
+                    {
+                        StartCoroutine(AudioClipFinishPlaying());
+                    }
+                    if (container.roarConfiguration.measureEvent)
+                    {
+                        StartCoroutine(SyncMeasureEvent());
+                    }
+                    if (container.roarConfiguration.markerEvent)
+                    {
+                        StartCoroutine(MarkerEventCoroutine());
+                    }
+                    if (container.roarConfiguration.onGoing)
+                    {
+                        StartCoroutine(OnGoingCoroutine());
+                    }
                 }
-                if (container.roarConfiguration.onGoing)
+                else
                 {
-                    StartCoroutine(PlayOnGoing());
+                    Fade(fadeTime, container.roarConfiguration.volume, true);
                 }
-            }
-            else
-            {
-                Fade(fadeTime, container.roarConfiguration.volume, true);
             }
         }
 
@@ -323,17 +354,21 @@ namespace RoaREngine
             {
                 paused = false;
                 audioSource.UnPause();
-                if (!audioSource.loop || !container.roarConfiguration.onGoing)
+                if (!audioSource.loop && !container.roarConfiguration.onGoing)
                 {
-                    StartCoroutine(AudioClipFinishPlayingCoroutine());
+                    StartCoroutine(AudioClipFinishPlaying());
                 }
                 if (container.roarConfiguration.measureEvent)
                 {
                     StartCoroutine(SyncMeasureEvent());
                 }
+                if (container.roarConfiguration.markerEvent)
+                {
+                    StartCoroutine(MarkerEventCoroutine());
+                }
                 if (container.roarConfiguration.onGoing)
                 {
-                    StartCoroutine(PlayOnGoing());
+                    StartCoroutine(OnGoingCoroutine());
                 }
             }
 
@@ -361,34 +396,45 @@ namespace RoaREngine
             }
         }
 
-        private IEnumerator AudioClipFinishPlayingCoroutine()
+        private IEnumerator AudioClipFinishPlaying()
         {
             float clipLengthRemaining = audioSource.clip.length - audioSource.time;
             yield return new WaitForSeconds(clipLengthRemaining);
-            audioSource.Stop();
-            audioSource.gameObject.SetActive(false);
-            ResetParent();
+            if (container.roarConfiguration.finishedEvent)
+            {
+                container.OnFinishedEvent?.Invoke();
+            }
+            if (!audioSource.loop && !container.roarConfiguration.onGoing)
+            {
+                ResetParent();
+                audioSource.Stop();
+                audioSource.gameObject.SetActive(false);
+            }
         }
 
-        private IEnumerator PlayOnGoing()
+        private IEnumerator OnGoingCoroutine()
         {
             if (container.roarConfiguration.onGoing)
             {
                 float clipLengthRemaining = audioSource.clip.length - audioSource.time;
+                timeToWait = clipLengthRemaining;
                 if (container.roarConfiguration.minTime != 0 || container.roarConfiguration.maxTime != 0)
                 {
-                    float seconds = Random.Range(container.roarConfiguration.minTime, container.roarConfiguration.maxTime);
-                    yield return new WaitForSeconds(clipLengthRemaining + seconds);
-                    audioSource.clip = container.Clip;
-                    audioSource.Play();
+                    float randomTime = Random.Range(container.roarConfiguration.minTime, container.roarConfiguration.maxTime);
+                    timeToWait += randomTime;
                 }
-                else
+                yield return new WaitForSeconds(timeToWait);
+                if (container.roarConfiguration.finishedEvent)
                 {
-                    yield return new WaitForSeconds(clipLengthRemaining);
-                    audioSource.clip = container.Clip;
-                    audioSource.Play();
+                    container.OnFinishedEvent?.Invoke();
                 }
-                StartCoroutine(PlayOnGoing());
+                audioSource.clip = container.Clip;
+                audioSource.Play();
+                if (container.roarConfiguration.playEvent)
+                {
+                    container.OnPlayEvent?.Invoke();
+                }
+                StartCoroutine(OnGoingCoroutine());
             }
         }
 
@@ -417,5 +463,6 @@ namespace RoaREngine
             yield return new WaitForSeconds((float)TrackInfo.GetTimeBeforeNextBar(audioSource, container.roarConfiguration.bpm, container.roarConfiguration.tempo));
             StartCoroutine(MeasureEventCoroutine());
         }
+
     }
 }
