@@ -20,6 +20,8 @@ public class UserCall : MonoBehaviour
 
     private void Start()
     {
+        manager.Play(CueNames[0]);
+        //manager.Play(CueNames[1]);
         manager.AddPlayEvent(CueNames[0], PlayEvent);
         manager.AddPauseEvent(CueNames[0], PauseEvent);
         manager.AddResumeEvent(CueNames[0], ResumeEvent);

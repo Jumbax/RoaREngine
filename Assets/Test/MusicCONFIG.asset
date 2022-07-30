@@ -24,7 +24,6 @@ MonoBehaviour:
   fadeInTime: 0
   fadeOutTime: 0
   delay: 0
-  esclusive: 0
   randomMinvolume: 0
   randomMaxvolume: 0
   pitch: 1
@@ -49,10 +48,10 @@ MonoBehaviour:
   minRandomXYZ: 0
   maxRandomXYZ: 0
   playEvent: 0
-  pauseEvent: 0
+  pauseEvent: 1
   stopEvent: 0
-  resumeEvent: 0
-  finishedEvent: 1
+  resumeEvent: 1
+  finishedEvent: 0
   measureEvent: 0
   bpm: 120
   tempo: 4

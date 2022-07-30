@@ -9,262 +9,30 @@ namespace RoaREngine
         private AudioSource audioSource;
         private RoaRContainer container;
         private bool paused;
-        private float timeToWait;
+        private float delay = 0f;
+
+        #region private
         private void Awake()
         {
             audioSource = GetComponent<AudioSource>();
             initialParent = transform.parent;
         }
 
-        public void SetContainer(RoaRContainer container)
-        {
-            this.container = container;
-            audioSource.clip = this.container.Clip;
-            this.container.SetConfiguration(audioSource);
-        }
-
-        public bool CheckForContainerName(string containerName)
-        {
-            return container.Name == containerName;
-        }
-
-        public void Play(float fadeTime, float volume, float fadeInVolume, bool randomStartTime, float startTime, Transform parent, float minRandomXYZ, float maxRandomXYZ, float delay)
-        {
-            StartCoroutine(PlayCoroutine(fadeTime, volume, fadeInVolume, randomStartTime, startTime, parent, minRandomXYZ, maxRandomXYZ, delay));
-        }
-
-        public IEnumerator PlayCoroutine(float fadeTime, float volume, float fadeInVolume, bool randomStartTime, float startTime, Transform parent, float minRandomXYZ, float maxRandomXYZ, float delay)
-        {
-            timeToWait = 0f;
-            if (delay > 0)
-            {
-                yield return new WaitForSeconds(delay);
-            }
-            if (audioSource.clip == null)
-            {
-                yield return null;
-            }
-            if (volume <= 0f)
-            {
-                volume = container.roarConfiguration.volume;
-            }
-            if (fadeInVolume <= 0f)
-            {
-                fadeInVolume = container.roarConfiguration.fadeInVolume;
-            }
-            if (fadeTime <= 0)
-            {
-                fadeTime = container.roarConfiguration.fadeInTime;
-            }
-            if (fadeTime > 0)
-            {
-                Fade(fadeTime, fadeInVolume);
-            }
-            if (!randomStartTime)
-            {
-                randomStartTime = container.roarConfiguration.randomStartTime;
-            }
-            if (randomStartTime)
-            {
-                audioSource.time = Random.Range(0f, audioSource.clip.length);
-            }
-            if (startTime <= 0)
-            {
-                startTime = container.roarConfiguration.startTime;
-            }
-            if (startTime > 0 && !randomStartTime)
-            {
-                startTime = Mathf.Clamp(startTime, 0f, audioSource.clip.length - 0.01f);
-                audioSource.time = startTime;
-            }
-            if (parent == null)
-            {
-                parent = container.roarConfiguration.parent;
-            }
-            if (parent != null)
-            {
-                SetParent(parent);
-            }
-            if (minRandomXYZ == 0 || maxRandomXYZ == 0)
-            {
-                minRandomXYZ = container.roarConfiguration.minRandomXYZ;
-                maxRandomXYZ = container.roarConfiguration.maxRandomXYZ;
-            }
-            if (minRandomXYZ != 0 || maxRandomXYZ != 0)
-            {
-                GenerateRandomPosition(minRandomXYZ, maxRandomXYZ);
-            }
-            if (container.roarConfiguration.measureEvent)
-            {
-                StartCoroutine(MeasureEventCoroutine());
-            }
-            if (container.roarConfiguration.markerEvent)
-            {
-                StartCoroutine(MarkerEventCoroutine());
-            }
-            if (container.roarConfiguration.onGoing)
-            {
-                StartCoroutine(OnGoingCoroutine());
-            }
-            if (container.roarConfiguration.playEvent)
-            {
-                container.OnPlayEvent?.Invoke();
-            }
-            if ((!audioSource.loop && !container.roarConfiguration.onGoing) || container.roarConfiguration.finishedEvent)
-            {
-                StartCoroutine(AudioClipFinishPlaying());
-            }
-            AddEffect();
-            audioSource.Play();
-        }
-
-        public void Stop(float fadeTime)
-        {
-            if (container.roarConfiguration.stopEvent)
-            {
-                container.OnStopEvent?.Invoke();
-            }
-            if (fadeTime <= 0)
-            {
-                fadeTime = container.roarConfiguration.fadeOutTime;
-            }
-            if (fadeTime <= 0)
-            {
-                audioSource.Stop();
-                audioSource.gameObject.SetActive(false);
-                ResetParent();
-            }
-            else
-            {
-                Fade(fadeTime, 0f, false, true);
-            }
-        }
-
-        public bool IsPlaying() => audioSource.isPlaying;
-
-        public bool IsInPause() => paused;
-
-        public void Pause(float fadeTime)
-        {
-            if (!paused)
-            {
-                if (container.roarConfiguration.pauseEvent)
-                {
-                    container.OnPauseEvent?.Invoke();
-                }
-                if (fadeTime <= 0)
-                {
-                    StopAllCoroutines();
-                    paused = true;
-                    audioSource.Pause();
-                }
-                else
-                {
-                    Fade(fadeTime, 0f, false, false, true);
-                }
-            }
-        }
-
-        public void Resume(float fadeTime)
-        {
-            if (paused)
-            {
-                if (container.roarConfiguration.resumeEvent)
-                {
-                    container.OnResumeEvent?.Invoke();
-                }
-                if (fadeTime <= 0)
-                {
-                    paused = false;
-                    audioSource.UnPause();
-                    if (!audioSource.isPlaying)
-                    {
-                        audioSource.Play();
-                    }
-                    if (!audioSource.loop && !container.roarConfiguration.onGoing)
-                    {
-                        StartCoroutine(AudioClipFinishPlaying());
-                    }
-                    if (container.roarConfiguration.measureEvent)
-                    {
-                        StartCoroutine(SyncMeasureEvent());
-                    }
-                    if (container.roarConfiguration.markerEvent)
-                    {
-                        StartCoroutine(MarkerEventCoroutine());
-                    }
-                    if (container.roarConfiguration.onGoing)
-                    {
-                        StartCoroutine(OnGoingCoroutine());
-                    }
-                }
-                else
-                {
-                    Fade(fadeTime, container.roarConfiguration.volume, true);
-                }
-            }
-        }
-
-        public AudioSource GetAudioSource() => audioSource;
-
-        public RoaRContainer GetContainer() => container;
-
-        public void Fade(float fadeTime, float volume, bool resume = false, bool stop = false, bool paused = false)
-        {
-            StopAllCoroutines();
-            StartCoroutine(FadeCoroutine(fadeTime, volume, resume, stop, paused));
-        }
-
-        public void SetParent(Transform parent)
+        private void SetParent(Transform parent)
         {
             transform.parent = parent;
             transform.position = parent.position;
             transform.position = Vector3.zero;
         }
 
-        public void ResetParent() => transform.parent = initialParent;
+        private void ResetParent() => transform.parent = initialParent;
 
-        public void GenerateRandomPosition(float minRandomXYZ, float maxRandomXYZ)
+        private void GenerateRandomPosition(float minRandomXYZ, float maxRandomXYZ)
         {
             float posX = Random.Range(minRandomXYZ, maxRandomXYZ);
             float posY = Random.Range(minRandomXYZ, maxRandomXYZ);
             float posZ = Random.Range(minRandomXYZ, maxRandomXYZ);
             transform.position = new Vector3(posX, posY, posZ);
-        }
-
-        public void AddEffect(EffectType type)
-        {
-            switch (type)
-            {
-                case EffectType.Chorus:
-                    gameObject.AddComponent<AudioChorusFilter>();
-                    container.roarConfiguration.chorusFilter = true;
-                    break;
-                case EffectType.Distortion:
-                    gameObject.AddComponent<AudioDistortionFilter>();
-                    container.roarConfiguration.distortionFilter = true;
-                    break;
-                case EffectType.Echo:
-                    gameObject.AddComponent<AudioEchoFilter>();
-                    container.roarConfiguration.echoFilter = true;
-                    break;
-                case EffectType.HP:
-                    gameObject.AddComponent<AudioHighPassFilter>();
-                    container.roarConfiguration.hpFilter = true;
-                    break;
-                case EffectType.LP:
-                    gameObject.AddComponent<AudioLowPassFilter>();
-                    container.roarConfiguration.lpFilter = true;
-                    break;
-                case EffectType.ReverbFilter:
-                    gameObject.AddComponent<AudioReverbFilter>();
-                    container.roarConfiguration.reverbFilter = true;
-                    break;
-                case EffectType.ReverbZone:
-                    gameObject.AddComponent<AudioReverbZone>();
-                    container.roarConfiguration.reverbZone = true;
-                    break;
-            }
         }
 
         private void AddEffect()
@@ -352,7 +120,6 @@ namespace RoaREngine
 
             if (resume)
             {
-                paused = false;
                 audioSource.UnPause();
                 if (!audioSource.loop && !container.roarConfiguration.onGoing)
                 {
@@ -391,7 +158,6 @@ namespace RoaREngine
             if (paused)
             {
                 StopAllCoroutines();
-                paused = true;
                 audioSource.Pause();
             }
         }
@@ -400,7 +166,7 @@ namespace RoaREngine
         {
             float clipLengthRemaining = audioSource.clip.length - audioSource.time;
             yield return new WaitForSeconds(clipLengthRemaining);
-            if (container.roarConfiguration.finishedEvent)
+            if (container.roarConfiguration.finishedEvent && !container.roarConfiguration.onGoing)
             {
                 container.OnFinishedEvent?.Invoke();
             }
@@ -417,16 +183,15 @@ namespace RoaREngine
             if (container.roarConfiguration.onGoing)
             {
                 float clipLengthRemaining = audioSource.clip.length - audioSource.time;
-                timeToWait = clipLengthRemaining;
-                if (container.roarConfiguration.minTime != 0 || container.roarConfiguration.maxTime != 0)
-                {
-                    float randomTime = Random.Range(container.roarConfiguration.minTime, container.roarConfiguration.maxTime);
-                    timeToWait += randomTime;
-                }
-                yield return new WaitForSeconds(timeToWait);
+                yield return new WaitForSeconds(clipLengthRemaining);
                 if (container.roarConfiguration.finishedEvent)
                 {
                     container.OnFinishedEvent?.Invoke();
+                }
+                if (container.roarConfiguration.minTime != 0 || container.roarConfiguration.maxTime != 0)
+                {
+                    float randomTime = Random.Range(container.roarConfiguration.minTime, container.roarConfiguration.maxTime);
+                    yield return new WaitForSeconds(randomTime);
                 }
                 audioSource.clip = container.Clip;
                 audioSource.Play();
@@ -463,6 +228,256 @@ namespace RoaREngine
             yield return new WaitForSeconds((float)TrackInfo.GetTimeBeforeNextBar(audioSource, container.roarConfiguration.bpm, container.roarConfiguration.tempo));
             StartCoroutine(MeasureEventCoroutine());
         }
+
+        #endregion
+
+        #region public
+        public void Play()
+        {
+            if (audioSource.clip == null)
+            {
+                return;
+            }
+            StartCoroutine(PlayCoroutine());
+        }
+
+        public IEnumerator PlayCoroutine()
+        {
+            if (container.roarConfiguration.delay > 0)
+            {
+                while (delay < container.roarConfiguration.delay)
+                {
+                    delay += Time.deltaTime;
+                    Debug.Log(delay);
+                    yield return null;
+                }
+                delay = 0f;
+            }
+            if (container.roarConfiguration.fadeInTime > 0)
+            {
+                Fade(container.roarConfiguration.fadeInTime, container.roarConfiguration.fadeInVolume);
+            }
+            if (container.roarConfiguration.randomStartTime)
+            {
+                audioSource.time = Random.Range(0f, audioSource.clip.length);
+            }
+            if (container.roarConfiguration.startTime > 0 && !container.roarConfiguration.randomStartTime)
+            {
+                container.roarConfiguration.startTime = Mathf.Clamp(container.roarConfiguration.startTime, 0f, audioSource.clip.length - 0.01f);
+                audioSource.time = container.roarConfiguration.startTime;
+            }
+            if (container.roarConfiguration.parent != null)
+            {
+                SetParent(container.roarConfiguration.parent);
+            }
+            if (container.roarConfiguration.minRandomXYZ != 0 || container.roarConfiguration.maxRandomXYZ != 0)
+            {
+                GenerateRandomPosition(container.roarConfiguration.minRandomXYZ, container.roarConfiguration.maxRandomXYZ);
+            }
+            if (container.roarConfiguration.measureEvent)
+            {
+                StartCoroutine(MeasureEventCoroutine());
+            }
+            if (container.roarConfiguration.markerEvent)
+            {
+                StartCoroutine(MarkerEventCoroutine());
+            }
+            if (container.roarConfiguration.onGoing)
+            {
+                StartCoroutine(OnGoingCoroutine());
+            }
+            if (container.roarConfiguration.playEvent)
+            {
+                container.OnPlayEvent?.Invoke();
+            }
+            if ((!audioSource.loop && !container.roarConfiguration.onGoing) || container.roarConfiguration.finishedEvent)
+            {
+                StartCoroutine(AudioClipFinishPlaying());
+            }
+            AddEffect();
+            audioSource.Play();
+        }
+
+        public void Pause()
+        {
+            if (!paused)
+            {
+                paused = true;
+                if (container.roarConfiguration.pauseEvent)
+                {
+                    container.OnPauseEvent?.Invoke();
+                }
+                if (container.roarConfiguration.fadeOutTime <= 0)
+                {
+                    StopAllCoroutines();
+                    if (audioSource.isPlaying)
+                    {
+                        audioSource.Pause();
+                    }
+                }
+                else
+                {
+                    Fade(container.roarConfiguration.fadeOutTime, 0f, false, false, true);
+                }
+            }
+        }
+
+        public void Resume()
+        {
+            if (paused)
+            {
+                paused = false;
+                if (container.roarConfiguration.resumeEvent)
+                {
+                    container.OnResumeEvent?.Invoke();
+                }
+                if (container.roarConfiguration.fadeInTime <= 0)
+                {
+                    audioSource.UnPause();
+                    if (!audioSource.isPlaying)
+                    {
+                        if (delay != 0 && delay == container.roarConfiguration.delay)
+                        {
+                            audioSource.Play();
+                        }
+                        else
+                        {
+                            StartCoroutine(ResumeCoroutine());
+                            return;
+                        }
+                    }
+                    if (!audioSource.loop && !container.roarConfiguration.onGoing)
+                    {
+                        StartCoroutine(AudioClipFinishPlaying());
+                    }
+                    if (container.roarConfiguration.measureEvent)
+                    {
+                        StartCoroutine(SyncMeasureEvent());
+                    }
+                    if (container.roarConfiguration.markerEvent)
+                    {
+                        StartCoroutine(MarkerEventCoroutine());
+                    }
+                    if (container.roarConfiguration.onGoing)
+                    {
+                        StartCoroutine(OnGoingCoroutine());
+                    }
+                }
+                else
+                {
+                    Fade(container.roarConfiguration.fadeInTime, container.roarConfiguration.fadeInVolume, true);
+                }
+            }
+        }
+
+        public IEnumerator ResumeCoroutine()
+        {
+            while (delay < container.roarConfiguration.delay)
+            {
+                delay += Time.deltaTime;
+                yield return null;
+            }
+            delay = 0f;
+            audioSource.Play();
+            if (!audioSource.loop && !container.roarConfiguration.onGoing)
+            {
+                StartCoroutine(AudioClipFinishPlaying());
+            }
+            if (container.roarConfiguration.measureEvent)
+            {
+                StartCoroutine(SyncMeasureEvent());
+            }
+            if (container.roarConfiguration.markerEvent)
+            {
+                StartCoroutine(MarkerEventCoroutine());
+            }
+            if (container.roarConfiguration.onGoing)
+            {
+                StartCoroutine(OnGoingCoroutine());
+            }
+        }
+
+        public void Stop()
+        {
+            if (container.roarConfiguration.stopEvent)
+            {
+                container.OnStopEvent?.Invoke();
+            }
+            if (container.roarConfiguration.fadeOutTime <= 0)
+            {
+                audioSource.Stop();
+                audioSource.gameObject.SetActive(false);
+                ResetParent();
+            }
+            else
+            {
+                Fade(container.roarConfiguration.fadeOutTime, 0f, false, true);
+            }
+        }
+
+        public bool IsPlaying() => audioSource.isPlaying;
+
+        public bool IsInPause() => paused;
+
+        public void Fade(float fadeTime, float volume, bool resume = false, bool stop = false, bool paused = false)
+        {
+            StopAllCoroutines();
+            StartCoroutine(FadeCoroutine(fadeTime, volume, resume, stop, paused));
+        }
+
+        public bool CheckForContainerName(string containerName)
+        {
+            return container.Name == containerName;
+        }
+
+        public AudioSource GetAudioSource() => audioSource;
+
+        public RoaRContainer GetContainer() => container;
+
+        public void SetContainer(RoaRContainer container)
+        {
+            this.container = container;
+            audioSource.clip = this.container.Clip;
+            this.container.SetConfiguration(audioSource, this);
+        }
+
+        public void AddEffect(EffectType type)
+        {
+            switch (type)
+            {
+                case EffectType.Chorus:
+                    gameObject.AddComponent<AudioChorusFilter>();
+                    container.roarConfiguration.chorusFilter = true;
+                    break;
+                case EffectType.Distortion:
+                    gameObject.AddComponent<AudioDistortionFilter>();
+                    container.roarConfiguration.distortionFilter = true;
+                    break;
+                case EffectType.Echo:
+                    gameObject.AddComponent<AudioEchoFilter>();
+                    container.roarConfiguration.echoFilter = true;
+                    break;
+                case EffectType.HP:
+                    gameObject.AddComponent<AudioHighPassFilter>();
+                    container.roarConfiguration.hpFilter = true;
+                    break;
+                case EffectType.LP:
+                    gameObject.AddComponent<AudioLowPassFilter>();
+                    container.roarConfiguration.lpFilter = true;
+                    break;
+                case EffectType.ReverbFilter:
+                    gameObject.AddComponent<AudioReverbFilter>();
+                    container.roarConfiguration.reverbFilter = true;
+                    break;
+                case EffectType.ReverbZone:
+                    gameObject.AddComponent<AudioReverbZone>();
+                    container.roarConfiguration.reverbZone = true;
+                    break;
+            }
+        }
+
+        #endregion
+
 
     }
 }

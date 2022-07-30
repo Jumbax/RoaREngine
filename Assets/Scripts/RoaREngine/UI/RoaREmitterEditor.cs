@@ -20,7 +20,7 @@ namespace RoaREngine
         {
             container = otherContainer;
             audioSource.clip = container.Clip;
-            container.SetConfiguration(audioSource);
+            //container.SetConfiguration(audioSource);
         }
 
         public void Play()
@@ -276,7 +276,7 @@ namespace RoaREngine
             UnityEditor.EditorApplication.delayCall += UnityEditor.EditorApplication.QueuePlayerLoopUpdate;
             if (!Application.isPlaying)
             {
-                container.roarConfiguration.ApplyTo(audioSource);
+                //container.roarConfiguration.ApplyTo(audioSource);
             }
         }
     }

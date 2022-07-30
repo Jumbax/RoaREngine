@@ -43,7 +43,6 @@ namespace RoaREngine
         public float fadeInTime = 0f;
         public float fadeOutTime = 0f;
         public float delay = 0f;
-        public bool esclusive = false;
         [Range(0f, 1f)] public float randomMinvolume = 0f;
         [Range(0f, 1f)] public float randomMaxvolume = 0f;
         [Range(-3f, 3f)] public float pitch = 1f;
@@ -161,8 +160,9 @@ namespace RoaREngine
         public float fadeOutParamValueStart = 0f;
         public float fadeOutParamValueEnd = 0f;
 
-        public void ApplyTo(AudioSource audioSource)
+        public void ApplyTo(AudioSource audioSource, RoaREmitter emitter)
         {
+            audioSource.playOnAwake = false;
             audioSource.outputAudioMixerGroup = this.audioMixerGroup;
             audioSource.loop = this.loop;
             audioSource.mute = this.mute;
@@ -196,6 +196,14 @@ namespace RoaREngine
             audioSource.maxDistance = this.maxDistance;
             audioSource.ignoreListenerVolume = this.ignorelistenervolume;
             audioSource.ignoreListenerPause = this.ignorelistenerpause;
+
+            emitter.GetContainer().roarConfiguration.fadeInVolume = this.fadeInVolume;
+            emitter.GetContainer().roarConfiguration.fadeInTime = this.fadeInTime;
+            emitter.GetContainer().roarConfiguration.randomStartTime = this.randomStartTime;
+            emitter.GetContainer().roarConfiguration.startTime = this.startTime;
+            emitter.GetContainer().roarConfiguration.parent = this.parent;
+            emitter.GetContainer().roarConfiguration.minRandomXYZ = this.minRandomXYZ;
+            emitter.GetContainer().roarConfiguration.maxRandomXYZ = this.maxRandomXYZ;
         }
     }
 }

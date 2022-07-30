@@ -33,7 +33,6 @@ namespace RoaREngine
         private bool randomStartTime = false;
         private bool loop = false;
         private bool mute = false;
-        private bool esclusive = false;
         private float volume = 1f;
         private float fadeInVolume = 0f;
         private float fadeInTime = 0f;
@@ -312,7 +311,6 @@ namespace RoaREngine
             randomStartTime = EditorGUILayout.Toggle("Random Start Time", randomStartTime);
             loop = EditorGUILayout.Toggle("Loop", loop);
             mute = EditorGUILayout.Toggle("Mute", mute);
-            esclusive = EditorGUILayout.Toggle("Esclusive", esclusive);
             volume = EditorGUILayout.Slider("Volume", volume, 0f, 1f);
             fadeInVolume = EditorGUILayout.Slider("FadeIn Volume", fadeInVolume, 0f, 1f);
             using (new GUILayout.HorizontalScope())
@@ -709,7 +707,6 @@ namespace RoaREngine
             config.randomStartTime = randomStartTime;
             config.loop = loop;
             config.mute = mute;
-            config.esclusive = esclusive;
             config.bypasseffects = bypasseffects;
             config.bypasslistenereffects = bypasslistenereffects;
             config.bypassreverbzones = bypassreverbzones;
@@ -886,7 +883,6 @@ namespace RoaREngine
             randomStartTime = false;
             loop = false;
             mute = false;
-            esclusive = false;
             volume = 1f;
             fadeInVolume = 0f;
             fadeInTime = 0f;
@@ -1008,7 +1004,6 @@ namespace RoaREngine
                 randomStartTime = config.randomStartTime;
                 loop = config.loop;
                 mute = config.mute;
-                esclusive = config.esclusive;
                 volume = config.volume;
                 fadeInVolume = config.fadeInVolume;
                 fadeInTime = config.fadeInTime;
