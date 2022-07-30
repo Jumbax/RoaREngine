@@ -35,8 +35,8 @@ namespace RoaREngine
         private bool mute = false;
         private float volume = 1f;
         private float fadeInVolume = 0f;
-        private float fadeInTime = 0f;
-        private float fadeOutTime = 0f;
+        private float playFadeTime = 0f;
+        private float stopFadeTime = 0f;
         private float delay = 0f;
         private float randomMinVolume = 0f;
         private float randomMaxVolume = 0f;
@@ -316,12 +316,12 @@ namespace RoaREngine
             using (new GUILayout.HorizontalScope())
             {
                 GUILayout.Label("FadeIn Time", GUILayout.Width(145));
-                fadeInTime = EditorGUILayout.FloatField(fadeInTime, GUILayout.Width(25));
+                playFadeTime = EditorGUILayout.FloatField(playFadeTime, GUILayout.Width(25));
             }
             using (new GUILayout.HorizontalScope())
             {
                 GUILayout.Label("FadeOut Time", GUILayout.Width(145));
-                fadeOutTime = EditorGUILayout.FloatField(fadeOutTime, GUILayout.Width(25));
+                stopFadeTime = EditorGUILayout.FloatField(stopFadeTime, GUILayout.Width(25));
             }
             using (new GUILayout.HorizontalScope())
             {
@@ -713,8 +713,8 @@ namespace RoaREngine
             config.priority = priority;
             config.volume = volume;
             config.fadeInVolume = fadeInVolume;
-            config.fadeInTime = fadeInTime;
-            config.fadeOutTime = fadeOutTime;
+            config.playFadeTime = playFadeTime;
+            config.stopFadeTime = stopFadeTime;
             config.delay = delay;
             config.randomMinvolume = randomMinVolume;
             config.randomMaxvolume = randomMaxVolume;
@@ -885,8 +885,8 @@ namespace RoaREngine
             mute = false;
             volume = 1f;
             fadeInVolume = 0f;
-            fadeInTime = 0f;
-            fadeOutTime = 0f;
+            playFadeTime = 0f;
+            stopFadeTime = 0f;
             delay = 0f;
             randomMinVolume = 0f;
             randomMaxVolume = 0f;
@@ -1006,8 +1006,8 @@ namespace RoaREngine
                 mute = config.mute;
                 volume = config.volume;
                 fadeInVolume = config.fadeInVolume;
-                fadeInTime = config.fadeInTime;
-                fadeOutTime = config.fadeOutTime;
+                playFadeTime = config.playFadeTime;
+                stopFadeTime = config.stopFadeTime;
                 delay = config.delay;
                 randomMinVolume = config.randomMinvolume;
                 randomMaxVolume = config.randomMaxvolume;

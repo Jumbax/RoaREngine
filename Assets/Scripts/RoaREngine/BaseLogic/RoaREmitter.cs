@@ -248,14 +248,13 @@ namespace RoaREngine
                 while (delay < container.roarConfiguration.delay)
                 {
                     delay += Time.deltaTime;
-                    Debug.Log(delay);
                     yield return null;
                 }
                 delay = 0f;
             }
-            if (container.roarConfiguration.fadeInTime > 0)
+            if (container.roarConfiguration.playFadeTime > 0)
             {
-                Fade(container.roarConfiguration.fadeInTime, container.roarConfiguration.fadeInVolume);
+                Fade(container.roarConfiguration.playFadeTime, container.roarConfiguration.fadeInVolume);
             }
             if (container.roarConfiguration.randomStartTime)
             {
@@ -307,7 +306,7 @@ namespace RoaREngine
                 {
                     container.OnPauseEvent?.Invoke();
                 }
-                if (container.roarConfiguration.fadeOutTime <= 0)
+                if (container.roarConfiguration.pauseFadeTime <= 0)
                 {
                     StopAllCoroutines();
                     if (audioSource.isPlaying)
@@ -317,7 +316,7 @@ namespace RoaREngine
                 }
                 else
                 {
-                    Fade(container.roarConfiguration.fadeOutTime, 0f, false, false, true);
+                    Fade(container.roarConfiguration.pauseFadeTime, 0f, false, false, true);
                 }
             }
         }
@@ -331,7 +330,7 @@ namespace RoaREngine
                 {
                     container.OnResumeEvent?.Invoke();
                 }
-                if (container.roarConfiguration.fadeInTime <= 0)
+                if (container.roarConfiguration.resumeFadeTime <= 0)
                 {
                     audioSource.UnPause();
                     if (!audioSource.isPlaying)
@@ -365,7 +364,7 @@ namespace RoaREngine
                 }
                 else
                 {
-                    Fade(container.roarConfiguration.fadeInTime, container.roarConfiguration.fadeInVolume, true);
+                    Fade(container.roarConfiguration.resumeFadeTime, container.roarConfiguration.fadeInVolume, true);
                 }
             }
         }
@@ -403,7 +402,7 @@ namespace RoaREngine
             {
                 container.OnStopEvent?.Invoke();
             }
-            if (container.roarConfiguration.fadeOutTime <= 0)
+            if (container.roarConfiguration.stopFadeTime <= 0)
             {
                 audioSource.Stop();
                 audioSource.gameObject.SetActive(false);
@@ -411,7 +410,7 @@ namespace RoaREngine
             }
             else
             {
-                Fade(container.roarConfiguration.fadeOutTime, 0f, false, true);
+                Fade(container.roarConfiguration.stopFadeTime, 0f, false, true);
             }
         }
 

@@ -40,8 +40,10 @@ namespace RoaREngine
         public bool randomStartTime = false;
         [Range(0f, 1f)] public float volume = 1f;
         [Range(0f, 1f)] public float fadeInVolume = 1f;
-        public float fadeInTime = 0f;
-        public float fadeOutTime = 0f;
+        public float playFadeTime = 0f;
+        public float pauseFadeTime = 0f;
+        public float resumeFadeTime = 0f;
+        public float stopFadeTime = 0f;
         public float delay = 0f;
         [Range(0f, 1f)] public float randomMinvolume = 0f;
         [Range(0f, 1f)] public float randomMaxvolume = 0f;
@@ -197,13 +199,13 @@ namespace RoaREngine
             audioSource.ignoreListenerVolume = this.ignorelistenervolume;
             audioSource.ignoreListenerPause = this.ignorelistenerpause;
 
-            emitter.GetContainer().roarConfiguration.fadeInVolume = this.fadeInVolume;
-            emitter.GetContainer().roarConfiguration.fadeInTime = this.fadeInTime;
-            emitter.GetContainer().roarConfiguration.randomStartTime = this.randomStartTime;
-            emitter.GetContainer().roarConfiguration.startTime = this.startTime;
-            emitter.GetContainer().roarConfiguration.parent = this.parent;
-            emitter.GetContainer().roarConfiguration.minRandomXYZ = this.minRandomXYZ;
-            emitter.GetContainer().roarConfiguration.maxRandomXYZ = this.maxRandomXYZ;
+            //emitter.GetContainer().roarConfiguration.fadeInVolume = this.fadeInVolume;
+            //emitter.GetContainer().roarConfiguration.fadeInTime = this.fadeInTime;
+            //emitter.GetContainer().roarConfiguration.randomStartTime = this.randomStartTime;
+            //emitter.GetContainer().roarConfiguration.startTime = this.startTime;
+            //emitter.GetContainer().roarConfiguration.parent = this.parent;
+            //emitter.GetContainer().roarConfiguration.minRandomXYZ = this.minRandomXYZ;
+            //emitter.GetContainer().roarConfiguration.maxRandomXYZ = this.maxRandomXYZ;
         }
     }
 }

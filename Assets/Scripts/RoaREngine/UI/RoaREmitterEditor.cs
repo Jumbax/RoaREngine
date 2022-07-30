@@ -25,9 +25,9 @@ namespace RoaREngine
 
         public void Play()
         {
-            if (container.roarConfiguration.fadeInTime > 0)
+            if (container.roarConfiguration.playFadeTime > 0)
             {
-                Fade(container.roarConfiguration.fadeInTime, container.roarConfiguration.fadeInVolume);
+                Fade(container.roarConfiguration.playFadeTime, container.roarConfiguration.fadeInVolume);
             }
             if (container.roarConfiguration.randomStartTime)
             {
@@ -60,33 +60,33 @@ namespace RoaREngine
 
         public void Stop()
         {
-            if (container.roarConfiguration.fadeOutTime <= 0)
+            if (container.roarConfiguration.stopFadeTime <= 0)
             {
                 audioSource.Stop();
                 DestroyImmediate(gameObject);
             }
             else
             {
-                Fade(container.roarConfiguration.fadeOutTime, 0f, false, true);
+                Fade(container.roarConfiguration.stopFadeTime, 0f, false, true);
             }
         }
 
         public void Pause()
         {
-            if (container.roarConfiguration.fadeOutTime <= 0)
+            if (container.roarConfiguration.pauseFadeTime <= 0)
             {
                 StopAllCoroutines();
                 audioSource.Pause();
             }
             else
             {
-                Fade(container.roarConfiguration.fadeOutTime, 0f, false, false, true);
+                Fade(container.roarConfiguration.pauseFadeTime, 0f, false, false, true);
             }
         }
 
         public void Resume()
         {
-            if (container.roarConfiguration.fadeOutTime <= 0)
+            if (container.roarConfiguration.resumeFadeTime <= 0)
             {
                 audioSource.UnPause();
                 if (container.roarConfiguration.onGoing)
@@ -96,7 +96,7 @@ namespace RoaREngine
             }
             else
             {
-                Fade(container.roarConfiguration.fadeOutTime, container.roarConfiguration.volume, true);
+                Fade(container.roarConfiguration.resumeFadeTime, container.roarConfiguration.volume, true);
             }
         }
         
