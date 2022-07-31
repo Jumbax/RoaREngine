@@ -16,7 +16,7 @@ namespace RoaREngine
         public UnityAction OnResumeEvent;
         public UnityAction OnFinishedEvent;
         public UnityAction MeasureEvent;
-        public UnityAction MarkerEvent;
+        public UnityAction TimedEvent;
 
         public void ResetBankIndex()
         {

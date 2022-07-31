@@ -80,8 +80,8 @@ namespace RoaREngine
         [Header("Controls Events")]
         public bool playEvent = false;
         public bool pauseEvent = false;
-        public bool stopEvent = false;
         public bool resumeEvent = false;
+        public bool stopEvent = false;
         public bool finishedEvent = false;
 
         [Header("Measure Event")]
@@ -90,10 +90,10 @@ namespace RoaREngine
         public int tempo = 4;
         public int everyNBar = 1;
 
-        [Header("Marker Event")]
-        public bool markerEvent = false;
-        public bool repeat = false;
-        public float markerEventTime = 0f;
+        [Header("Timed Event")]
+        public bool timedEvent = false;
+        public bool repeatTimedEvent = false;
+        public float timedEventTime = 0f;
 
 
         [Header("Effects")]

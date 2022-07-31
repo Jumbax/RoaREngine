@@ -21,8 +21,10 @@ MonoBehaviour:
   randomStartTime: 0
   volume: 1
   fadeInVolume: 1
-  fadeInTime: 0
-  fadeOutTime: 0
+  playFadeTime: 0
+  pauseFadeTime: 0
+  resumeFadeTime: 0
+  stopFadeTime: 0
   delay: 0
   randomMinvolume: 0
   randomMaxvolume: 0
@@ -47,18 +49,18 @@ MonoBehaviour:
   maxTime: 0
   minRandomXYZ: 0
   maxRandomXYZ: 0
-  playEvent: 0
+  playEvent: 1
   pauseEvent: 1
-  stopEvent: 0
   resumeEvent: 1
-  finishedEvent: 0
+  stopEvent: 0
+  finishedEvent: 1
   measureEvent: 0
   bpm: 120
   tempo: 4
   everyNBar: 1
-  markerEvent: 0
-  repeat: 0
-  markerEventTime: 0
+  timedEvent: 0
+  repeatTimedEvent: 0
+  timedEventTime: 0
   chorusFilter: 0
   chorusDryMix: 1
   chorusWetMix1: 1

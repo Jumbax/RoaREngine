@@ -36,6 +36,8 @@ namespace RoaREngine
         private float volume = 1f;
         private float fadeInVolume = 0f;
         private float playFadeTime = 0f;
+        private float pauseFadeTime = 0f;
+        private float resumeFadeTime = 0f;
         private float stopFadeTime = 0f;
         private float delay = 0f;
         private float randomMinVolume = 0f;
@@ -68,10 +70,16 @@ namespace RoaREngine
         private int bpm = 120;
         private int tempo = 4;
         private int everyNBar = 1;
-        private bool markerEvent = false;
-        private bool hasMarkerEvent = false;
-        private bool repeat;
-        public float markerEventTime = 0f;
+        private bool timedEvent = false;
+        private bool hasTimedEvent = false;
+        private bool repeatTimedEvent;
+        public float timedEventTime = 0f;
+        public bool hasControlEvent = false;
+        public bool playEvent = false;
+        public bool pauseEvent = false;
+        public bool resumeEvent = false;
+        public bool stopEvent = false;
+        public bool finishedEvent = false;
         private bool addEffect = false;
         private AnimBool chorus = new AnimBool(false);
         private float chorusDryMix = 0.5f;
@@ -315,12 +323,22 @@ namespace RoaREngine
             fadeInVolume = EditorGUILayout.Slider("FadeIn Volume", fadeInVolume, 0f, 1f);
             using (new GUILayout.HorizontalScope())
             {
-                GUILayout.Label("FadeIn Time", GUILayout.Width(145));
+                GUILayout.Label("Play FadeIn Time", GUILayout.Width(145));
                 playFadeTime = EditorGUILayout.FloatField(playFadeTime, GUILayout.Width(25));
             }
             using (new GUILayout.HorizontalScope())
             {
-                GUILayout.Label("FadeOut Time", GUILayout.Width(145));
+                GUILayout.Label("Pause FadeIn Time", GUILayout.Width(145));
+                pauseFadeTime = EditorGUILayout.FloatField(pauseFadeTime, GUILayout.Width(25));
+            }
+            using (new GUILayout.HorizontalScope())
+            {
+                GUILayout.Label("Resume FadeIn Time", GUILayout.Width(145));
+                resumeFadeTime = EditorGUILayout.FloatField(resumeFadeTime, GUILayout.Width(25));
+            }
+            using (new GUILayout.HorizontalScope())
+            {
+                GUILayout.Label("Stop FadeOut Time", GUILayout.Width(145));
                 stopFadeTime = EditorGUILayout.FloatField(stopFadeTime, GUILayout.Width(25));
             }
             using (new GUILayout.HorizontalScope())
@@ -398,18 +416,29 @@ namespace RoaREngine
             }
             EditorGUILayout.EndFoldoutHeaderGroup();
 
-            hasMarkerEvent = EditorGUILayout.BeginFoldoutHeaderGroup(hasMarkerEvent, "MarkerEvent");
-            if (hasMarkerEvent)
+            hasTimedEvent = EditorGUILayout.BeginFoldoutHeaderGroup(hasTimedEvent, "Timed Event");
+            if (hasTimedEvent)
             {
-                markerEvent = EditorGUILayout.Toggle("MarkerEvent", markerEvent);
-                GUI.enabled = markerEvent;
-                repeat = EditorGUILayout.Toggle("Repeat", repeat);
+                timedEvent = EditorGUILayout.Toggle("Timed Event", timedEvent);
+                GUI.enabled = timedEvent;
+                repeatTimedEvent = EditorGUILayout.Toggle("Repeat Timed Event", repeatTimedEvent);
                 using (new GUILayout.HorizontalScope())
                 {
-                    GUILayout.Label("Marker Event Time", GUILayout.Width(145));
-                    markerEventTime = EditorGUILayout.FloatField(markerEventTime, GUILayout.Width(25));
+                    GUILayout.Label("Timed Event Time", GUILayout.Width(145));
+                    timedEventTime = EditorGUILayout.FloatField(timedEventTime, GUILayout.Width(25));
                 }
                 GUI.enabled = true;
+            }
+            EditorGUILayout.EndFoldoutHeaderGroup();
+
+            hasControlEvent = EditorGUILayout.BeginFoldoutHeaderGroup(hasControlEvent, "Control Events");
+            if (hasControlEvent)
+            {
+                playEvent = EditorGUILayout.Toggle("Play Event", playEvent);
+                pauseEvent = EditorGUILayout.Toggle("Pause Event", pauseEvent);
+                resumeEvent = EditorGUILayout.Toggle("Resume Event", resumeEvent);
+                stopEvent = EditorGUILayout.Toggle("Stop Event", stopEvent);
+                finishedEvent = EditorGUILayout.Toggle("Finished Event", finishedEvent);
             }
             EditorGUILayout.EndFoldoutHeaderGroup();
 
@@ -714,6 +743,8 @@ namespace RoaREngine
             config.volume = volume;
             config.fadeInVolume = fadeInVolume;
             config.playFadeTime = playFadeTime;
+            config.pauseFadeTime = pauseFadeTime;
+            config.resumeFadeTime = resumeFadeTime;
             config.stopFadeTime = stopFadeTime;
             config.delay = delay;
             config.randomMinvolume = randomMinVolume;
@@ -744,9 +775,14 @@ namespace RoaREngine
             config.bpm = bpm;
             config.tempo = tempo;
             config.everyNBar = everyNBar;
-            config.markerEvent = markerEvent;
-            config.repeat = repeat;
-            config.markerEventTime = markerEventTime;
+            config.timedEvent = timedEvent;
+            config.repeatTimedEvent = repeatTimedEvent;
+            config.timedEventTime = timedEventTime;
+            config.playEvent = playEvent;
+            config.pauseEvent = pauseEvent;
+            config.resumeEvent = resumeEvent;
+            config.stopEvent = stopEvent;
+            config.finishedEvent = finishedEvent;
             config.chorusFilter = chorus.target;
             config.chorusDryMix = chorusDryMix;
             config.chorusWetMix1 = chorusWetMix1;
@@ -886,6 +922,8 @@ namespace RoaREngine
             volume = 1f;
             fadeInVolume = 0f;
             playFadeTime = 0f;
+            pauseFadeTime = 0f;
+            resumeFadeTime = 0f;
             stopFadeTime = 0f;
             delay = 0f;
             randomMinVolume = 0f;
@@ -915,9 +953,14 @@ namespace RoaREngine
             maxRandomXYZ = 0f;
             measureEvent = false;
             hasMeasureEvent = false;
-            hasMarkerEvent = false;
-            repeat = false;
-            markerEventTime = 0f;
+            hasTimedEvent = false;
+            repeatTimedEvent = false;
+            timedEventTime = 0f;
+            playEvent = false;
+            pauseEvent = false;
+            resumeEvent = false;
+            stopEvent = false;
+            finishedEvent = false;
             bpm = 120;
             tempo = 4;
             everyNBar = 1;
@@ -1007,6 +1050,8 @@ namespace RoaREngine
                 volume = config.volume;
                 fadeInVolume = config.fadeInVolume;
                 playFadeTime = config.playFadeTime;
+                pauseFadeTime = config.pauseFadeTime;
+                resumeFadeTime = config.resumeFadeTime;
                 stopFadeTime = config.stopFadeTime;
                 delay = config.delay;
                 randomMinVolume = config.randomMinvolume;
@@ -1036,9 +1081,14 @@ namespace RoaREngine
                 bpm = config.bpm;
                 tempo = config.tempo;
                 everyNBar = config.everyNBar;
-                markerEvent = config.markerEvent;
-                repeat = config.repeat;
-                markerEventTime = config.markerEventTime;
+                timedEvent = config.timedEvent;
+                repeatTimedEvent = config.repeatTimedEvent;
+                timedEventTime = config.timedEventTime;
+                playEvent = config.playEvent;
+                pauseEvent = config.pauseEvent;
+                resumeEvent = config.resumeEvent;
+                stopEvent = config.stopEvent;
+                finishedEvent = config.finishedEvent;
                 fadeInParamValueStart = config.fadeInParamValueStart;
                 fadeInParamValueEnd = config.fadeInParamValueEnd;
                 fadeOutParamValueStart = config.fadeOutParamValueStart;

@@ -1,4 +1,5 @@
 using RoaREngine;
+using System.Collections;
 using UnityEngine;
 
 public class UserCall : MonoBehaviour
@@ -21,12 +22,18 @@ public class UserCall : MonoBehaviour
     private void Start()
     {
         manager.Play(CueNames[0]);
-        //manager.Play(CueNames[1]);
         manager.AddPlayEvent(CueNames[0], PlayEvent);
         manager.AddPauseEvent(CueNames[0], PauseEvent);
         manager.AddResumeEvent(CueNames[0], ResumeEvent);
         manager.AddStopEvent(CueNames[0], StopEvent);
         manager.AddFinishedEvent(CueNames[0], FinishEvent);
+    }
+
+    private IEnumerator TestPlay()
+    {
+        yield return new WaitForSeconds(0.1f);
+        manager.Play(CueNames[0]);
+        manager.Play(CueNames[1]);
     }
 
     void FinishEvent()

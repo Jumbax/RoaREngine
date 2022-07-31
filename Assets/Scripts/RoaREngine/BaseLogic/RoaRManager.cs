@@ -248,7 +248,7 @@ namespace RoaREngine
                 RoaRContainer container = GetContainer(musicID);
                 if (container != null)
                 {
-                    container.MarkerEvent += markerAction;
+                    container.TimedEvent += markerAction;
                 }
             }
         }
@@ -260,7 +260,7 @@ namespace RoaREngine
                 RoaRContainer container = GetContainer(musicID);
                 if (container != null)
                 {
-                    container.MarkerEvent -= markerAction;
+                    container.TimedEvent -= markerAction;
                 }
             }
         }

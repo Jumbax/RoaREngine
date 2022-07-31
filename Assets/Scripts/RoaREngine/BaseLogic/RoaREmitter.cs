@@ -119,7 +119,6 @@ namespace RoaREngine
                 while (delay < container.roarConfiguration.delay)
                 {
                     delay += Time.deltaTime;
-                    Debug.Log(delay);
                     yield return null;
                 }
                 delay = 0f;
@@ -149,9 +148,9 @@ namespace RoaREngine
             {
                 StartCoroutine(MeasureEventCoroutine());
             }
-            if (container.roarConfiguration.markerEvent)
+            if (container.roarConfiguration.timedEvent)
             {
-                StartCoroutine(MarkerEventCoroutine());
+                StartCoroutine(TimedEventCoroutine());
             }
             if (container.roarConfiguration.onGoing)
             {
@@ -199,9 +198,9 @@ namespace RoaREngine
                 {
                     StartCoroutine(SyncMeasureEvent());
                 }
-                if (container.roarConfiguration.markerEvent)
+                if (container.roarConfiguration.timedEvent)
                 {
-                    StartCoroutine(MarkerEventCoroutine());
+                    StartCoroutine(TimedEventCoroutine());
                 }
                 if (container.roarConfiguration.onGoing)
                 {
@@ -282,14 +281,14 @@ namespace RoaREngine
             StartCoroutine(MeasureEventCoroutine());
         }
 
-        private IEnumerator MarkerEventCoroutine()
+        private IEnumerator TimedEventCoroutine()
         {
-            float eventTime = container.roarConfiguration.markerEventTime;
-            yield return new WaitForSeconds(eventTime);
-            container.MarkerEvent?.Invoke();
-            if (container.roarConfiguration.repeat)
+            float timedEventTime = container.roarConfiguration.timedEventTime;
+            yield return new WaitForSeconds(timedEventTime);
+            container.TimedEvent?.Invoke();
+            if (container.roarConfiguration.repeatTimedEvent)
             {
-                StartCoroutine(MarkerEventCoroutine());
+                StartCoroutine(TimedEventCoroutine());
             }
         }
 
@@ -367,9 +366,9 @@ namespace RoaREngine
                     {
                         StartCoroutine(SyncMeasureEvent());
                     }
-                    if (container.roarConfiguration.markerEvent)
+                    if (container.roarConfiguration.timedEvent)
                     {
-                        StartCoroutine(MarkerEventCoroutine());
+                        StartCoroutine(TimedEventCoroutine());
                     }
                     if (container.roarConfiguration.onGoing)
                     {
