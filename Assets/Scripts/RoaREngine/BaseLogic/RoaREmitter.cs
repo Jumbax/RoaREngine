@@ -162,7 +162,7 @@ namespace RoaREngine
             }
             if ((!audioSource.loop && !container.roarConfiguration.onGoing) || container.roarConfiguration.finishedEvent)
             {
-                StartCoroutine(AudioClipFinishPlaying());
+                StartCoroutine(AudioClipFinishPlayingCoroutine());
             }
             AddEffect();
             audioSource.Play();
@@ -173,7 +173,6 @@ namespace RoaREngine
             while (delay < container.roarConfiguration.delay)
             {
                 delay += Time.deltaTime;
-                Debug.Log(delay);
                 yield return null;
             }
             Fade(container.roarConfiguration.playFadeTime, container.roarConfiguration.fadeInVolume, true);
@@ -192,7 +191,7 @@ namespace RoaREngine
                 audioSource.UnPause();
                 if (!audioSource.loop && !container.roarConfiguration.onGoing)
                 {
-                    StartCoroutine(AudioClipFinishPlaying());
+                    StartCoroutine(AudioClipFinishPlayingCoroutine());
                 }
                 if (container.roarConfiguration.measureEvent)
                 {
@@ -231,7 +230,7 @@ namespace RoaREngine
             }
         }
 
-        private IEnumerator AudioClipFinishPlaying()
+        private IEnumerator AudioClipFinishPlayingCoroutine()
         {
             float clipLengthRemaining = audioSource.clip.length - audioSource.time;
             yield return new WaitForSeconds(clipLengthRemaining);
@@ -360,7 +359,7 @@ namespace RoaREngine
                     }
                     if (!audioSource.loop && !container.roarConfiguration.onGoing)
                     {
-                        StartCoroutine(AudioClipFinishPlaying());
+                        StartCoroutine(AudioClipFinishPlayingCoroutine());
                     }
                     if (container.roarConfiguration.measureEvent)
                     {
