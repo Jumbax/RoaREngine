@@ -5,13 +5,15 @@ namespace RoaREngine
 {
     public class RoaREmitter : MonoBehaviour
     {
+        #region var
         private Transform initialParent;
         private AudioSource audioSource;
         private RoaRContainer container;
         private bool paused;
         private float delay = 0f;
+        #endregion
 
-        #region private
+        #region private functions
         private void Awake()
         {
             audioSource = GetComponent<AudioSource>();
@@ -111,7 +113,7 @@ namespace RoaREngine
                 reverbZone.density = container.roarConfiguration.reverbZoneDensity;
             }
         }
-        
+
         private IEnumerator PlayCoroutine()
         {
             if (container.roarConfiguration.delay > 0)
@@ -167,7 +169,7 @@ namespace RoaREngine
             AddEffect();
             audioSource.Play();
         }
-        
+
         private IEnumerator ResumeCoroutine()
         {
             while (delay < container.roarConfiguration.delay)
@@ -185,6 +187,27 @@ namespace RoaREngine
             float time = 0f;
             float startVolume = audioSource.volume;
             float duration = fadeTime;
+
+            if (!resume && !stop && !paused)
+            {
+
+                if (!audioSource.loop && !container.roarConfiguration.onGoing)
+                {
+                    StartCoroutine(AudioClipFinishPlayingCoroutine());
+                }
+                if (container.roarConfiguration.measureEvent)
+                {
+                    StartCoroutine(SyncMeasureEvent());
+                }
+                if (container.roarConfiguration.timedEvent)
+                {
+                    StartCoroutine(TimedEventCoroutine());
+                }
+                if (container.roarConfiguration.onGoing)
+                {
+                    StartCoroutine(OnGoingCoroutine());
+                }
+            }
 
             if (resume)
             {
@@ -211,6 +234,7 @@ namespace RoaREngine
             {
                 audioSource.volume = Mathf.Lerp(startVolume, volume, time / duration);
                 time += Time.deltaTime;
+                Debug.Log(time);
                 yield return null;
             }
 
@@ -225,7 +249,6 @@ namespace RoaREngine
 
             if (paused)
             {
-                StopAllCoroutines();
                 audioSource.Pause();
             }
         }
@@ -299,7 +322,7 @@ namespace RoaREngine
 
         #endregion
 
-        #region public
+        #region public functions
         public void Play()
         {
             if (audioSource.clip == null)

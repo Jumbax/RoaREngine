@@ -1,4 +1,5 @@
 using RoaREngine;
+using System;
 using UnityEngine;
 
 [ExecuteInEditMode]
@@ -7,160 +8,188 @@ public class UserCall : MonoBehaviour
     public string[] CueNames;
     public RoaRContainer[] Containers;
     public float hSliderValue = 0.0f;
-
+    public int bankIndex;
+    public float crossFadeParam;
+    
     private void OnGUI()
     {
         hSliderValue = GUI.HorizontalSlider(new Rect(25, 25, 100, 30), hSliderValue, 0f, 1f);
         GUILayout.BeginArea(new Rect(Screen.width / 4 - 100, Screen.height / 4, 200, Screen.height));
         if (GUILayout.Button("Play"))
         {
-            RoaREventChannel.Play?.Invoke(CueNames[0], true);
+            RoaRManager.CallPlay(CueNames[0]);
             Debug.Log("Play");
         }
         if (GUILayout.Button("Pause"))
         {
-            RoaREventChannel.Pause?.Invoke(CueNames[0]);
+            RoaRManager.CallPause(CueNames[0]);
             Debug.Log("Pause");
         }
         if (GUILayout.Button("Resume"))
         {
-            RoaREventChannel.Resume?.Invoke(CueNames[0]);
+            RoaRManager.CallResume(CueNames[0]);
             Debug.Log("Resume");
         }
         if (GUILayout.Button("Stop"))
         {
-            RoaREventChannel.Stop?.Invoke(CueNames[0]);
+            RoaRManager.CallStop(CueNames[0]);
             Debug.Log("Stop");
         }
         if (GUILayout.Button("Add Container"))
         {
-            RoaREventChannel.AddContainer?.Invoke(Containers[0]);
+            RoaRManager.CallAddContainer(Containers[0]);
             Debug.Log("Add Container");
         }
         if (GUILayout.Button("Remove Container"))
         {
-            RoaREventChannel.RemoveContainer?.Invoke(Containers[0]);
+            RoaRManager.CallRemoveContainer(Containers[0]);
             Debug.Log("Remove Container");
         }
         if (GUILayout.Button("Get Container"))
         {
-            RoaREventChannel.GetContainer?.Invoke(CueNames[0]);
+            RoaRManager.CallGetContainer(CueNames[0]);
             Debug.Log("Get Container");
         }
         if (GUILayout.Button("Get Containers"))
         {
-            RoaREventChannel.GetContainers?.Invoke();
+            RoaRManager.CallGetContainers();
             Debug.Log("Get Containers");
         }
         if (GUILayout.Button("Get Number Containers"))
         {
-            RoaREventChannel.GetNumberContainers?.Invoke();
+            RoaRManager.CallGetNumberContainers();
             Debug.Log("Get Number Containers");
-        }
-        if (GUILayout.Button("Set Containers"))
-        {
-            //RoaREventChannel.SetContainer?.Invoke(CueNames[0]);
-            Debug.Log("Set Container");
         }
         if (GUILayout.Button("Change Sequence Mode"))
         {
-            Debug.Log("test");
+            RoaRManager.CallChangeSequenceMode(CueNames[0], AudioSequenceMode.Sequential);
+            Debug.Log("Change Sequence Mode");
         }
         if (GUILayout.Button("Get AudioSource"))
         {
-            Debug.Log("test");
+            RoaRManager.CallGetAudioSource(CueNames[0]);
+            Debug.Log("Get AudioSource");
         }
         if (GUILayout.Button("Get Number AudioSources"))
         {
-            Debug.Log("test");
+            RoaRManager.CallGetNumberAudioSources();
+            Debug.Log("Get Number AudioSources");
         }
         if (GUILayout.Button("Add Effect"))
         {
-            Debug.Log("test");
+            RoaRManager.CallAddEffect(CueNames[0], EffectType.Chorus);
+            Debug.Log("Add Effect");
         }
         if (GUILayout.Button("Get AudioSource Effect"))
         {
-            Debug.Log("test");
+            //RoaRManager.CallGetAudioSourceEffect(CueNames[0], AudioChorusFilter);
+            Debug.Log("Get AudioSource Effect");
         }
         if (GUILayout.Button("Set Bank Index"))
         {
-            Debug.Log("test");
+            RoaRManager.CallSetBankIndex(CueNames[0], bankIndex);
+            Debug.Log("Set Bank Index");
         }
         GUILayout.EndArea();
 
         GUILayout.BeginArea(new Rect(Screen.width / 2 - 100, Screen.height / 4, 200, Screen.height));
         if (GUILayout.Button("Fade"))
         {
-            Debug.Log("test");
+            RoaRManager.CallFade(CueNames[0], 3f, 0f);
+            //Debug.Log("Fade");
         }
         if (GUILayout.Button("CrossFade By Parameter"))
         {
-            Debug.Log("test");
+            RoaRManager.CallCrossFadeByParameter(CueNames, hSliderValue);
+            Debug.Log("CrossFade By Parameter");
         }
         if (GUILayout.Button("Add Measure Event"))
         {
-            Debug.Log("test");
+            RoaRManager.CallAddMeasureEvent(CueNames[0], MeasureEvent);
+            Debug.Log("Add Measure Event");
         }
         if (GUILayout.Button("Remove Measure Event"))
         {
-            Debug.Log("test");
+            RoaRManager.CallRemoveMeasureEvent(CueNames[0], MeasureEvent);
+            Debug.Log("Remove Measure Event");
         }
         if (GUILayout.Button("Add Timed Event"))
         {
-            Debug.Log("test");
+            RoaRManager.CallAddTimedEvent(CueNames[0], TimedEvent);
+            Debug.Log("Add Timed Event");
         }
         if (GUILayout.Button("Remove Timed Event"))
         {
-            Debug.Log("test");
+            RoaRManager.CallRemoveTimedEvent(CueNames[0], TimedEvent);
+            Debug.Log("Add Timed Event");
         }
         if (GUILayout.Button("Add Play Event"))
         {
-            Debug.Log("test");
+            RoaRManager.CallAddPlayEvent(CueNames[0], PlayEvent);
+            Debug.Log("Add Play Event");
         }
         if (GUILayout.Button("Remove Play Event"))
         {
-            Debug.Log("test");
+            RoaRManager.CallRemovePlayEvent(CueNames[0], PlayEvent);
+            Debug.Log("Remove Play Event");
         }
         if (GUILayout.Button("Add Pause Event"))
         {
-            Debug.Log("test");
+            RoaRManager.CallAddPauseEvent(CueNames[0], PauseEvent);
+            Debug.Log("Add Pause Event");
         }
         if (GUILayout.Button("Remove Pause Event"))
         {
-            Debug.Log("test");
+            RoaRManager.CallRemovePauseEvent(CueNames[0], PauseEvent);
+            Debug.Log("Remove Pause Event");
         }
         if (GUILayout.Button("Add Resume Event"))
         {
-            Debug.Log("test");
+            RoaRManager.CallAddResumeEvent(CueNames[0], ResumeEvent);
+            Debug.Log("Add Resume Event");
         }
         if (GUILayout.Button("Remove Resume Event"))
         {
-            Debug.Log("test");
+            RoaRManager.CallRemoveResumeEvent(CueNames[0], ResumeEvent);
+            Debug.Log("Remove Resume Event");
         }
         if (GUILayout.Button("Add Stop Event"))
         {
-            Debug.Log("test");
+            RoaRManager.CallAddStopEvent(CueNames[0], StopEvent);
+            Debug.Log("Add Stop Event");
         }
         if (GUILayout.Button("Remove Stop Event"))
         {
-            Debug.Log("test");
+            RoaRManager.CallRemoveStopEvent(CueNames[0], StopEvent);
+            Debug.Log("Remove Stop Event");
         }
         if (GUILayout.Button("Add Finished Event"))
         {
-            Debug.Log("test");
+            RoaRManager.CallAddFinishedEvent(CueNames[0], FinishedEvent);
+            Debug.Log("Add Finished Event");
         }
         if (GUILayout.Button("Remove Finished Event"))
         {
-            Debug.Log("test");
+            RoaRManager.CallRemoveFinishedEvent(CueNames[0], FinishedEvent);
+            Debug.Log("Remove Finished Event");
         }
         GUILayout.EndArea();
 
     }
 
-
-    void FinishEvent()
+    private void MeasureEvent()
     {
-        Debug.Log("Finish  Event");
+        Debug.Log("Measure Event");
+    }
+
+    private void TimedEvent()
+    {
+        Debug.Log("Timed Event");
+    }
+
+    void FinishedEvent()
+    {
+        Debug.Log("Finished Event");
     }
 
     void PlayEvent()
