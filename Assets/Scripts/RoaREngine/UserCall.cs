@@ -1,40 +1,162 @@
 using RoaREngine;
-using System.Collections;
 using UnityEngine;
 
+[ExecuteInEditMode]
 public class UserCall : MonoBehaviour
 {
-    private bool Play;
-    private bool Stop;
-    private bool Pause;
-    private bool Resume;
-    private bool C;
-    private bool X;
-    public RoaRManager manager;
     public string[] CueNames;
+    public RoaRContainer[] Containers;
     public float hSliderValue = 0.0f;
 
     private void OnGUI()
     {
         hSliderValue = GUI.HorizontalSlider(new Rect(25, 25, 100, 30), hSliderValue, 0f, 1f);
+        GUILayout.BeginArea(new Rect(Screen.width / 4 - 100, Screen.height / 4, 200, Screen.height));
+        if (GUILayout.Button("Play"))
+        {
+            RoaREventChannel.Play?.Invoke(CueNames[0], true);
+            Debug.Log("Play");
+        }
+        if (GUILayout.Button("Pause"))
+        {
+            RoaREventChannel.Pause?.Invoke(CueNames[0]);
+            Debug.Log("Pause");
+        }
+        if (GUILayout.Button("Resume"))
+        {
+            RoaREventChannel.Resume?.Invoke(CueNames[0]);
+            Debug.Log("Resume");
+        }
+        if (GUILayout.Button("Stop"))
+        {
+            RoaREventChannel.Stop?.Invoke(CueNames[0]);
+            Debug.Log("Stop");
+        }
+        if (GUILayout.Button("Add Container"))
+        {
+            RoaREventChannel.AddContainer?.Invoke(Containers[0]);
+            Debug.Log("Add Container");
+        }
+        if (GUILayout.Button("Remove Container"))
+        {
+            RoaREventChannel.RemoveContainer?.Invoke(Containers[0]);
+            Debug.Log("Remove Container");
+        }
+        if (GUILayout.Button("Get Container"))
+        {
+            RoaREventChannel.GetContainer?.Invoke(CueNames[0]);
+            Debug.Log("Get Container");
+        }
+        if (GUILayout.Button("Get Containers"))
+        {
+            RoaREventChannel.GetContainers?.Invoke();
+            Debug.Log("Get Containers");
+        }
+        if (GUILayout.Button("Get Number Containers"))
+        {
+            RoaREventChannel.GetNumberContainers?.Invoke();
+            Debug.Log("Get Number Containers");
+        }
+        if (GUILayout.Button("Set Containers"))
+        {
+            //RoaREventChannel.SetContainer?.Invoke(CueNames[0]);
+            Debug.Log("Set Container");
+        }
+        if (GUILayout.Button("Change Sequence Mode"))
+        {
+            Debug.Log("test");
+        }
+        if (GUILayout.Button("Get AudioSource"))
+        {
+            Debug.Log("test");
+        }
+        if (GUILayout.Button("Get Number AudioSources"))
+        {
+            Debug.Log("test");
+        }
+        if (GUILayout.Button("Add Effect"))
+        {
+            Debug.Log("test");
+        }
+        if (GUILayout.Button("Get AudioSource Effect"))
+        {
+            Debug.Log("test");
+        }
+        if (GUILayout.Button("Set Bank Index"))
+        {
+            Debug.Log("test");
+        }
+        GUILayout.EndArea();
+
+        GUILayout.BeginArea(new Rect(Screen.width / 2 - 100, Screen.height / 4, 200, Screen.height));
+        if (GUILayout.Button("Fade"))
+        {
+            Debug.Log("test");
+        }
+        if (GUILayout.Button("CrossFade By Parameter"))
+        {
+            Debug.Log("test");
+        }
+        if (GUILayout.Button("Add Measure Event"))
+        {
+            Debug.Log("test");
+        }
+        if (GUILayout.Button("Remove Measure Event"))
+        {
+            Debug.Log("test");
+        }
+        if (GUILayout.Button("Add Timed Event"))
+        {
+            Debug.Log("test");
+        }
+        if (GUILayout.Button("Remove Timed Event"))
+        {
+            Debug.Log("test");
+        }
+        if (GUILayout.Button("Add Play Event"))
+        {
+            Debug.Log("test");
+        }
+        if (GUILayout.Button("Remove Play Event"))
+        {
+            Debug.Log("test");
+        }
+        if (GUILayout.Button("Add Pause Event"))
+        {
+            Debug.Log("test");
+        }
+        if (GUILayout.Button("Remove Pause Event"))
+        {
+            Debug.Log("test");
+        }
+        if (GUILayout.Button("Add Resume Event"))
+        {
+            Debug.Log("test");
+        }
+        if (GUILayout.Button("Remove Resume Event"))
+        {
+            Debug.Log("test");
+        }
+        if (GUILayout.Button("Add Stop Event"))
+        {
+            Debug.Log("test");
+        }
+        if (GUILayout.Button("Remove Stop Event"))
+        {
+            Debug.Log("test");
+        }
+        if (GUILayout.Button("Add Finished Event"))
+        {
+            Debug.Log("test");
+        }
+        if (GUILayout.Button("Remove Finished Event"))
+        {
+            Debug.Log("test");
+        }
+        GUILayout.EndArea();
+
     }
 
-    private void Start()
-    {
-        manager.Play(CueNames[0]);
-        manager.AddPlayEvent(CueNames[0], PlayEvent);
-        manager.AddPauseEvent(CueNames[0], PauseEvent);
-        manager.AddResumeEvent(CueNames[0], ResumeEvent);
-        manager.AddStopEvent(CueNames[0], StopEvent);
-        manager.AddFinishedEvent(CueNames[0], FinishEvent);
-    }
-
-    private IEnumerator TestPlay()
-    {
-        yield return new WaitForSeconds(0.1f);
-        manager.Play(CueNames[0]);
-        manager.Play(CueNames[1]);
-    }
 
     void FinishEvent()
     {
@@ -55,72 +177,9 @@ public class UserCall : MonoBehaviour
     {
         Debug.Log("Resume Event");
     }
-    
+
     void StopEvent()
     {
         Debug.Log("Stop Event");
-    }
-
-    void Update()
-    {
-        if (Input.GetKey(KeyCode.Alpha1))
-        {
-            if (!Play)
-            {
-                manager.Play(CueNames[0]);
-                Play = true;
-            }
-        }
-        if (Input.GetKey(KeyCode.Alpha2))
-        {
-            if (!Stop)
-            {
-                manager.Stop(CueNames[0]);
-                Stop = true;
-            }
-        }
-        if (Input.GetKey(KeyCode.Alpha3))
-        {
-            if (!Pause)
-            {
-                manager.Pause(CueNames[0]);
-                Pause = true;
-            }
-        }
-        if (Input.GetKey(KeyCode.Alpha4))
-        {
-            if (!Resume)
-            {
-                manager.Resume(CueNames[0]);
-                Resume = true;
-            }
-        }
-        if (Input.GetKey(KeyCode.F))
-        {
-            Play = false;
-            Stop = false;
-            Pause = false;
-            Resume = false;
-            C = false;
-            X = false;
-        }
-        if (Input.GetKey(KeyCode.X))
-        {
-            if (!X)
-            {
-                manager.GetAudioSourceEffect<AudioChorusFilter>(CueNames[0]).depth = 1f;
-                //manager.GetAudioSource(CueName).volume = 0f;
-                X = true;
-            }
-        }
-        if (Input.GetKey(KeyCode.C))
-        {
-            if (!C)
-            {
-                manager.AddEffect(CueNames[0], EffectType.Distortion);
-                C = true;
-            }
-        }
-
     }
 }

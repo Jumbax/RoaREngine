@@ -26,8 +26,10 @@ namespace RoaREngine
 
         private AudioClip NextClip()
         {
-            if (audioClips.Length == 1) return audioClips[0];
-
+            if (audioClips.Length == 1)
+            {
+                return audioClips[0];
+            }
             switch (sequenceMode)
             {
                 case AudioSequenceMode.Sequential:
