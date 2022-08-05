@@ -5,12 +5,15 @@ namespace RoaREngine
 {
     public class RoaRPooler : MonoBehaviour
     {
+        #region var
         [SerializeField] private GameObject roarEmitter;
         [SerializeField] private int count;
         private List<GameObject> roarEmitters;
 
         public List<GameObject> RoarEmitters { get => roarEmitters;}
+        #endregion
 
+        #region private functions
         private void Awake()
         {
             roarEmitters = new List<GameObject>();
@@ -21,7 +24,9 @@ namespace RoaREngine
                 roarEmitters.Add(go);
             }
         }
+        #endregion
 
+        #region public functions
         public GameObject Get()
         {
             for (int i = 0; i < roarEmitters.Count; i++)
@@ -38,6 +43,6 @@ namespace RoaREngine
             roarEmitters.Add(go);
             return go;
         }
-
+        #endregion
     }
 }

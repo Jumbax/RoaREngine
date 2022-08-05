@@ -4,6 +4,7 @@ namespace RoaREngine
 {
     public static class TrackInfo
     {
+        #region public functions
         public static float Remap(float value, float min, float max)
         {
             return (value - min) * 1f / (max - min);
@@ -51,5 +52,6 @@ namespace RoaREngine
             // Calculate time remaining in the current bar
             return barLength - remainder;
         }
+        #endregion
     }
 }

@@ -5,6 +5,7 @@ using UnityEngine.Audio;
 
 namespace RoaREngine
 {
+    #region enum
     public enum EffectType
     {
         Chorus,
@@ -24,10 +25,12 @@ namespace RoaREngine
         Low = 194,
         VeryLow = 256
     }
+    #endregion
 
     [CreateAssetMenu(fileName = "RoaRConfiguration", menuName = "RoaREngine/RoaRConfiguration")]
     public class RoaRConfigurationSO : ScriptableObject
     {
+        #region var
         public Transform parent = null;
 
         public AudioMixerGroup audioMixerGroup = null;
@@ -161,7 +164,9 @@ namespace RoaREngine
         public float fadeInParamValueEnd = 0f;
         public float fadeOutParamValueStart = 0f;
         public float fadeOutParamValueEnd = 0f;
+        #endregion
 
+        #region public functions
         public void ApplyTo(AudioSource audioSource, RoaREmitter emitter)
         {
             audioSource.playOnAwake = false;
@@ -207,5 +212,6 @@ namespace RoaREngine
             //emitter.GetContainer().roarConfiguration.minRandomXYZ = this.minRandomXYZ;
             //emitter.GetContainer().roarConfiguration.maxRandomXYZ = this.maxRandomXYZ;
         }
+        #endregion
     }
 }

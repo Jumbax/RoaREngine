@@ -7,9 +7,12 @@ namespace RoaREngine
     [Serializable]
     public class RoaRContainerMap
     {
+        #region var
         public List<RoaRContainer> roarContainers;
         private Dictionary<string, RoaRContainer> containerDict = new Dictionary<string, RoaRContainer>();
+        #endregion
 
+        #region public functions
         public void Init()
         {
             SetNames();
@@ -63,6 +66,6 @@ namespace RoaREngine
         {
             return containerDict.ContainsKey(musicID);
         }
-
+        #endregion
     }
 }

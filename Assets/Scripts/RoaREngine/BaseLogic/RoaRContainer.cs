@@ -6,6 +6,7 @@ namespace RoaREngine
     [CreateAssetMenu(fileName = "RoaRContainer", menuName = "RoaREngine/RoaRContainer")]
     public class RoaRContainer : ScriptableObject
     {
+        #region var
         public string Name;
         public AudioClip Clip { get => roarClipBank.GetClip();}
         public RoaRClipsBankSO roarClipBank;
@@ -17,7 +18,9 @@ namespace RoaREngine
         public UnityAction OnFinishedEvent;
         public UnityAction MeasureEvent;
         public UnityAction TimedEvent;
+        #endregion
 
+        #region public functions
         public void ResetBankIndex()
         {
             roarClipBank.ResetIndex();
@@ -27,5 +30,6 @@ namespace RoaREngine
         {
             roarConfiguration.ApplyTo(audioSource, roarEmitter);
         }
+        #endregion
     }
 }
