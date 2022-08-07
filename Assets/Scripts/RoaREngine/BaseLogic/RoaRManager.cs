@@ -13,10 +13,9 @@ namespace RoaREngine
         [SerializeField] private List<RoaRContainer> roarContainers;
         private List<GameObject> roarEmitters;
         private Dictionary<string, RoaRContainer> containerDict = new Dictionary<string, RoaRContainer>();
-        //private RoaRPooler roarPooler;
         #endregion
 
-        #region private functions
+        #region functions
         private void Awake()
         {
             //RoarContainerMap.Init();
@@ -231,17 +230,9 @@ namespace RoaREngine
             }
         }
 
-        //private T GetAudioSourceEffect<T>(string musicID)
-        //{
-        //    //TEST
-        //    T filter = GetAudioSource(musicID).GetComponent<T>();
-        //    return filter;
-        //}
-
-        private Behaviour GetAudioSourceEffect(string musicID)
+        private T GetAudioSourceEffect<T>(string musicID)
         {
-            //TEST
-            Behaviour filter = GetAudioSource(musicID).GetComponent<Behaviour>();
+            T filter = GetAudioSource(musicID).GetComponent<T>();
             return filter;
         }
 
