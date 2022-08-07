@@ -8,127 +8,52 @@ namespace RoaREngine
     public class RoaRManager : MonoBehaviour
     {
         #region var
-        private RoaRPooler roarPooler;
+        [SerializeField] private GameObject roarEmitter;
+        [SerializeField] private int count;
+        [SerializeField] private List<RoaRContainer> roarContainers;
+        private List<GameObject> roarEmitters;
         private Dictionary<string, RoaRContainer> containerDict = new Dictionary<string, RoaRContainer>();
-        public List<RoaRContainer> roarContainers;
-        #endregion
-
-        #region delegate
-        public static UnityAction<string, bool> PlayAction;
-        public static UnityAction<string> PauseAction;
-        public static UnityAction<string> ResumeAction;
-        public static UnityAction<string> StopAction;
-        public static UnityAction<RoaRContainer> AddContainerAction;
-        public static UnityAction<RoaRContainer> RemoveContainerAction;
-        public static Func<string, RoaRContainer> GetContainerFunc;
-        public static Func<List<RoaRContainer>> GetContainersFunc;
-        public static Func<int> GetNumberContainersFunc;
-        public static UnityAction<string, AudioSequenceMode> ChangeSequenceModeAction;
-        public static Func<string, AudioSource> GetAudioSourceFunc;
-        public static Func<int> GetNumberAudioSourcesFunc;
-        public static UnityAction<string, EffectType> AddEffectAction;
-        public static Func<string, Behaviour> GetAudioSourceEffectFunc;
-        public static UnityAction<string, int> SetBankIndexAction;
-        public static UnityAction<string, float, float> FadeAction;
-        public static UnityAction<string[], float> CrossFadeByParameterAction;
-        public static UnityAction<string[], float[][], float> CrossFadeByParameterWithParamAction;
-        public static UnityAction<string, UnityAction> AddMeasureEventAction;
-        public static UnityAction<string, UnityAction> RemoveMeasureEventAction;
-        public static UnityAction<string, UnityAction> AddTimedEventAction;
-        public static UnityAction<string, UnityAction> RemoveTimedEventAction;
-        public static UnityAction<string, UnityAction> AddPlayEventAction;
-        public static UnityAction<string, UnityAction> RemovePlayEventAction;
-        public static UnityAction<string, UnityAction> AddPauseEventAction;
-        public static UnityAction<string, UnityAction> RemovePauseEventAction;
-        public static UnityAction<string, UnityAction> AddResumeEventAction;
-        public static UnityAction<string, UnityAction> RemoveResumeEventAction;
-        public static UnityAction<string, UnityAction> AddStopEventAction;
-        public static UnityAction<string, UnityAction> RemoveStopEventAction;
-        public static UnityAction<string, UnityAction> AddFinishedEventAction;
-        public static UnityAction<string, UnityAction> RemoveFinishedEventAction;
+        //private RoaRPooler roarPooler;
         #endregion
 
         #region private functions
         private void Awake()
         {
             //RoarContainerMap.Init();
-            roarPooler = GetComponent<RoaRPooler>();
+            //roarPooler = GetComponent<RoaRPooler>();
             SetNames();
             ResetContainersBankIndex();
+            SetInitialEmitters();
         }
 
-        private void OnEnable()
+        private void SetInitialEmitters()
         {
-            PlayAction += Play;
-            PauseAction += Pause;
-            ResumeAction += Resume;
-            StopAction += Stop;
-            AddContainerAction += AddContainer;
-            RemoveContainerAction += RemoveContainer;
-            GetContainerFunc += GetContainer;
-            GetContainersFunc += GetContainers;
-            GetNumberContainersFunc += GetNumberContainers;
-            ChangeSequenceModeAction += ChangeSequenceMode;
-            GetAudioSourceFunc += GetAudioSource;
-            GetNumberAudioSourcesFunc += GetNumberAudioSources;
-            AddEffectAction += AddEffect;
-            GetAudioSourceEffectFunc += GetAudioSourceEffect;
-            SetBankIndexAction += SetBankIndex;
-            FadeAction += Fade;
-            CrossFadeByParameterAction += CrossFadeByParameter;
-            CrossFadeByParameterWithParamAction += CrossFadeByParameterWithParam;
-            AddMeasureEventAction += AddMeasureEvent;
-            RemoveMeasureEventAction += RemoveMeasureEvent;
-            AddTimedEventAction += AddTimedEvent;
-            RemoveTimedEventAction += RemoveTimedEvent;
-            AddPlayEventAction += AddPlayEvent;
-            RemovePlayEventAction += RemovePlayEvent;
-            AddPauseEventAction += AddPauseEvent;
-            RemovePauseEventAction += RemovePauseEvent;
-            AddResumeEventAction += AddResumeEvent;
-            RemoveResumeEventAction += RemoveResumeEvent;
-            AddStopEventAction += AddStopEvent;
-            RemoveStopEventAction += RemoveStopEvent;
-            AddFinishedEventAction += AddFinishedEvent;
-            RemoveFinishedEventAction += RemoveFinishedEvent;
-        }
-
-        private void OnDisable()
-        {
-            PlayAction -= Play;
-            PauseAction -= Pause;
-            ResumeAction -= Resume;
-            StopAction -= Stop;
-            AddContainerAction -= AddContainer;
-            RemoveContainerAction -= RemoveContainer;
-            GetContainerFunc -= GetContainer;
-            GetContainersFunc -= GetContainers;
-            GetNumberContainersFunc -= GetNumberContainers;
-            ChangeSequenceModeAction -= ChangeSequenceMode;
-            GetAudioSourceFunc -= GetAudioSource;
-            GetNumberAudioSourcesFunc -= GetNumberAudioSources;
-            AddEffectAction -= AddEffect;
-            GetAudioSourceEffectFunc -= GetAudioSourceEffect;
-            SetBankIndexAction -= SetBankIndex;
-            FadeAction -= Fade;
-            CrossFadeByParameterAction -= CrossFadeByParameter;
-            CrossFadeByParameterWithParamAction -= CrossFadeByParameterWithParam;
-            AddMeasureEventAction -= AddMeasureEvent;
-            RemoveMeasureEventAction -= RemoveMeasureEvent;
-            AddTimedEventAction -= AddTimedEvent;
-            RemoveTimedEventAction -= RemoveTimedEvent;
-            AddPlayEventAction -= AddPlayEvent;
-            RemovePlayEventAction -= RemovePlayEvent;
-            AddPauseEventAction -= AddPauseEvent;
-            RemovePauseEventAction -= RemovePauseEvent;
-            AddResumeEventAction -= AddResumeEvent;
-            RemoveResumeEventAction -= RemoveResumeEvent;
-            AddStopEventAction -= AddStopEvent;
-            RemoveStopEventAction -= RemoveStopEvent;
-            AddFinishedEventAction -= AddFinishedEvent;
-            RemoveFinishedEventAction -= RemoveFinishedEvent;
+            roarEmitters = new List<GameObject>();
+            for (int i = 0; i < count; i++)
+            {
+                GameObject go = Instantiate(roarEmitter, transform);
+                go.SetActive(false);
+                roarEmitters.Add(go);
+            }
         }
         
+        public GameObject GetEmitter()
+        {
+            for (int i = 0; i < roarEmitters.Count; i++)
+            {
+                if (!roarEmitters[i].activeInHierarchy)
+                {
+                    roarEmitters[i].SetActive(true);
+                    return roarEmitters[i];
+                }
+            }
+
+            GameObject go = Instantiate(roarEmitter, transform);
+            go.SetActive(true);
+            roarEmitters.Add(go);
+            return go;
+        }
+
         private void Play(string musicID, bool esclusive = false)
         {
             if (MusicIDIsValid(musicID))
@@ -146,7 +71,7 @@ namespace RoaREngine
                         Stop(musicID);
                     }
                 }
-                roarEmitter = roarPooler.Get();
+                roarEmitter = GetEmitter();
                 if (roarEmitter != null)
                 {
                     SetContainer(musicID, roarEmitter);
@@ -219,7 +144,7 @@ namespace RoaREngine
 
         private GameObject GetActiveEmitterObject(string musicID)
         {
-            foreach (GameObject roarEmitter in roarPooler.RoarEmitters)
+            foreach (GameObject roarEmitter in roarEmitters)
             {
                 RoaREmitter emitterComponent = roarEmitter.GetComponent<RoaREmitter>();
                 if (roarEmitter.gameObject.activeInHierarchy == true)
@@ -571,42 +496,6 @@ namespace RoaREngine
                 }
             }
         }
-        #endregion
-
-        #region public functions
-        public static void CallPlay(string musicID, bool esclusive = false) => PlayAction?.Invoke(musicID, esclusive);
-        public static void CallPause(string musicID) => PauseAction?.Invoke(musicID);
-        public static void CallResume(string musicID) => ResumeAction?.Invoke(musicID);
-        public static void CallStop(string musicID) => StopAction?.Invoke(musicID);
-        public static void CallAddContainer(RoaRContainer container) => AddContainerAction?.Invoke(container);
-        public static void CallRemoveContainer(RoaRContainer container) => RemoveContainerAction?.Invoke(container);
-        public static RoaRContainer CallGetContainer(string musicID) => GetContainerFunc?.Invoke(musicID);
-        public static List<RoaRContainer> CallGetContainers() => GetContainersFunc?.Invoke();
-        public static int CallGetNumberContainers() => (int)GetNumberContainersFunc?.Invoke();
-        public static void CallChangeSequenceMode(string musicID, AudioSequenceMode audioSequenceMode) => ChangeSequenceModeAction?.Invoke(musicID, audioSequenceMode);
-        public static AudioSource CallGetAudioSource(string musicID) => GetAudioSourceFunc?.Invoke(musicID);
-        public static int CallGetNumberAudioSources() => (int)GetNumberAudioSourcesFunc?.Invoke();
-        public static void CallAddEffect(string musicID, EffectType type) => AddEffectAction?.Invoke(musicID, type);
-        public static Behaviour CallGetAudioSourceEffect(string musicID, Behaviour effect) => GetAudioSourceEffectFunc?.Invoke(musicID);
-        public static void CallSetBankIndex(string musicID, int index) => SetBankIndexAction?.Invoke(musicID, index);
-        public static void CallFade(string musicID, float fadeTime, float finalVolume) => FadeAction?.Invoke(musicID, fadeTime, finalVolume);
-        public static void CallCrossFadeByParameter(string[] musicIDs, float parameter) => CrossFadeByParameterAction?.Invoke(musicIDs, parameter);
-        public static void CallCrossFadeByParameterWithParam(string[] musicIDs, float[][] parameters, float parameter) => CrossFadeByParameterWithParamAction?.Invoke(musicIDs, parameters, parameter);
-        public static void CallAddMeasureEvent(string musicIDs, UnityAction measureEvent) => AddMeasureEventAction?.Invoke(musicIDs, measureEvent);
-        public static void CallRemoveMeasureEvent(string musicIDs, UnityAction measureEvent) => RemoveMeasureEventAction?.Invoke(musicIDs, measureEvent);
-        public static void CallAddTimedEvent(string musicIDs, UnityAction measureEvent) => AddTimedEventAction?.Invoke(musicIDs, measureEvent);
-        public static void CallRemoveTimedEvent(string musicIDs, UnityAction measureEvent) => RemoveTimedEventAction?.Invoke(musicIDs, measureEvent);
-        public static void CallAddPlayEvent(string musicIDs, UnityAction measureEvent) => AddPlayEventAction?.Invoke(musicIDs, measureEvent);
-        public static void CallRemovePlayEvent(string musicIDs, UnityAction measureEvent) => RemovePlayEventAction?.Invoke(musicIDs, measureEvent);
-        public static void CallAddPauseEvent(string musicIDs, UnityAction measureEvent) => AddPauseEventAction?.Invoke(musicIDs, measureEvent);
-        public static void CallRemovePauseEvent(string musicIDs, UnityAction measureEvent) => RemovePauseEventAction?.Invoke(musicIDs, measureEvent);
-        public static void CallAddResumeEvent(string musicIDs, UnityAction measureEvent) => AddResumeEventAction?.Invoke(musicIDs, measureEvent);
-        public static void CallRemoveResumeEvent(string musicIDs, UnityAction measureEvent) => RemoveResumeEventAction?.Invoke(musicIDs, measureEvent);
-        public static void CallAddStopEvent(string musicIDs, UnityAction measureEvent) => AddStopEventAction?.Invoke(musicIDs, measureEvent);
-        public static void CallRemoveStopEvent(string musicIDs, UnityAction measureEvent) => RemoveStopEventAction?.Invoke(musicIDs, measureEvent);
-        public static void CallAddFinishedEvent(string musicIDs, UnityAction measureEvent) => AddFinishedEventAction?.Invoke(musicIDs, measureEvent);
-        public static void CallRemoveFinishedEvent(string musicIDs, UnityAction measureEvent) => RemoveFinishedEventAction?.Invoke(musicIDs, measureEvent);
-
         #endregion
     }
 }
