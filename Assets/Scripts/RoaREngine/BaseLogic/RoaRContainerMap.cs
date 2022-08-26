@@ -8,8 +8,8 @@ namespace RoaREngine
     public class RoaRContainerMap
     {
         #region var
-        public List<RoaRContainer> roarContainers;
-        private Dictionary<string, RoaRContainer> containerDict = new Dictionary<string, RoaRContainer>();
+        public List<RoaRContainerSO> roarContainers;
+        private Dictionary<string, RoaRContainerSO> containerDict = new Dictionary<string, RoaRContainerSO>();
         #endregion
 
         #region public functions
@@ -21,7 +21,7 @@ namespace RoaREngine
 
         public void SetNames()
         {
-            foreach (RoaRContainer container in roarContainers)
+            foreach (RoaRContainerSO container in roarContainers)
             {
                 //CONTROLLO PER VEDERE SE CI SONO CONTAINER CON LO STESSO NOME
                 containerDict[container.Name] = container;
@@ -30,25 +30,25 @@ namespace RoaREngine
 
         public void ResetContainersBankIndex()
         {
-            foreach (RoaRContainer container in roarContainers)
+            foreach (RoaRContainerSO container in roarContainers)
             {
                 container.ResetBankIndex();
             }
         }
 
-        public void AddContainer(RoaRContainer container)
+        public void AddContainer(RoaRContainerSO container)
         {
             roarContainers.Add(container);
             containerDict[container.Name] = container;
         }
 
-        public void RemoveContainer(RoaRContainer container)
+        public void RemoveContainer(RoaRContainerSO container)
         {
             roarContainers.Remove(container);
             containerDict.Remove(container.Name);
         }
 
-        public RoaRContainer GetContainer(string musicID)
+        public RoaRContainerSO GetContainer(string musicID)
         {
             if (MusicIDIsValid(musicID))
             {

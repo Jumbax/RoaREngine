@@ -10,8 +10,8 @@ namespace RoaREngine
     {
         Vector2 scrollPos = Vector2.zero;
 
-        private RoaRContainer containerEditor = null;
-        private List<RoaRContainer> containers = new List<RoaRContainer>();
+        private RoaRContainerSO containerEditor = null;
+        private List<RoaRContainerSO> containers = new List<RoaRContainerSO>();
         private List<string> containersName = new List<string>();
         private int containerIndex = 0;
         private int containerOldIndex = 0;
@@ -155,7 +155,7 @@ namespace RoaREngine
             foreach (var asset in AssetDatabase.FindAssets("t:RoaRContainer CONTAINER"))
             {
                 var path = AssetDatabase.GUIDToAssetPath(asset);
-                containers.Add((RoaRContainer)AssetDatabase.LoadMainAssetAtPath(path));
+                containers.Add((RoaRContainerSO)AssetDatabase.LoadMainAssetAtPath(path));
                 containersName.Add(AssetDatabase.LoadMainAssetAtPath(path).name);
             }
         }
@@ -681,7 +681,7 @@ namespace RoaREngine
                 //TODO ERROR MESSAGE "A CONTAINER MUST HAVE A NAME"
                 return;
             }
-            RoaRContainer container = CreateInstance<RoaRContainer>();
+            RoaRContainerSO container = CreateInstance<RoaRContainerSO>();
 
             string path = AssetDatabase.GenerateUniqueAssetPath(string.Concat("Assets/Test/", containerName, "CONTAINER.asset"));
             AssetDatabase.CreateAsset(container, path);
@@ -878,7 +878,7 @@ namespace RoaREngine
             foreach (var asset in AssetDatabase.FindAssets("t:RoaRContainer CONTAINER"))
             {
                 var path = AssetDatabase.GUIDToAssetPath(asset);
-                containers.Add((RoaRContainer)AssetDatabase.LoadMainAssetAtPath(path));
+                containers.Add((RoaRContainerSO)AssetDatabase.LoadMainAssetAtPath(path));
                 containersName.Add(AssetDatabase.LoadMainAssetAtPath(path).name);
             }
             if (containerIndex == 0)
@@ -979,7 +979,7 @@ namespace RoaREngine
             reverbZone = new AnimBool(false);
         }
 
-        private void SaveContainerSettings(RoaRContainer container)
+        private void SaveContainerSettings(RoaRContainerSO container)
         {
             if (containerName == "" || containerIndex == 0)
             {
@@ -995,7 +995,7 @@ namespace RoaREngine
 
         private void GetSettingsFromContainer()
         {
-            RoaRContainer container = containers[containerIndex - 1];
+            RoaRContainerSO container = containers[containerIndex - 1];
             if (container.roarClipBank != null)
             {
                 bank = container.roarClipBank;
@@ -1158,7 +1158,7 @@ namespace RoaREngine
                 RoaREmitterEditor emitterComponent = emitterEditor.AddComponent<RoaREmitterEditor>();
                 if (containerIndex - 1 < 0)
                 {
-                    containerEditor = CreateInstance<RoaRContainer>();
+                    containerEditor = CreateInstance<RoaRContainerSO>();
                 }
                 else
                 {

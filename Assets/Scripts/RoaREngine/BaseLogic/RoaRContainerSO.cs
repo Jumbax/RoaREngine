@@ -4,7 +4,7 @@ using UnityEngine.Events;
 namespace RoaREngine
 {
     [CreateAssetMenu(fileName = "RoaRContainer", menuName = "RoaREngine/RoaRContainer")]
-    public class RoaRContainer : ScriptableObject
+    public class RoaRContainerSO : ScriptableObject
     {
         #region var
         public string Name;

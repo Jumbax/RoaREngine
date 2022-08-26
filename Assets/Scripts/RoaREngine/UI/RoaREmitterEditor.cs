@@ -8,7 +8,7 @@ namespace RoaREngine
     public class RoaREmitterEditor : RoaREmitter
     {
         private AudioSource audioSource;
-        private RoaRContainer container;
+        private RoaRContainerSO container;
         private float delay = 0f;
 
         #region private
@@ -248,7 +248,7 @@ namespace RoaREngine
             StartCoroutine(PlayCoroutine());
         }
 
-        public new void SetContainer(RoaRContainer otherContainer)
+        public new void SetContainer(RoaRContainerSO otherContainer)
         {
             container = otherContainer;
             audioSource.clip = container.Clip;

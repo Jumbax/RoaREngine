@@ -8,7 +8,7 @@ namespace RoaREngine
         #region var
         private Transform initialParent;
         private AudioSource audioSource;
-        private RoaRContainer container;
+        private RoaRContainerSO container;
         private bool paused;
         private float delay = 0f;
         #endregion
@@ -439,9 +439,9 @@ namespace RoaREngine
 
         public AudioSource GetAudioSource() => audioSource;
 
-        public RoaRContainer GetContainer() => container;
+        public RoaRContainerSO GetContainer() => container;
 
-        public void SetContainer(RoaRContainer container)
+        public void SetContainer(RoaRContainerSO container)
         {
             this.container = container;
             audioSource.clip = this.container.Clip;

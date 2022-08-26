@@ -9,6 +9,7 @@ namespace RoaREngine
         {
             return (value - min) * 1f / (max - min);
         }
+
         public static double GetTrackDuration(AudioClip clip)
         {
             // Track Duration = samples / freq

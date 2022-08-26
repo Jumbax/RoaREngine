@@ -1,38 +1,44 @@
 using RoaREngine;
 using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [ExecuteInEditMode]
 public class UserCall : MonoBehaviour
 {
     public string[] CueNames;
-    public RoaRContainer[] Containers;
+    public RoaRContainerSO[] Containers;
     public float hSliderValue = 0.0f;
     public int bankIndex;
     public float crossFadeParam;
-    
+    public RoaRManager manager;
+   
     private void OnGUI()
     {
         hSliderValue = GUI.HorizontalSlider(new Rect(25, 25, 100, 30), hSliderValue, 0f, 1f);
         GUILayout.BeginArea(new Rect(Screen.width / 4 - 100, Screen.height / 4, 200, Screen.height));
         if (GUILayout.Button("Play"))
         {
-            //RoaRManager.CallPlay(CueNames[0]);
-            Debug.Log("Play");
+            //RoaRManager.CallPlay?.Invoke("Music", false);
+        }
+        if (GUILayout.Button("ChangeScene"))
+        {
+            SceneManager.LoadScene(1);
         }
         if (GUILayout.Button("Pause"))
         {
-            //RoaRManager.CallPause(CueNames[0]);
+            //manager.Pause(CueNames[0]);
+            //RoaRManager.CallPause?.Invoke("Music");
             Debug.Log("Pause");
         }
         if (GUILayout.Button("Resume"))
         {
-            //RoaRManager.CallResume(CueNames[0]);
+            //RoaRManager.CallResume?.Invoke("Music");
             Debug.Log("Resume");
         }
         if (GUILayout.Button("Stop"))
         {
-            //RoaRManager.CallStop(CueNames[0]);
+            //RoaRManager.CallStop?.Invoke("Music");
             Debug.Log("Stop");
         }
         if (GUILayout.Button("Add Container"))
@@ -83,6 +89,7 @@ public class UserCall : MonoBehaviour
         if (GUILayout.Button("Get AudioSource Effect"))
         {
             //RoaRManager.CallGetAudioSourceEffect(CueNames[0], AudioChorusFilter);
+            //manager.GetAudioSourceEffect<AudioDistortionFilter>("Music");
             Debug.Log("Get AudioSource Effect");
         }
         if (GUILayout.Button("Set Bank Index"))
