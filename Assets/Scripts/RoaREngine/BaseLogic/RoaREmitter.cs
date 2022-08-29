@@ -118,6 +118,10 @@ namespace RoaREngine
         {
             if (container.roarConfiguration.delay > 0)
             {
+                if (Time.time < container.roarConfiguration.delay)
+                {
+                    container.roarConfiguration.delay -= Time.time;
+                }
                 while (delay < container.roarConfiguration.delay)
                 {
                     delay += Time.deltaTime;

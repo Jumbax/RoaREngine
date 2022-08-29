@@ -575,6 +575,11 @@ PrefabInstance:
       propertyPath: bank
       value: 
       objectReference: {fileID: 559457894}
+    - target: {fileID: 6238204421614994642, guid: a202c5493018ba54b925c5eb13b2c4a6,
+        type: 3}
+      propertyPath: count
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 6238204421614994645, guid: a202c5493018ba54b925c5eb13b2c4a6,
         type: 3}
       propertyPath: m_Name

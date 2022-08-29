@@ -15,4 +15,3 @@ MonoBehaviour:
   roarContainers:
   - {fileID: 11400000, guid: ef809eaca4e959b4da5611a1e8bad1a4, type: 2}
   - {fileID: 11400000, guid: 9e15ed5b9e88b854fb5676b0073b811b, type: 2}
-  - {fileID: 11400000, guid: d4643b26745be2a4091ed749cdb025ba, type: 2}

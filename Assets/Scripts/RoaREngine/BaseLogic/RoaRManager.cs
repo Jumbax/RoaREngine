@@ -29,11 +29,75 @@ namespace RoaREngine
         private void OnEnable()
         {
             SceneManager.sceneLoaded += OnChangeScene;
+            CallPlay += Play;
+            CallPause += Pause;
+            CallResume += Resume;
+            CallStop += Stop;
+            CallAddContainer += AddContainer;
+            CallRemoveContainer += RemoveContainer;
+            CallGetContainer += GetContainer;
+            CallGetContainers += GetContainers;
+            CallGetNumberContainers += GetNumberContainers;
+            CallChangeSequenceMode += ChangeSequenceMode;
+            CallGetAudioSource += GetAudioSource;
+            CallGetNumberAudioSources += GetNumberAudioSources;
+            CallAddEffect += AddEffect;
+            //CallGetAudioSourceEffect += GetAudioSourceEffect;
+            CallSetBankIndex += SetBankIndex;
+            CallFade += Fade;
+            CallCrossFadeByParameter += CrossFadeByParameter;
+            CallCrossFadeByParameterWithParam += CrossFadeByParameterWithParam;
+            CallAddMeasureEvent += AddMeasureEvent;
+            CallRemoveMeasureEvent += RemoveMeasureEvent;
+            CallAddTimedEvent += AddTimedEvent;
+            CallRemoveTimedEvent += RemoveTimedEvent;
+            CallAddPlayEvent += AddPlayEvent;
+            CallRemovePlayEvent += RemovePlayEvent;
+            CallAddPauseEvent += AddPauseEvent;
+            CallRemovePauseEvent += RemovePauseEvent;
+            CallAddResumeEvent += AddResumeEvent;
+            CallRemoveResumeEvent += RemoveResumeEvent;
+            CallAddStopEvent += AddStopEvent;
+            CallRemoveStopEvent += RemoveStopEvent;
+            CallAddFinishedEvent += AddFinishedEvent;
+            CallRemoveFinishedEvent += RemoveFinishedEvent;
         }
 
         private void OnDisable()
         {
             SceneManager.sceneLoaded -= OnChangeScene;
+            CallPlay -= Play;
+            CallPause -= Pause;
+            CallResume -= Resume;
+            CallStop -= Stop;
+            CallAddContainer -= AddContainer;
+            CallRemoveContainer -= RemoveContainer;
+            CallGetContainer -= GetContainer;
+            CallGetContainers -= GetContainers;
+            CallGetNumberContainers -= GetNumberContainers;
+            CallChangeSequenceMode -= ChangeSequenceMode;
+            CallGetAudioSource -= GetAudioSource;
+            CallGetNumberAudioSources -= GetNumberAudioSources;
+            CallAddEffect -= AddEffect;
+            //CallGetAudioSourceEffect -= GetAudioSourceEffect;
+            CallSetBankIndex -= SetBankIndex;
+            CallFade -= Fade;
+            CallCrossFadeByParameter -= CrossFadeByParameter;
+            CallCrossFadeByParameterWithParam -= CrossFadeByParameterWithParam;
+            CallAddMeasureEvent -= AddMeasureEvent;
+            CallRemoveMeasureEvent -= RemoveMeasureEvent;
+            CallAddTimedEvent -= AddTimedEvent;
+            CallRemoveTimedEvent -= RemoveTimedEvent;
+            CallAddPlayEvent -= AddPlayEvent;
+            CallRemovePlayEvent -= RemovePlayEvent;
+            CallAddPauseEvent -= AddPauseEvent;
+            CallRemovePauseEvent -= RemovePauseEvent;
+            CallAddResumeEvent -= AddResumeEvent;
+            CallRemoveResumeEvent -= RemoveResumeEvent;
+            CallAddStopEvent -= AddStopEvent;
+            CallRemoveStopEvent -= RemoveStopEvent;
+            CallAddFinishedEvent -= AddFinishedEvent;
+            CallRemoveFinishedEvent -= RemoveFinishedEvent;
         }
 
         private void OnChangeScene(Scene arg0, LoadSceneMode arg1)
@@ -69,7 +133,7 @@ namespace RoaREngine
             return go;
         }
 
-        private void Play(string musicID, bool esclusive = false)
+        public void Play(string musicID, bool esclusive = false)
         {
             if (MusicIDIsValid(musicID))
             {
@@ -504,6 +568,41 @@ namespace RoaREngine
                 }
             }
         }
+        #endregion
+
+        #region delegate
+        public static UnityAction<string, bool> CallPlay;
+        public static UnityAction<string> CallPause;
+        public static UnityAction<string> CallResume;
+        public static UnityAction<string> CallStop;
+        public static UnityAction<RoaRContainerSO> CallAddContainer;
+        public static UnityAction<RoaRContainerSO> CallRemoveContainer;
+        public static UnityAction<string, AudioSequenceMode> CallChangeSequenceMode;
+        public static UnityAction<string, EffectType> CallAddEffect;
+        public static UnityAction<string, int> CallSetBankIndex;
+        public static UnityAction<string, float, float> CallFade;
+        public static UnityAction<string[], float> CallCrossFadeByParameter;
+        public static UnityAction<string[], float[][], float> CallCrossFadeByParameterWithParam;
+        public static UnityAction<string, UnityAction> CallAddMeasureEvent;
+        public static UnityAction<string, UnityAction> CallRemoveMeasureEvent;
+        public static UnityAction<string, UnityAction> CallAddTimedEvent;
+        public static UnityAction<string, UnityAction> CallRemoveTimedEvent;
+        public static UnityAction<string, UnityAction> CallAddPlayEvent;
+        public static UnityAction<string, UnityAction> CallRemovePlayEvent;
+        public static UnityAction<string, UnityAction> CallAddPauseEvent;
+        public static UnityAction<string, UnityAction> CallRemovePauseEvent;
+        public static UnityAction<string, UnityAction> CallAddResumeEvent;
+        public static UnityAction<string, UnityAction> CallRemoveResumeEvent;
+        public static UnityAction<string, UnityAction> CallAddStopEvent;
+        public static UnityAction<string, UnityAction> CallRemoveStopEvent;
+        public static UnityAction<string, UnityAction> CallAddFinishedEvent;
+        public static UnityAction<string, UnityAction> CallRemoveFinishedEvent;
+        public static Func<string, RoaRContainerSO> CallGetContainer;
+        public static Func<List<RoaRContainerSO>> CallGetContainers;
+        public static Func<int> CallGetNumberContainers;
+        public static Func<string, AudioSource> CallGetAudioSource;
+        public static Func<int> CallGetNumberAudioSources;
+        public static Func <string> CallGetAudioSourceEffect;
         #endregion
     }
 }
