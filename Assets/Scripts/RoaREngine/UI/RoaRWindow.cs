@@ -330,7 +330,7 @@ namespace RoaREngine
             }
             using (new GUILayout.HorizontalScope())
             {
-                GUILayout.Label("Pause FadeIn Time", GUILayout.Width(145));
+                GUILayout.Label("Pause FadeOut Time", GUILayout.Width(145));
                 pauseFadeTime = EditorGUILayout.FloatField(pauseFadeTime, GUILayout.Width(25));
             }
             using (new GUILayout.HorizontalScope())
