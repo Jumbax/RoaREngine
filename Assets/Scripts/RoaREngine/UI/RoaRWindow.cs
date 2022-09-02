@@ -152,7 +152,7 @@ namespace RoaREngine
             containers.Clear();
             containersName.Clear();
             containersName.Add("New Container");
-            foreach (var asset in AssetDatabase.FindAssets("t:RoaRContainer CONTAINER"))
+            foreach (var asset in AssetDatabase.FindAssets("t:RoaRContainerSO CONTAINER"))
             {
                 var path = AssetDatabase.GUIDToAssetPath(asset);
                 containers.Add((RoaRContainerSO)AssetDatabase.LoadMainAssetAtPath(path));
@@ -290,12 +290,14 @@ namespace RoaREngine
             {
                 clips[i] = EditorGUILayout.ObjectField("AudioClips", clips[i], typeof(AudioClip), false) as AudioClip;
             }
+            GUI.enabled = sequenceMode == AudioSequenceMode.Choise;
             using (new GUILayout.HorizontalScope())
             {
                 GUILayout.Label("Start From", GUILayout.Width(145));
                 clipIndex = EditorGUILayout.IntField(clipIndex, GUILayout.Width(25));
                 clipIndex = Mathf.Clamp(clipIndex, 0, clips.Count);
             }
+            GUI.enabled = true;
             if (GUILayout.Button("Add Clip"))
             {
                 AddClipField();
@@ -875,7 +877,7 @@ namespace RoaREngine
             containers.Clear();
             containersName.Clear();
             containersName.Add("New Container");
-            foreach (var asset in AssetDatabase.FindAssets("t:RoaRContainer CONTAINER"))
+            foreach (var asset in AssetDatabase.FindAssets("t:RoaRContainerSO"))
             {
                 var path = AssetDatabase.GUIDToAssetPath(asset);
                 containers.Add((RoaRContainerSO)AssetDatabase.LoadMainAssetAtPath(path));

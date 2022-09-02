@@ -15,7 +15,6 @@ public class UserCall : MonoBehaviour
     private void Start()
     {
         manager.Play("Music");
-        manager.Play("Music1");
     }
 
     private void OnGUI()

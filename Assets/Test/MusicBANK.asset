@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9391202ee6d382c4fb44c85f91c80e47, type: 3}
   m_Name: MusicBANK
   m_EditorClassIdentifier: 
-  sequenceMode: 1
+  sequenceMode: 0
   audioClips:
   - {fileID: 8300000, guid: 5c32398ea5165d749b7d081e88d2d5d8, type: 3}
+  - {fileID: 8300000, guid: d5b77323a4b290348bcbb73bd4187128, type: 3}
   IndexClip: 0
