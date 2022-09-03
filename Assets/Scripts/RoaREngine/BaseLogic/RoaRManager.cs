@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
@@ -12,9 +13,11 @@ namespace RoaREngine
         [SerializeField] private GameObject roarEmitter;
         [SerializeField] private int count;
         [SerializeField] private RoaRContainersBank bank;
+        [SerializeField] private List<AudioMixer> audiomixers;
         private List<RoaRContainerSO> roarContainers;
         private List<GameObject> roarEmitters;
         private Dictionary<string, RoaRContainerSO> containerDict = new Dictionary<string, RoaRContainerSO>();
+        private Dictionary<string, AudioMixer> audioMixerDict = new Dictionary<string, AudioMixer>();
         #endregion
 
         #region functions
@@ -24,10 +27,12 @@ namespace RoaREngine
             SetNames();
             ResetContainersBankIndex();
             SetInitialEmitters();
+            SetMixersNames();
         }
 
         private void OnEnable()
         {
+            CallTestMixers += TestMixers;
             SceneManager.sceneLoaded += OnChangeScene;
             CallPlay += Play;
             CallPause += Pause;
@@ -137,6 +142,28 @@ namespace RoaREngine
             go.SetActive(true);
             roarEmitters.Add(go);
             return go;
+        }
+
+        private void SetMixersNames()
+        {
+            if (audiomixers.Count > 0)
+            {
+                foreach (AudioMixer audiomixer in audiomixers)
+                {
+                    audioMixerDict[audiomixer.name] = audiomixer;
+                }
+            }
+        }
+
+        private void TestMixers()
+        {
+            Debug.Log(audiomixers.Count);
+            Debug.Log(audioMixerDict.Count);
+            Debug.Log(GetAudioMixer("Master"));
+            Debug.Log(GetAudioMixerParameter("Master", "Volume"));
+            SetAudioMixerParameter("Master", "Volume", -6f);
+            Debug.Log(GetAudioMixerParameter("Master", "Volume"));
+
         }
 
         private void Play(string musicID, bool esclusive = false)
@@ -615,9 +642,41 @@ namespace RoaREngine
                 }
             }
         }
+
+        private float GetAudioMixerParameter(string audioMixerName, string parameter)
+        {
+            bool value = audioMixerDict[audioMixerName].GetFloat(parameter, out float param);
+            if (value)
+            {
+                return param;
+            }
+            else
+            {
+                return float.MinValue;
+            }
+        }
+
+        private void SetAudioMixerParameter(string audioMixerName, string parameter, float volume)
+        {
+            audioMixerDict[audioMixerName].SetFloat(parameter, volume);
+        }
+
+        private void ChangeAudioMixerSnapshot(string audioMixerName, string snapshot, float time)
+        {
+            audioMixerDict[audioMixerName].FindSnapshot(snapshot).TransitionTo(time);
+        }
+
+        private AudioMixer GetAudioMixer(string audioMixerName)
+        {
+            return audioMixerDict[audioMixerName];
+        }
+
+        private float NormalizedMixerValue(float normalizedValue) => Mathf.Log10(normalizedValue) * 20f;
+
         #endregion
 
         #region delegate
+        public static UnityAction CallTestMixers;
         public static UnityAction<string, bool> CallPlay;
         public static UnityAction<string> CallPause;
         public static UnityAction<string> CallResume;
