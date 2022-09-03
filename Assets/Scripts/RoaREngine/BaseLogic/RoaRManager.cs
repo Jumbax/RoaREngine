@@ -33,6 +33,9 @@ namespace RoaREngine
             CallPause += Pause;
             CallResume += Resume;
             CallStop += Stop;
+            CallStopAll += StopAll;
+            CallPauseAll += PauseAll;
+            CallResumeAll += ResumeAll;
             CallAddContainer += AddContainer;
             CallRemoveContainer += RemoveContainer;
             CallGetContainer += GetContainer;
@@ -70,6 +73,9 @@ namespace RoaREngine
             CallPause -= Pause;
             CallResume -= Resume;
             CallStop -= Stop;
+            CallStopAll -= StopAll;
+            CallPauseAll -= PauseAll;
+            CallResumeAll -= ResumeAll;
             CallAddContainer -= AddContainer;
             CallRemoveContainer -= RemoveContainer;
             CallGetContainer -= GetContainer;
@@ -133,7 +139,7 @@ namespace RoaREngine
             return go;
         }
 
-        public void Play(string musicID, bool esclusive = false)
+        private void Play(string musicID, bool esclusive = false)
         {
             if (MusicIDIsValid(musicID))
             {
@@ -199,6 +205,33 @@ namespace RoaREngine
             }
         }
 
+        private void StopAll()
+        {
+            List<RoaREmitter> emitters = GetActiveEmitters();
+            foreach (RoaREmitter emitter in emitters)
+            {
+                emitter.Stop();
+            }
+        }
+
+        private void PauseAll()
+        {
+            List<RoaREmitter> emitters = GetActiveEmitters();
+            foreach (RoaREmitter emitter in emitters)
+            {
+                emitter.Pause();
+            }
+        }
+
+        private void ResumeAll()
+        {
+            List<RoaREmitter> emitters = GetActiveEmitters();
+            foreach (RoaREmitter emitter in emitters)
+            {
+                emitter.Resume();
+            }
+        }
+
         private void SetNames()
         {
             roarContainers = bank.ContainersBank.roarContainers;
@@ -229,6 +262,7 @@ namespace RoaREngine
                 RoaREmitter emitterComponent = roarEmitter.GetComponent<RoaREmitter>();
                 if (roarEmitter.gameObject.activeInHierarchy == true)
                 {
+                    //Check this control? Has sense?
                     if (emitterComponent.CheckForContainerName(musicID))
                     {
                         return roarEmitter;
@@ -236,6 +270,19 @@ namespace RoaREngine
                 }
             }
             return null;
+        }
+
+        private List<RoaREmitter> GetActiveEmitters()
+        {
+            List<RoaREmitter> activeEmitters = new List<RoaREmitter>();
+            foreach (GameObject roarEmitter in roarEmitters)
+            {
+                if (roarEmitter.gameObject.activeInHierarchy == true)
+                {
+                    activeEmitters.Add(roarEmitter.GetComponent<RoaREmitter>());
+                }
+            }
+            return activeEmitters;
         }
 
         private RoaREmitter GetEmitter(string musicID)
@@ -250,7 +297,7 @@ namespace RoaREngine
             }
             return null;
         }
-     
+
         private void AddContainer(RoaRContainerSO container)
         {
             roarContainers.Add(container);
@@ -276,7 +323,7 @@ namespace RoaREngine
         {
             roarEmitter.GetComponent<RoaREmitter>().SetContainer(containerDict[musicID]);
         }
-        
+
         private List<RoaRContainerSO> GetContainers()
         {
             return roarContainers;
@@ -484,7 +531,7 @@ namespace RoaREngine
                 }
             }
         }
-   
+
         private void RemovePauseEvent(string musicID, UnityAction pauseEvent)
         {
             if (MusicIDIsValid(musicID))
@@ -496,7 +543,7 @@ namespace RoaREngine
                 }
             }
         }
-      
+
         private void AddResumeEvent(string musicID, UnityAction resumeEvent)
         {
             if (MusicIDIsValid(musicID))
@@ -508,7 +555,7 @@ namespace RoaREngine
                 }
             }
         }
-       
+
         private void RemoveResumeEvent(string musicID, UnityAction resumeEvent)
         {
             if (MusicIDIsValid(musicID))
@@ -520,7 +567,7 @@ namespace RoaREngine
                 }
             }
         }
-       
+
         private void AddStopEvent(string musicID, UnityAction stopEvent)
         {
             if (MusicIDIsValid(musicID))
@@ -544,7 +591,7 @@ namespace RoaREngine
                 }
             }
         }
-   
+
         private void AddFinishedEvent(string musicID, UnityAction finishEvent)
         {
             if (MusicIDIsValid(musicID))
@@ -556,7 +603,7 @@ namespace RoaREngine
                 }
             }
         }
-       
+
         private void RemoveFinishedEvent(string musicID, UnityAction finishEvent)
         {
             if (MusicIDIsValid(musicID))
@@ -575,6 +622,9 @@ namespace RoaREngine
         public static UnityAction<string> CallPause;
         public static UnityAction<string> CallResume;
         public static UnityAction<string> CallStop;
+        public static UnityAction CallStopAll;
+        public static UnityAction CallPauseAll;
+        public static UnityAction CallResumeAll;
         public static UnityAction<RoaRContainerSO> CallAddContainer;
         public static UnityAction<RoaRContainerSO> CallRemoveContainer;
         public static UnityAction<string, AudioSequenceMode> CallChangeSequenceMode;
@@ -602,7 +652,7 @@ namespace RoaREngine
         public static Func<int> CallGetNumberContainers;
         public static Func<string, AudioSource> CallGetAudioSource;
         public static Func<int> CallGetNumberAudioSources;
-        public static Func <string> CallGetAudioSourceEffect;
+        public static Func<string> CallGetAudioSourceEffect;
         #endregion
     }
 }

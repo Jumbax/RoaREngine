@@ -49,11 +49,11 @@ MonoBehaviour:
   maxTime: 0
   minRandomXYZ: 0
   maxRandomXYZ: 0
-  playEvent: 1
-  pauseEvent: 1
-  resumeEvent: 1
+  playEvent: 0
+  pauseEvent: 0
+  resumeEvent: 0
   stopEvent: 0
-  finishedEvent: 1
+  finishedEvent: 0
   measureEvent: 0
   bpm: 120
   tempo: 4

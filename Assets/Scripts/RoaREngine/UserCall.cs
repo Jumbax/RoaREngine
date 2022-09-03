@@ -12,11 +12,6 @@ public class UserCall : MonoBehaviour
     public float crossFadeParam;
     public RoaRManager manager;
 
-    private void Start()
-    {
-        manager.Play("Music");
-    }
-
     private void OnGUI()
     {
         hSliderValue = GUI.HorizontalSlider(new Rect(25, 25, 100, 30), hSliderValue, 0f, 1f);
@@ -24,6 +19,8 @@ public class UserCall : MonoBehaviour
         if (GUILayout.Button("Play"))
         {
             RoaRManager.CallPlay("Music", false);
+            RoaRManager.CallPlay("Music1", false);
+            RoaRManager.CallPlay("Music2", false);
         }
         if (GUILayout.Button("ChangeScene"))
         {
@@ -43,6 +40,21 @@ public class UserCall : MonoBehaviour
         {
             RoaRManager.CallStop("Music");
             Debug.Log("Stop");
+        }
+        if (GUILayout.Button("StopAll"))
+        {
+            RoaRManager.CallStopAll();
+            Debug.Log("StopAll");
+        }
+        if (GUILayout.Button("PauseAll"))
+        {
+            RoaRManager.CallPauseAll();
+            Debug.Log("PauseAll");
+        }
+        if (GUILayout.Button("ResumeAll"))
+        {
+            RoaRManager.CallResumeAll();
+            Debug.Log("ResumeAll");
         }
         if (GUILayout.Button("Add Container"))
         {

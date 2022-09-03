@@ -25,7 +25,7 @@ MonoBehaviour:
   pauseFadeTime: 0
   resumeFadeTime: 0
   stopFadeTime: 0
-  delay: 15.36
+  delay: 0
   randomMinvolume: 0
   randomMaxvolume: 0
   pitch: 1

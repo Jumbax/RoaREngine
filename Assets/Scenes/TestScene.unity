@@ -444,7 +444,7 @@ PrefabInstance:
         type: 3}
       propertyPath: ContainersBank
       value: 
-      objectReference: {fileID: 11400000, guid: 7edebd81c703fef45bc479084e9919f9,
+      objectReference: {fileID: 11400000, guid: 2d2251c04985a3743bf2bbb1b271d701,
         type: 2}
     - target: {fileID: 1131191254515613797, guid: ae9f7be239063b843abff16f4e1540c2,
         type: 3}

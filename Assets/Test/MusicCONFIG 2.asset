@@ -15,14 +15,17 @@ MonoBehaviour:
   parent: {fileID: 0}
   audioMixerGroup: {fileID: 0}
   priority: 128
-  loop: 1
+  loop: 0
   mute: 0
   startTime: 0
   randomStartTime: 0
-  volume: 0
-  fadeInFinalVolume: 1
-  fadeInTime: 0
-  fadeOutTime: 0
+  volume: 1
+  fadeInVolume: 1
+  playFadeTime: 0
+  pauseFadeTime: 0
+  resumeFadeTime: 0
+  stopFadeTime: 0
+  delay: 0
   randomMinvolume: 0
   randomMaxvolume: 0
   pitch: 1
@@ -41,15 +44,23 @@ MonoBehaviour:
   bypassreverbzones: 0
   ignorelistenervolume: 0
   ignorelistenerpause: 0
-  onGoing: 0
+  onGoing: 1
   minTime: 0
   maxTime: 0
   minRandomXYZ: 0
   maxRandomXYZ: 0
+  playEvent: 0
+  pauseEvent: 0
+  resumeEvent: 0
+  stopEvent: 0
+  finishedEvent: 0
   measureEvent: 0
   bpm: 120
   tempo: 4
   everyNBar: 1
+  timedEvent: 0
+  repeatTimedEvent: 0
+  timedEventTime: 0
   chorusFilter: 0
   chorusDryMix: 1
   chorusWetMix1: 1
