@@ -3,12 +3,12 @@ using UnityEngine;
 
 namespace RoaREngine
 {
-    public class RoaREmitter : MonoBehaviour
+    public class RoarEmitter : MonoBehaviour
     {
         #region var
         private Transform initialParent;
         private AudioSource audioSource;
-        private RoaRContainerSO container;
+        private RoarContainerSO container;
         private bool paused;
         private float delay = 0f;
         private int containerNameHash;
@@ -301,9 +301,9 @@ namespace RoaREngine
 
         private IEnumerator MeasureEventCoroutine()
         {
-            float seconds = (float)TrackInfo.GetTrackBarLength(container.roarConfiguration.bpm, container.roarConfiguration.tempo);
-            float barNumber = seconds * container.roarConfiguration.everyNBar;
-            yield return new WaitForSeconds(barNumber);
+            float seconds = (float)RoarTrackInfo.GetTrackBarLength(container.roarConfiguration.bpm, container.roarConfiguration.tempo);
+            float beatNumber = seconds * container.roarConfiguration.everyNBeat;
+            yield return new WaitForSeconds(beatNumber);
             container.MeasureEvent?.Invoke();
             StartCoroutine(MeasureEventCoroutine());
         }
@@ -321,7 +321,7 @@ namespace RoaREngine
 
         private IEnumerator SyncMeasureEvent()
         {
-            yield return new WaitForSeconds((float)TrackInfo.GetTimeBeforeNextBar(audioSource, container.roarConfiguration.bpm, container.roarConfiguration.tempo));
+            yield return new WaitForSeconds((float)RoarTrackInfo.GetTimeBeforeNextBar(audioSource, container.roarConfiguration.bpm, container.roarConfiguration.tempo));
             StartCoroutine(MeasureEventCoroutine());
         }
 
@@ -445,9 +445,9 @@ namespace RoaREngine
 
         public AudioSource GetAudioSource() => audioSource;
 
-        public RoaRContainerSO GetContainer() => container;
+        public RoarContainerSO GetContainer() => container;
 
-        public void SetContainer(RoaRContainerSO container)
+        public void SetContainer(RoarContainerSO container)
         {
             this.container = container;
             audioSource.clip = this.container.Clip;

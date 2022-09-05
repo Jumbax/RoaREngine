@@ -5,10 +5,10 @@ namespace RoaREngine
 {
 #if UNITY_EDITOR
     [ExecuteInEditMode]
-    public class RoaREmitterEditor : RoaREmitter
+    public class RoarEmitterEditor : RoarEmitter
     {
         private AudioSource audioSource;
-        private RoaRContainerSO container;
+        private RoarContainerSO container;
         private float delay = 0f;
 
         #region private
@@ -248,7 +248,7 @@ namespace RoaREngine
             StartCoroutine(PlayCoroutine());
         }
 
-        public new void SetContainer(RoaRContainerSO otherContainer)
+        public new void SetContainer(RoarContainerSO otherContainer)
         {
             container = otherContainer;
             audioSource.clip = container.Clip;

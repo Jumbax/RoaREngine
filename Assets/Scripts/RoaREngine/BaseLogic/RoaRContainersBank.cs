@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace RoaREngine
 {
-    public class RoaRContainersBank : MonoBehaviour
+    public class RoarContainersBank : MonoBehaviour
     {
-        public RoaRContainersBankSO ContainersBank;
+        public RoarContainersBankSO ContainersBank;
     }
 }

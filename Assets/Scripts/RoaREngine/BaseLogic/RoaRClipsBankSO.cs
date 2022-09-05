@@ -2,15 +2,18 @@ using UnityEngine;
 
 namespace RoaREngine
 {
+
+    #region enum
     public enum AudioSequenceMode
     {
         Sequential,
         Random,
         Choise
     }
+    #endregion
 
-    [CreateAssetMenu(fileName = "RoaRClipsBank", menuName = "RoaREngine/RoaRClipsBank")]
-    public class RoaRClipsBankSO : ScriptableObject
+    [CreateAssetMenu(fileName = "RoarClipsBank", menuName = "RoarEngine/RoarClipsBank")]
+    public class RoarClipsBankSO : ScriptableObject
     {
         #region var
         public AudioSequenceMode sequenceMode = AudioSequenceMode.Sequential;
@@ -20,8 +23,20 @@ namespace RoaREngine
         public int IndexClip = 0;
         #endregion
 
-        #region private functions
-        private AudioClip NextClip()
+        //#region private functions
+        //private AudioClip NextClip()
+        //{
+        //    
+        //}
+        //#endregion
+        
+        #region public functions
+        public void ResetIndex()
+        {
+            currentIndex = -1;
+            previousIndex = -1;
+        }
+        public AudioClip GetClip()
         {
             if (audioClips.Length == 1)
             {
@@ -52,15 +67,6 @@ namespace RoaREngine
 
             return audioClips[currentIndex];
         }
-        #endregion
-        
-        #region public functions
-        public void ResetIndex()
-        {
-            currentIndex = -1;
-            previousIndex = -1;
-        }
-        public AudioClip GetClip() => NextClip();
         #endregion
     }
 }

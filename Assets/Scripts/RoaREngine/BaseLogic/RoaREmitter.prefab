@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1095030392760059677}
   - component: {fileID: 3707475308488056797}
   m_Layer: 0
-  m_Name: RoaREmitter
+  m_Name: RoarEmitter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

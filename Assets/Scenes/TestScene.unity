@@ -368,18 +368,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 005882f2cdcb9364ba497f095a30bd01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &859925085 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6238204421614994642, guid: a202c5493018ba54b925c5eb13b2c4a6,
-    type: 3}
-  m_PrefabInstance: {fileID: 6238204420797197967}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ddad0b5ef0d372f49b234f285469fa62, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1259477258
 GameObject:
   m_ObjectHideFlags: 0
@@ -417,7 +405,6 @@ MonoBehaviour:
   hSliderValue: 0
   bankIndex: 0
   crossFadeParam: 0
-  manager: {fileID: 859925085}
 --- !u!4 &1259477260
 Transform:
   m_ObjectHideFlags: 0
@@ -504,7 +491,7 @@ PrefabInstance:
     - target: {fileID: 1131191254515613799, guid: ae9f7be239063b843abff16f4e1540c2,
         type: 3}
       propertyPath: m_Name
-      value: RoaRContainerBank
+      value: RoarContainerBank
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ae9f7be239063b843abff16f4e1540c2, type: 3}
@@ -600,7 +587,7 @@ PrefabInstance:
     - target: {fileID: 6238204421614994645, guid: a202c5493018ba54b925c5eb13b2c4a6,
         type: 3}
       propertyPath: m_Name
-      value: RoaRManager
+      value: RoarManager
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a202c5493018ba54b925c5eb13b2c4a6, type: 3}

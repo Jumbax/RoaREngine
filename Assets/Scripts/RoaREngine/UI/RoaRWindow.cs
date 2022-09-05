@@ -6,24 +6,24 @@ using UnityEngine.Audio;
 
 namespace RoaREngine
 {
-    public class RoaRWindow : EditorWindow
+    public class RoarWindow : EditorWindow
     {
         #region var
         private string folderPath;
 
         Vector2 scrollPos = Vector2.zero;
-        private RoaRContainerSO containerEditor = null;
-        private List<RoaRContainerSO> containers = new List<RoaRContainerSO>();
+        private RoarContainerSO containerEditor = null;
+        private List<RoarContainerSO> containers = new List<RoarContainerSO>();
         private List<string> containersName = new List<string>();
         private int containerIndex = 0;
         private int containerOldIndex = 0;
         private GameObject emitterEditor;
 
         private string containerName;
-        private RoaRConfigurationSO config = null;
-        private RoaRConfigurationSO oldConfig = null;
-        private RoaRClipsBankSO bank = null;
-        private RoaRClipsBankSO oldBank = null;
+        private RoarConfigurationSO config = null;
+        private RoarConfigurationSO oldConfig = null;
+        private RoarClipsBankSO bank = null;
+        private RoarClipsBankSO oldBank = null;
         private int clipsNumber = 0;
         private List<AudioClip> clips = new List<AudioClip>();
         private int clipIndex = 0;
@@ -71,7 +71,7 @@ namespace RoaREngine
         private bool hasMeasureEvent = false;
         private int bpm = 120;
         private int tempo = 4;
-        private int everyNBar = 1;
+        private int everyNBeat = 1;
         private bool timedEvent = false;
         private bool hasTimedEvent = false;
         private bool repeatTimedEvent;
@@ -159,7 +159,7 @@ namespace RoaREngine
             foreach (var asset in AssetDatabase.FindAssets("t:RoaRContainerSO CONTAINER"))
             {
                 var path = AssetDatabase.GUIDToAssetPath(asset);
-                containers.Add((RoaRContainerSO)AssetDatabase.LoadMainAssetAtPath(path));
+                containers.Add((RoarContainerSO)AssetDatabase.LoadMainAssetAtPath(path));
                 containersName.Add(AssetDatabase.LoadMainAssetAtPath(path).name);
             }
             if (!PlayerPrefs.HasKey("FolderPath"))
@@ -173,10 +173,10 @@ namespace RoaREngine
             Debug.Log(PlayerPrefs.GetString("FolderPath"));
         }
 
-        [MenuItem("RoaREngine/RoaRWindow")]
+        [MenuItem("RoarEngine/RoarWindow")]
         private static void DisplayWindow()
         {
-            RoaRWindow w = GetWindow<RoaRWindow>("RoaRWindow");
+            RoarWindow w = GetWindow<RoarWindow>("RoarWindow");
             w.Show();
         }
 
@@ -193,7 +193,6 @@ namespace RoaREngine
         private void LoadFolderPath()
         {
             folderPath = PlayerPrefs.GetString("FolderPath");
-            Debug.Log(folderPath);
         }
 
         private void OnGUI()
@@ -289,8 +288,8 @@ namespace RoaREngine
         private void ContainerSettings()
         {
             containerName = EditorGUILayout.TextField("ContainerName", containerName);
-            config = EditorGUILayout.ObjectField("Configuration", config, typeof(RoaRConfigurationSO), false) as RoaRConfigurationSO;
-            bank = EditorGUILayout.ObjectField("Bank", bank, typeof(RoaRClipsBankSO), false) as RoaRClipsBankSO;
+            config = EditorGUILayout.ObjectField("Configuration", config, typeof(RoarConfigurationSO), false) as RoarConfigurationSO;
+            bank = EditorGUILayout.ObjectField("Bank", bank, typeof(RoarClipsBankSO), false) as RoarClipsBankSO;
             if (GUILayout.Button("Create Container"))
             {
                 CreateContainer();
@@ -444,8 +443,8 @@ namespace RoaREngine
                 }
                 using (new GUILayout.HorizontalScope())
                 {
-                    GUILayout.Label("EveryNBar", GUILayout.Width(145));
-                    everyNBar = EditorGUILayout.IntField(everyNBar, GUILayout.Width(25));
+                    GUILayout.Label("EveryNBeat", GUILayout.Width(145));
+                    everyNBeat = EditorGUILayout.IntField(everyNBeat, GUILayout.Width(25));
                 }
                 GUI.enabled = true;
             }
@@ -716,7 +715,7 @@ namespace RoaREngine
                 return;
             }
 
-            RoaRContainerSO container = CreateInstance<RoaRContainerSO>();
+            RoarContainerSO container = CreateInstance<RoarContainerSO>();
 
             string path = AssetDatabase.GenerateUniqueAssetPath(string.Concat(folderPath, "/", containerName, "CONTAINER.asset"));
             AssetDatabase.CreateAsset(container, path);
@@ -744,9 +743,9 @@ namespace RoaREngine
             ReloadContainers();
         }
 
-        private RoaRClipsBankSO CreateClipBank()
+        private RoarClipsBankSO CreateClipBank()
         {
-            RoaRClipsBankSO bank = CreateInstance<RoaRClipsBankSO>();
+            RoarClipsBankSO bank = CreateInstance<RoarClipsBankSO>();
 
             string path = AssetDatabase.GenerateUniqueAssetPath(string.Concat(folderPath, "/", containerName, "BANK.asset"));
             AssetDatabase.CreateAsset(bank, path);
@@ -760,9 +759,9 @@ namespace RoaREngine
             return bank;
         }
 
-        private RoaRConfigurationSO CreateConfiguration(RoaRClipsBankSO bank)
+        private RoarConfigurationSO CreateConfiguration(RoarClipsBankSO bank)
         {
-            RoaRConfigurationSO config = CreateInstance<RoaRConfigurationSO>();
+            RoarConfigurationSO config = CreateInstance<RoarConfigurationSO>();
 
             //string path = AssetDatabase.GenerateUniqueAssetPath(string.Concat("Assets/Test/", containerName, "CONFIG.asset"));
             string path = AssetDatabase.GenerateUniqueAssetPath(string.Concat(folderPath, "/", containerName, "CONFIG.asset"));
@@ -777,7 +776,7 @@ namespace RoaREngine
             return config;
         }
 
-        private void ApplySettings(RoaRClipsBankSO bank, RoaRConfigurationSO config)
+        private void ApplySettings(RoarClipsBankSO bank, RoarConfigurationSO config)
         {
             bank.sequenceMode = sequenceMode;
             bank.IndexClip = clipIndex;
@@ -826,7 +825,7 @@ namespace RoaREngine
             config.fadeOutParamValueEnd = fadeOutParamValueEnd;
             config.bpm = bpm;
             config.tempo = tempo;
-            config.everyNBar = everyNBar;
+            config.everyNBeat = everyNBeat;
             config.timedEvent = timedEvent;
             config.repeatTimedEvent = repeatTimedEvent;
             config.timedEventTime = timedEventTime;
@@ -914,7 +913,7 @@ namespace RoaREngine
             foreach (var asset in AssetDatabase.FindAssets("t:RoaRContainerSO"))
             {
                 var path = AssetDatabase.GUIDToAssetPath(asset);
-                containers.Add((RoaRContainerSO)AssetDatabase.LoadMainAssetAtPath(path));
+                containers.Add((RoarContainerSO)AssetDatabase.LoadMainAssetAtPath(path));
                 containersName.Add(AssetDatabase.LoadMainAssetAtPath(path).name);
             }
             if (containerIndex == 0)
@@ -999,7 +998,7 @@ namespace RoaREngine
             finishedEvent = false;
             bpm = 120;
             tempo = 4;
-            everyNBar = 1;
+            everyNBeat = 1;
             isInACrossFade = false;
             fadeInParamValueStart = 0f;
             fadeInParamValueEnd = 0f;
@@ -1015,7 +1014,7 @@ namespace RoaREngine
             reverbZone = new AnimBool(false);
         }
 
-        private void SaveContainerSettings(RoaRContainerSO container)
+        private void SaveContainerSettings(RoarContainerSO container)
         {
             if (containerName == "" || containerIndex == 0)
             {
@@ -1031,14 +1030,14 @@ namespace RoaREngine
 
         private void GetSettingsFromContainer()
         {
-            RoaRContainerSO container = containers[containerIndex - 1];
+            RoarContainerSO container = containers[containerIndex - 1];
             if (container.roarClipBank != null)
             {
                 bank = container.roarClipBank;
             }
             else
             {
-                bank = CreateInstance<RoaRClipsBankSO>();
+                bank = CreateInstance<RoarClipsBankSO>();
             }
             if (container.roarConfiguration != null)
             {
@@ -1046,7 +1045,7 @@ namespace RoaREngine
             }
             else
             {
-                config = CreateInstance<RoaRConfigurationSO>();
+                config = CreateInstance<RoarConfigurationSO>();
             }
             containerName = container.Name;
             GetSettingsFromBank();
@@ -1116,7 +1115,7 @@ namespace RoaREngine
                 measureEvent = config.measureEvent;
                 bpm = config.bpm;
                 tempo = config.tempo;
-                everyNBar = config.everyNBar;
+                everyNBeat = config.everyNBeat;
                 timedEvent = config.timedEvent;
                 repeatTimedEvent = config.repeatTimedEvent;
                 timedEventTime = config.timedEventTime;
@@ -1191,10 +1190,10 @@ namespace RoaREngine
             {
                 emitterEditor = new GameObject();
                 emitterEditor.name = "EmitterEditor";
-                RoaREmitterEditor emitterComponent = emitterEditor.AddComponent<RoaREmitterEditor>();
+                RoarEmitterEditor emitterComponent = emitterEditor.AddComponent<RoarEmitterEditor>();
                 if (containerIndex - 1 < 0)
                 {
-                    containerEditor = CreateInstance<RoaRContainerSO>();
+                    containerEditor = CreateInstance<RoarContainerSO>();
                 }
                 else
                 {
@@ -1211,7 +1210,7 @@ namespace RoaREngine
         {
             if (emitterEditor != null)
             {
-                RoaREmitterEditor emitterComponent = emitterEditor.GetComponent<RoaREmitterEditor>();
+                RoarEmitterEditor emitterComponent = emitterEditor.GetComponent<RoarEmitterEditor>();
                 emitterComponent.Stop();
             }
         }
@@ -1220,7 +1219,7 @@ namespace RoaREngine
         {
             if (emitterEditor != null)
             {
-                RoaREmitterEditor emitterComponent = emitterEditor.GetComponent<RoaREmitterEditor>();
+                RoarEmitterEditor emitterComponent = emitterEditor.GetComponent<RoarEmitterEditor>();
                 emitterComponent.Pause();
             }
         }
@@ -1229,7 +1228,7 @@ namespace RoaREngine
         {
             if (emitterEditor != null)
             {
-                RoaREmitterEditor emitterComponent = emitterEditor.GetComponent<RoaREmitterEditor>();
+                RoarEmitterEditor emitterComponent = emitterEditor.GetComponent<RoarEmitterEditor>();
                 emitterComponent.Resume();
             }
         }

@@ -27,8 +27,8 @@ namespace RoaREngine
     }
     #endregion
 
-    [CreateAssetMenu(fileName = "RoaRConfiguration", menuName = "RoaREngine/RoaRConfiguration")]
-    public class RoaRConfigurationSO : ScriptableObject
+    [CreateAssetMenu(fileName = "RoarConfiguration", menuName = "RoarEngine/RoarConfiguration")]
+    public class RoarConfigurationSO : ScriptableObject
     {
         #region var
         public Transform parent = null;
@@ -91,7 +91,7 @@ namespace RoaREngine
         public bool measureEvent = false;
         public int bpm = 120;
         public int tempo = 4;
-        public int everyNBar = 1;
+        public int everyNBeat = 1;
 
         [Header("Timed Event")]
         public bool timedEvent = false;

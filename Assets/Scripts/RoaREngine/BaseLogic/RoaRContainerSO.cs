@@ -4,13 +4,13 @@ using UnityEngine.Events;
 namespace RoaREngine
 {
     [CreateAssetMenu(fileName = "RoaRContainer", menuName = "RoaREngine/RoaRContainer")]
-    public class RoaRContainerSO : ScriptableObject
+    public class RoarContainerSO : ScriptableObject
     {
         #region var
         public string Name;
         public AudioClip Clip { get => roarClipBank.GetClip();}
-        public RoaRClipsBankSO roarClipBank;
-        public RoaRConfigurationSO roarConfiguration;
+        public RoarClipsBankSO roarClipBank;
+        public RoarConfigurationSO roarConfiguration;
         public UnityAction OnPlayEvent;
         public UnityAction OnPauseEvent;
         public UnityAction OnStopEvent;

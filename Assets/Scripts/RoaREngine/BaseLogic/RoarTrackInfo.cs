@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace RoaREngine
 {
-    public static class TrackInfo
+    public static class RoarTrackInfo
     {
         #region public functions
         public static float Remap(float value, float min, float max)

@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace RoaREngine
 {
-    [CreateAssetMenu(fileName = "RoaRContainersBank", menuName = "RoaREngine/RoaRContainersBank")]
-    public class RoaRContainersBankSO : ScriptableObject
+    [CreateAssetMenu(fileName = "RoarContainersBank", menuName = "RoarEngine/RoarContainersBank")]
+    public class RoarContainersBankSO : ScriptableObject
     {
-        public List<RoaRContainerSO> roarContainers;
+        public List<RoarContainerSO> RoarContainers;
     }
 }

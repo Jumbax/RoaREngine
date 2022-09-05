@@ -275,7 +275,6 @@ MonoBehaviour:
   hSliderValue: 0
   bankIndex: 0
   crossFadeParam: 0
-  manager: {fileID: 0}
 --- !u!4 &963511445
 Transform:
   m_ObjectHideFlags: 0
@@ -438,9 +437,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 005882f2cdcb9364ba497f095a30bd01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  roarContainers:
-  - {fileID: 11400000, guid: 9e15ed5b9e88b854fb5676b0073b811b, type: 2}
-  - {fileID: 11400000, guid: ef809eaca4e959b4da5611a1e8bad1a4, type: 2}
+  ContainersBank: {fileID: 11400000, guid: 51ef0c09a1d0cd641985dc5d8ccf8fab, type: 2}
 --- !u!4 &1344362574
 Transform:
   m_ObjectHideFlags: 0
