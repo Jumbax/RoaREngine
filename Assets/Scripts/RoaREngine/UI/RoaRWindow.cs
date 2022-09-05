@@ -8,8 +8,10 @@ namespace RoaREngine
 {
     public class RoaRWindow : EditorWindow
     {
-        Vector2 scrollPos = Vector2.zero;
+        #region var
+        private string folderPath;
 
+        Vector2 scrollPos = Vector2.zero;
         private RoaRContainerSO containerEditor = null;
         private List<RoaRContainerSO> containers = new List<RoaRContainerSO>();
         private List<string> containersName = new List<string>();
@@ -138,7 +140,9 @@ namespace RoaREngine
         private float fadeInParamValueEnd = 0f;
         private float fadeOutParamValueStart = 0f;
         private float fadeOutParamValueEnd = 0f;
+        #endregion
 
+        #region func
         private void Awake()
         {
             chorus.valueChanged.AddListener(Repaint);
@@ -158,6 +162,15 @@ namespace RoaREngine
                 containers.Add((RoaRContainerSO)AssetDatabase.LoadMainAssetAtPath(path));
                 containersName.Add(AssetDatabase.LoadMainAssetAtPath(path).name);
             }
+            if (!PlayerPrefs.HasKey("FolderPath"))
+            {
+                CreateFolderPath();
+            }
+            else
+            {
+                LoadFolderPath();
+            }
+            Debug.Log(PlayerPrefs.GetString("FolderPath"));
         }
 
         [MenuItem("RoaREngine/RoaRWindow")]
@@ -165,6 +178,22 @@ namespace RoaREngine
         {
             RoaRWindow w = GetWindow<RoaRWindow>("RoaRWindow");
             w.Show();
+        }
+
+        private void CreateFolderPath()
+        {
+            string path = EditorUtility.OpenFolderPanel("Choose a folder for RoaR Assets", "Assets", "");
+            if (path.Length > 0)
+            {
+                folderPath = "Assets" + path.Substring(Application.dataPath.Length);
+                PlayerPrefs.SetString("FolderPath", folderPath);
+            }
+        }
+
+        private void LoadFolderPath()
+        {
+            folderPath = PlayerPrefs.GetString("FolderPath");
+            Debug.Log(folderPath);
         }
 
         private void OnGUI()
@@ -277,6 +306,10 @@ namespace RoaREngine
             if (GUILayout.Button("Reload Containers"))
             {
                 ReloadContainers();
+            }
+            if (GUILayout.Button("Change Folder Path"))
+            {
+                CreateFolderPath();
             }
         }
 
@@ -678,14 +711,14 @@ namespace RoaREngine
 
         private void CreateContainer()
         {
-            if (containerName == "" || containers.Find(container => container.Name == containerName))
+            if (containers.Find(container => container.Name == containerName))
             {
-                //TODO ERROR MESSAGE "A CONTAINER MUST HAVE A NAME"
                 return;
             }
+
             RoaRContainerSO container = CreateInstance<RoaRContainerSO>();
 
-            string path = AssetDatabase.GenerateUniqueAssetPath(string.Concat("Assets/Test/", containerName, "CONTAINER.asset"));
+            string path = AssetDatabase.GenerateUniqueAssetPath(string.Concat(folderPath, "/", containerName, "CONTAINER.asset"));
             AssetDatabase.CreateAsset(container, path);
 
             container.Name = containerName;
@@ -715,7 +748,7 @@ namespace RoaREngine
         {
             RoaRClipsBankSO bank = CreateInstance<RoaRClipsBankSO>();
 
-            string path = AssetDatabase.GenerateUniqueAssetPath(string.Concat("Assets/Test/", containerName, "BANK.asset"));
+            string path = AssetDatabase.GenerateUniqueAssetPath(string.Concat(folderPath, "/", containerName, "BANK.asset"));
             AssetDatabase.CreateAsset(bank, path);
 
             bank.audioClips = clips.ToArray();
@@ -725,6 +758,23 @@ namespace RoaREngine
             Selection.activeObject = bank;
 
             return bank;
+        }
+
+        private RoaRConfigurationSO CreateConfiguration(RoaRClipsBankSO bank)
+        {
+            RoaRConfigurationSO config = CreateInstance<RoaRConfigurationSO>();
+
+            //string path = AssetDatabase.GenerateUniqueAssetPath(string.Concat("Assets/Test/", containerName, "CONFIG.asset"));
+            string path = AssetDatabase.GenerateUniqueAssetPath(string.Concat(folderPath, "/", containerName, "CONFIG.asset"));
+            AssetDatabase.CreateAsset(config, path);
+
+            ApplySettings(bank, config);
+
+            AssetDatabase.SaveAssets();
+            EditorUtility.FocusProjectWindow();
+            Selection.activeObject = config;
+
+            return config;
         }
 
         private void ApplySettings(RoaRClipsBankSO bank, RoaRConfigurationSO config)
@@ -838,22 +888,6 @@ namespace RoaREngine
             config.reverbZoneLFReference = reverbZoneLFReference;
             config.reverbZoneDiffusion = reverbZoneDiffusion;
             config.reverbZoneDensity = reverbZoneDensity;
-        }
-
-        private RoaRConfigurationSO CreateConfiguration(RoaRClipsBankSO bank)
-        {
-            RoaRConfigurationSO config = CreateInstance<RoaRConfigurationSO>();
-
-            string path = AssetDatabase.GenerateUniqueAssetPath(string.Concat("Assets/Test/", containerName, "CONFIG.asset"));
-            AssetDatabase.CreateAsset(config, path);
-
-            ApplySettings(bank, config);
-
-            AssetDatabase.SaveAssets();
-            EditorUtility.FocusProjectWindow();
-            Selection.activeObject = config;
-
-            return config;
         }
 
         private void AddClipField()
@@ -1207,5 +1241,6 @@ namespace RoaREngine
                 ApplySettings(bank, config);
             }
         }
+        #endregion
     }
 }

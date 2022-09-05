@@ -451,7 +451,7 @@ namespace RoaREngine
         {
             this.container = container;
             audioSource.clip = this.container.Clip;
-            this.container.SetConfiguration(audioSource, this);
+            this.container.SetConfiguration(audioSource);
             containerNameHash = this.container.Name.GetHashCode();
         }
 

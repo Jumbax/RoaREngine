@@ -231,7 +231,7 @@ namespace RoaREngine
             UnityEditor.EditorApplication.delayCall += UnityEditor.EditorApplication.QueuePlayerLoopUpdate;
             if (!Application.isPlaying)
             {
-                container.roarConfiguration.ApplyTo(audioSource, this);
+                container.roarConfiguration.ApplyTo(audioSource);
             }
         }
 
@@ -252,7 +252,7 @@ namespace RoaREngine
         {
             container = otherContainer;
             audioSource.clip = container.Clip;
-            container.SetConfiguration(audioSource, this);
+            container.SetConfiguration(audioSource);
         }
 
         public new void Pause()

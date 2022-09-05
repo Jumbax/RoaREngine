@@ -26,9 +26,9 @@ namespace RoaREngine
             roarClipBank.ResetIndex();
         }
 
-        public void SetConfiguration(AudioSource audioSource, RoaREmitter roarEmitter)
+        public void SetConfiguration(AudioSource audioSource)
         {
-            roarConfiguration.ApplyTo(audioSource, roarEmitter);
+            roarConfiguration.ApplyTo(audioSource);
         }
         #endregion
     }
