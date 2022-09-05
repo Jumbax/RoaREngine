@@ -11,6 +11,7 @@ namespace RoaREngine
         private RoaRContainerSO container;
         private bool paused;
         private float delay = 0f;
+        private int containerNameHash;
         #endregion
 
         #region private functions
@@ -438,7 +439,8 @@ namespace RoaREngine
 
         public bool CheckForContainerName(string containerName)
         {
-            return container.Name == containerName;
+            int containerNameHash = containerName.GetHashCode();
+            return this.containerNameHash == containerNameHash;
         }
 
         public AudioSource GetAudioSource() => audioSource;
@@ -450,6 +452,7 @@ namespace RoaREngine
             this.container = container;
             audioSource.clip = this.container.Clip;
             this.container.SetConfiguration(audioSource, this);
+            containerNameHash = this.container.Name.GetHashCode();
         }
 
         public void AddEffect(EffectType type)
@@ -486,7 +489,6 @@ namespace RoaREngine
                     break;
             }
         }
-
         #endregion
     }
 }

@@ -32,7 +32,6 @@ namespace RoaREngine
 
         private void OnEnable()
         {
-            CallTestMixers += TestMixers;
             SceneManager.sceneLoaded += OnChangeScene;
             CallPlay += Play;
             CallPause += Pause;
@@ -69,6 +68,11 @@ namespace RoaREngine
             CallRemoveStopEvent += RemoveStopEvent;
             CallAddFinishedEvent += AddFinishedEvent;
             CallRemoveFinishedEvent += RemoveFinishedEvent;
+            CallGetAudioMixer += GetAudioMixer;
+            CallGetAudioMixerParameter += GetAudioMixerParameter;
+            CallSetAudioMixerParameter += SetAudioMixerParameter;
+            CallChangeAudioMixerSnapshot += ChangeAudioMixerSnapshot;
+            CallSetAudioMixerVolumeWithSlider += SetAudioMixerVolumeWithSlider;
         }
 
         private void OnDisable()
@@ -109,6 +113,11 @@ namespace RoaREngine
             CallRemoveStopEvent -= RemoveStopEvent;
             CallAddFinishedEvent -= AddFinishedEvent;
             CallRemoveFinishedEvent -= RemoveFinishedEvent;
+            CallGetAudioMixer -= GetAudioMixer;
+            CallGetAudioMixerParameter -= GetAudioMixerParameter;
+            CallSetAudioMixerParameter -= SetAudioMixerParameter;
+            CallChangeAudioMixerSnapshot -= ChangeAudioMixerSnapshot;
+            CallSetAudioMixerVolumeWithSlider -= SetAudioMixerVolumeWithSlider;
         }
 
         private void OnChangeScene(Scene arg0, LoadSceneMode arg1)
@@ -153,17 +162,6 @@ namespace RoaREngine
                     audioMixerDict[audiomixer.name] = audiomixer;
                 }
             }
-        }
-
-        private void TestMixers()
-        {
-            Debug.Log(audiomixers.Count);
-            Debug.Log(audioMixerDict.Count);
-            Debug.Log(GetAudioMixer("Master"));
-            Debug.Log(GetAudioMixerParameter("Master", "Volume"));
-            SetAudioMixerParameter("Master", "Volume", -6f);
-            Debug.Log(GetAudioMixerParameter("Master", "Volume"));
-
         }
 
         private void Play(string musicID, bool esclusive = false)
@@ -289,7 +287,6 @@ namespace RoaREngine
                 RoaREmitter emitterComponent = roarEmitter.GetComponent<RoaREmitter>();
                 if (roarEmitter.gameObject.activeInHierarchy == true)
                 {
-                    //Check this control? Has sense?
                     if (emitterComponent.CheckForContainerName(musicID))
                     {
                         return roarEmitter;
@@ -671,12 +668,15 @@ namespace RoaREngine
             return audioMixerDict[audioMixerName];
         }
 
-        private float NormalizedMixerValue(float normalizedValue) => Mathf.Log10(normalizedValue) * 20f;
+        private void SetAudioMixerVolumeWithSlider(string audioMixerName, string volumeNameParameter,float volume)
+        {
+            audioMixerDict[audioMixerName].SetFloat(volumeNameParameter, NormalizedMixerValue(volume));
+        }
 
+        private float NormalizedMixerValue(float normalizedValue) => Mathf.Log10(normalizedValue) * 20f;
         #endregion
 
         #region delegate
-        public static UnityAction CallTestMixers;
         public static UnityAction<string, bool> CallPlay;
         public static UnityAction<string> CallPause;
         public static UnityAction<string> CallResume;
@@ -706,12 +706,17 @@ namespace RoaREngine
         public static UnityAction<string, UnityAction> CallRemoveStopEvent;
         public static UnityAction<string, UnityAction> CallAddFinishedEvent;
         public static UnityAction<string, UnityAction> CallRemoveFinishedEvent;
+        public static UnityAction<string, string, float> CallSetAudioMixerParameter;
+        public static UnityAction<string, string, float> CallChangeAudioMixerSnapshot;
+        public static UnityAction<string, string, float> CallSetAudioMixerVolumeWithSlider;
         public static Func<string, RoaRContainerSO> CallGetContainer;
         public static Func<List<RoaRContainerSO>> CallGetContainers;
         public static Func<int> CallGetNumberContainers;
         public static Func<string, AudioSource> CallGetAudioSource;
         public static Func<int> CallGetNumberAudioSources;
         public static Func<string> CallGetAudioSourceEffect;
+        public static Func<string, AudioMixer> CallGetAudioMixer;
+        public static Func<string, string, float> CallGetAudioMixerParameter;
         #endregion
     }
 }

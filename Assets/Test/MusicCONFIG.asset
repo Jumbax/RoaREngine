@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: MusicCONFIG
   m_EditorClassIdentifier: 
   parent: {fileID: 0}
-  audioMixerGroup: {fileID: 0}
+  audioMixerGroup: {fileID: 24300002, guid: 704b0cf488f496a43ae051a35eb6ceda, type: 2}
   priority: 128
   loop: 0
   mute: 0

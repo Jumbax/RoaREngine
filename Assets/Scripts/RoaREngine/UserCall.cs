@@ -10,21 +10,14 @@ public class UserCall : MonoBehaviour
     public float hSliderValue = 0.0f;
     public int bankIndex;
     public float crossFadeParam;
-    public RoaRManager manager;
 
     private void OnGUI()
     {
         hSliderValue = GUI.HorizontalSlider(new Rect(25, 25, 100, 30), hSliderValue, 0f, 1f);
         GUILayout.BeginArea(new Rect(Screen.width / 4 - 100, Screen.height / 4, 200, Screen.height));
-        if (GUILayout.Button("TestMixer"))
-        {
-            RoaRManager.CallTestMixers();
-        }
         if (GUILayout.Button("Play"))
         {
             RoaRManager.CallPlay("Music", false);
-            RoaRManager.CallPlay("Music1", false);
-            RoaRManager.CallPlay("Music2", false);
         }
         if (GUILayout.Button("ChangeScene"))
         {
