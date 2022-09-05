@@ -167,7 +167,7 @@ namespace RoaREngine
         #endregion
 
         #region public functions
-        public void ApplyTo(AudioSource audioSource, RoaREmitter emitter)
+        public void ApplyTo(AudioSource audioSource)
         {
             audioSource.playOnAwake = false;
             audioSource.outputAudioMixerGroup = this.audioMixerGroup;
@@ -203,14 +203,6 @@ namespace RoaREngine
             audioSource.maxDistance = this.maxDistance;
             audioSource.ignoreListenerVolume = this.ignorelistenervolume;
             audioSource.ignoreListenerPause = this.ignorelistenerpause;
-
-            //emitter.GetContainer().roarConfiguration.fadeInVolume = this.fadeInVolume;
-            //emitter.GetContainer().roarConfiguration.fadeInTime = this.fadeInTime;
-            //emitter.GetContainer().roarConfiguration.randomStartTime = this.randomStartTime;
-            //emitter.GetContainer().roarConfiguration.startTime = this.startTime;
-            //emitter.GetContainer().roarConfiguration.parent = this.parent;
-            //emitter.GetContainer().roarConfiguration.minRandomXYZ = this.minRandomXYZ;
-            //emitter.GetContainer().roarConfiguration.maxRandomXYZ = this.maxRandomXYZ;
         }
         #endregion
     }
