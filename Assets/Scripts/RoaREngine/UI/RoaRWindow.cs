@@ -45,7 +45,7 @@ namespace RoaREngine
         private float pitch = 1f;
         private float randomMinPitch = 0f;
         private float randomMaxPitch = 0f;
-        private float panStereo = 0f;
+        private float stereoPan = 0f;
         private float reverbZoneMix = 1f;
         private bool is3D = false;
         private float spatialBlend = 0f;
@@ -353,7 +353,7 @@ namespace RoaREngine
             pitch = EditorGUILayout.Slider("Pitch", pitch, -3f, 3f);
             randomMinPitch = EditorGUILayout.Slider("Random Min Pitch", randomMinPitch, -3f, 3f);
             randomMaxPitch = EditorGUILayout.Slider("Random Max Pitch", randomMaxPitch, -3f, 3f);
-            panStereo = EditorGUILayout.Slider("Pan Stereo", panStereo, 0f, 1f);
+            stereoPan = EditorGUILayout.Slider("Stereo Pan", stereoPan, -1f, 1f);
             reverbZoneMix = EditorGUILayout.Slider("Reverb Zone Mix", reverbZoneMix, 0f, 1f);
             bypasseffects = EditorGUILayout.Toggle("BypassEffects", bypasseffects);
             bypasslistenereffects = EditorGUILayout.Toggle("BypassListenerEffects", bypasslistenereffects);
@@ -754,7 +754,7 @@ namespace RoaREngine
             config.pitch = pitch;
             config.randomMinPitch = randomMaxPitch;
             config.randomMaxPitch = randomMaxPitch;
-            config.panStereo = panStereo;
+            config.stereoPan = stereoPan;
             config.spatialBlend = spatialBlend;
             config.reverbZoneMix = reverbZoneMix;
             config.dopplerLevel = dopplerLevel;
@@ -933,7 +933,7 @@ namespace RoaREngine
             pitch = 1f;
             randomMinPitch = 0f;
             randomMaxPitch = 0f;
-            panStereo = 0f;
+            stereoPan = 0f;
             reverbZoneMix = 1f;
             is3D = false;
             spatialBlend = 0f;
@@ -1061,7 +1061,7 @@ namespace RoaREngine
                 pitch = config.pitch;
                 randomMinPitch = config.randomMinPitch;
                 randomMaxPitch = config.randomMaxPitch;
-                panStereo = config.panStereo;
+                stereoPan = config.stereoPan;
                 reverbZoneMix = config.reverbZoneMix;
                 spatialBlend = config.spatialBlend;
                 rolloffMode = config.rolloffMode;

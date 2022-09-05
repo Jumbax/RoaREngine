@@ -53,7 +53,7 @@ namespace RoaREngine
         [Range(-3f, 3f)] public float pitch = 1f;
         [Range(-3f, 3f)] public float randomMinPitch = 0f;
         [Range(-3f, 3f)] public float randomMaxPitch = 0f;
-        [Range(0f, 1f)] public float panStereo = 0f;
+        [Range(-1f, 1f)] public float stereoPan = 0f;
         [Range(0f, 1f)] public float reverbZoneMix = 1f;
 
         [Header("Spatialisation")]
@@ -193,7 +193,7 @@ namespace RoaREngine
             {
                 audioSource.pitch = this.pitch;
             }
-            audioSource.panStereo = this.panStereo;
+            audioSource.panStereo = this.stereoPan;
             audioSource.spatialBlend = this.spatialBlend;
             audioSource.reverbZoneMix = this.reverbZoneMix;
             audioSource.dopplerLevel = this.dopplerLevel;
