@@ -24,7 +24,7 @@ namespace RoaREngine
         private void Awake()
         {
             DontDestroyOnLoad(transform.gameObject);
-            SetNames();
+            SetContainersNames();
             ResetContainersBankIndex();
             SetInitialEmitters();
             SetMixersNames();
@@ -122,15 +122,8 @@ namespace RoaREngine
 
         private void OnChangeScene(Scene arg0, LoadSceneMode arg1)
         {
-            Debug.Log(containerDict.Count);
             bank = FindObjectOfType(typeof(RoarContainersBank)) as RoarContainersBank;
-            SetNames();
-            Debug.Log(bank.ContainersBank.RoarContainers.Count);
-            foreach (var item in bank.ContainersBank.RoarContainers)
-            {
-                Debug.Log(item.Name);
-            }
-            Debug.Log(containerDict.Count);
+            SetContainersNames();
         }
 
         private void SetInitialEmitters()
@@ -265,7 +258,7 @@ namespace RoaREngine
             }
         }
 
-        private void SetNames()
+        private void SetContainersNames()
         {
             containerDict.Clear();
             roarContainers = bank.ContainersBank.RoarContainers;

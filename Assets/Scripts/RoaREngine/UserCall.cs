@@ -18,6 +18,7 @@ public class UserCall : MonoBehaviour
         if (GUILayout.Button("Play"))
         {
             RoarManager.CallPlay("Music", false);
+            RoarManager.CallPlay("Music1", false);
         }
         if (GUILayout.Button("ChangeScene"))
         {
