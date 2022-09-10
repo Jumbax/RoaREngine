@@ -73,6 +73,8 @@ namespace RoaREngine
             CallSetAudioMixerParameter += SetAudioMixerParameter;
             CallChangeAudioMixerSnapshot += ChangeAudioMixerSnapshot;
             CallSetAudioMixerVolumeWithSlider += SetAudioMixerVolumeWithSlider;
+            CallSetParent += SetParent;
+            CallResetParent += ResetParent;
         }
 
         private void OnDisable()
@@ -118,6 +120,8 @@ namespace RoaREngine
             CallSetAudioMixerParameter -= SetAudioMixerParameter;
             CallChangeAudioMixerSnapshot -= ChangeAudioMixerSnapshot;
             CallSetAudioMixerVolumeWithSlider -= SetAudioMixerVolumeWithSlider;
+            CallSetParent -= SetParent;
+            CallResetParent -= ResetParent;
         }
 
         private void OnChangeScene(Scene arg0, LoadSceneMode arg1)
@@ -165,7 +169,7 @@ namespace RoaREngine
             }
         }
 
-        private void Play(string musicID, bool esclusive = false)
+        private void Play(string musicID, Transform parent)
         {
             if (MusicIDIsValid(musicID))
             {
@@ -174,7 +178,7 @@ namespace RoaREngine
                     return;
                 }
                 GameObject roarEmitter;
-                if (esclusive)
+                if (GetContainer(musicID).roarConfiguration.esclusive)
                 {
                     roarEmitter = GetActiveEmitterObject(musicID);
                     if (roarEmitter != null)
@@ -187,6 +191,10 @@ namespace RoaREngine
                 {
                     SetContainer(musicID, roarEmitter);
                     RoarEmitter emitterComponent = roarEmitter.GetComponent<RoarEmitter>();
+                    if (parent != null)
+                    {
+                        emitterComponent.SetParent(parent);
+                    }
                     emitterComponent.Play();
                 }
             }
@@ -371,6 +379,27 @@ namespace RoaREngine
                 return emitterComponent.GetAudioSource();
             }
             return null;
+        }
+
+        private void SetParent(string musicID, Transform parent)
+        {
+            GameObject emitter = GetActiveEmitterObject(musicID);
+            if (emitter != null)
+            {
+                RoarEmitter emitterComponent = emitter.GetComponent<RoarEmitter>();
+                emitterComponent.SetParent(parent);
+            }
+        }
+
+        private void ResetParent(string musicID)
+        {
+            GameObject emitter = GetActiveEmitterObject(musicID);
+            if (emitter != null)
+            {
+                RoarEmitter emitterComponent = emitter.GetComponent<RoarEmitter>();
+                emitterComponent.ResetParent();
+            }
+
         }
 
         private void AddEffect(string musicID, EffectType type)
@@ -669,7 +698,7 @@ namespace RoaREngine
             return audioMixerDict[audioMixerName];
         }
 
-        private void SetAudioMixerVolumeWithSlider(string audioMixerName, string volumeNameParameter,float volume)
+        private void SetAudioMixerVolumeWithSlider(string audioMixerName, string volumeNameParameter, float volume)
         {
             audioMixerDict[audioMixerName].SetFloat(volumeNameParameter, NormalizedMixerValue(volume));
         }
@@ -678,7 +707,7 @@ namespace RoaREngine
         #endregion
 
         #region delegate
-        public static UnityAction<string, bool> CallPlay;
+        public static UnityAction<string, Transform> CallPlay;
         public static UnityAction<string> CallPause;
         public static UnityAction<string> CallResume;
         public static UnityAction<string> CallStop;
@@ -710,6 +739,8 @@ namespace RoaREngine
         public static UnityAction<string, string, float> CallSetAudioMixerParameter;
         public static UnityAction<string, string, float> CallChangeAudioMixerSnapshot;
         public static UnityAction<string, string, float> CallSetAudioMixerVolumeWithSlider;
+        public static UnityAction<string, Transform> CallSetParent;
+        public static UnityAction<string> CallResetParent;
         public static Func<string, RoarContainerSO> CallGetContainer;
         public static Func<List<RoarContainerSO>> CallGetContainers;
         public static Func<int> CallGetNumberContainers;

@@ -31,10 +31,10 @@ namespace RoaREngine
     public class RoarConfigurationSO : ScriptableObject
     {
         #region var
-        public Transform parent = null;
 
         public AudioMixerGroup audioMixerGroup = null;
         public PriorityLevel priority = PriorityLevel.Standard;
+        public bool esclusive = false;
 
         [Header("Properties")]
         public bool loop = false;

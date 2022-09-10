@@ -27,11 +27,11 @@ namespace RoaREngine
         private int clipsNumber = 0;
         private List<AudioClip> clips = new List<AudioClip>();
         private int clipIndex = 0;
-        private Transform parent = null;
         private AudioMixerGroup audioMixerGroup = null;
         private PriorityLevel priority = PriorityLevel.Standard;
         private AudioSequenceMode sequenceMode = AudioSequenceMode.Sequential;
         private float startTime = 0f;
+        private bool esclusive = false;
         private bool randomStartTime = false;
         private bool loop = false;
         private bool mute = false;
@@ -170,7 +170,6 @@ namespace RoaREngine
             {
                 LoadFolderPath();
             }
-            Debug.Log(PlayerPrefs.GetString("FolderPath"));
         }
 
         [MenuItem("RoarEngine/RoarWindow")]
@@ -342,7 +341,6 @@ namespace RoaREngine
 
         private void ConfigurationSettings()
         {
-            parent = EditorGUILayout.ObjectField("Parent", parent, typeof(Transform), true) as Transform;
             audioMixerGroup = EditorGUILayout.ObjectField("AudioMixerGroup", audioMixerGroup, typeof(AudioMixerGroup), false) as AudioMixerGroup;
             priority = (PriorityLevel)EditorGUILayout.EnumPopup("Priority", priority);
             using (new GUILayout.HorizontalScope())
@@ -350,6 +348,7 @@ namespace RoaREngine
                 GUILayout.Label("StartTime", GUILayout.Width(145));
                 startTime = EditorGUILayout.FloatField(startTime, GUILayout.Width(25));
             }
+            esclusive = EditorGUILayout.Toggle("Esclusive", esclusive);
             randomStartTime = EditorGUILayout.Toggle("Random Start Time", randomStartTime);
             loop = EditorGUILayout.Toggle("Loop", loop);
             mute = EditorGUILayout.Toggle("Mute", mute);
@@ -781,9 +780,9 @@ namespace RoaREngine
             bank.sequenceMode = sequenceMode;
             bank.IndexClip = clipIndex;
 
-            config.parent = parent;
             config.audioMixerGroup = audioMixerGroup;
             config.startTime = startTime;
+            config.esclusive = esclusive;
             config.randomStartTime = randomStartTime;
             config.loop = loop;
             config.mute = mute;
@@ -946,11 +945,11 @@ namespace RoaREngine
         private void DefaultConfiguration()
         {
             config = null;
-            parent = null;
             audioMixerGroup = null;
             priority = PriorityLevel.Standard;
             sequenceMode = AudioSequenceMode.Sequential;
             startTime = 0f;
+            esclusive = false;
             randomStartTime = false;
             loop = false;
             mute = false;
@@ -1075,10 +1074,10 @@ namespace RoaREngine
         {
             if (config != null)
             {
-                parent = config.parent;
                 audioMixerGroup = config.audioMixerGroup;
                 priority = config.priority;
                 startTime = config.startTime;
+                esclusive = config.esclusive;
                 randomStartTime = config.randomStartTime;
                 loop = config.loop;
                 mute = config.mute;

@@ -17,8 +17,9 @@ public class UserCall : MonoBehaviour
         GUILayout.BeginArea(new Rect(Screen.width / 4 - 100, Screen.height / 4, 200, Screen.height));
         if (GUILayout.Button("Play"))
         {
-            RoarManager.CallPlay("Music", false);
-            RoarManager.CallPlay("Music1", false);
+            RoarManager.CallPlay("Music", null);
+            //RoarManager.CallPlay("Music1", null);
+            Debug.Log("Play");
         }
         if (GUILayout.Button("ChangeScene"))
         {
@@ -53,6 +54,16 @@ public class UserCall : MonoBehaviour
         {
             RoarManager.CallResumeAll();
             Debug.Log("ResumeAll");
+        }
+        if (GUILayout.Button("SetParent"))
+        {
+            RoarManager.CallSetParent("Music", transform);
+            Debug.Log("SetParent");
+        }
+        if (GUILayout.Button("SetParent"))
+        {
+            RoarManager.CallResetParent("Music");
+            Debug.Log("ResetParent");
         }
         if (GUILayout.Button("Add Container"))
         {

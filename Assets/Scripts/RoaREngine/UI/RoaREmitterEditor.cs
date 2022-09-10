@@ -42,10 +42,6 @@ namespace RoaREngine
                 container.roarConfiguration.startTime = Mathf.Clamp(container.roarConfiguration.startTime, 0f, audioSource.clip.length - 0.01f);
                 audioSource.time = container.roarConfiguration.startTime;
             }
-            if (container.roarConfiguration.parent != null)
-            {
-                SetParent(container.roarConfiguration.parent);
-            }
             if (container.roarConfiguration.minRandomXYZ != 0 || container.roarConfiguration.maxRandomXYZ != 0)
             {
                 GenerateRandomPosition(container.roarConfiguration.minRandomXYZ, container.roarConfiguration.maxRandomXYZ);
@@ -316,7 +312,7 @@ namespace RoaREngine
             }
         }
 
-        public void SetParent(Transform parent)
+        public new void SetParent(Transform parent)
         {
             transform.parent = parent;
             transform.position = parent.position;

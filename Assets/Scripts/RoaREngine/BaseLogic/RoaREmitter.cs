@@ -21,15 +21,6 @@ namespace RoaREngine
             initialParent = transform.parent;
         }
 
-        private void SetParent(Transform parent)
-        {
-            transform.parent = parent;
-            transform.position = parent.position;
-            transform.position = Vector3.zero;
-        }
-
-        private void ResetParent() => transform.parent = initialParent;
-
         private void GenerateRandomPosition(float minRandomXYZ, float maxRandomXYZ)
         {
             float posX = Random.Range(minRandomXYZ, maxRandomXYZ);
@@ -142,10 +133,6 @@ namespace RoaREngine
             {
                 container.roarConfiguration.startTime = Mathf.Clamp(container.roarConfiguration.startTime, 0f, audioSource.clip.length - 0.01f);
                 audioSource.time = container.roarConfiguration.startTime;
-            }
-            if (container.roarConfiguration.parent != null)
-            {
-                SetParent(container.roarConfiguration.parent);
             }
             if (container.roarConfiguration.minRandomXYZ != 0 || container.roarConfiguration.maxRandomXYZ != 0)
             {
@@ -430,6 +417,15 @@ namespace RoaREngine
         public bool IsPlaying() => audioSource.isPlaying;
 
         public bool IsInPause() => paused;
+
+        public void SetParent(Transform parent)
+        {
+            transform.parent = parent;
+            transform.position = parent.position;
+            transform.position = Vector3.zero;
+        }
+
+        public void ResetParent() => transform.parent = initialParent;
 
         public void Fade(float fadeTime, float volume, bool resume = false, bool stop = false, bool paused = false)
         {
