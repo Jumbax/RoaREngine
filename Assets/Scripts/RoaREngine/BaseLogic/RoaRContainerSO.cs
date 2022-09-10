@@ -3,7 +3,7 @@ using UnityEngine.Events;
 
 namespace RoaREngine
 {
-    [CreateAssetMenu(fileName = "RoaRContainer", menuName = "RoaREngine/RoaRContainer")]
+    [CreateAssetMenu(fileName = "RoarContainer", menuName = "RoarEngine/RoarContainer")]
     public class RoarContainerSO : ScriptableObject
     {
         #region var
