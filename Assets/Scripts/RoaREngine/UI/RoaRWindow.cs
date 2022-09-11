@@ -1017,12 +1017,31 @@ namespace RoaREngine
         {
             if (containerName == "" || containerIndex == 0)
             {
-                //TODO ERROR MESSAGE "A CONTAINER MUST HAVE A NAME"
                 return;
             }
             container.Name = containerName;
-            container.roarClipBank.audioClips = clips.ToArray();
-            ApplySettings(container.roarClipBank, container.roarConfiguration);
+            if (config != null)
+            {
+                container.roarConfiguration = config;
+            }
+            else
+            {
+                container.roarConfiguration = null;
+            }
+            if (bank != null)
+            {
+                container.roarClipBank = bank;
+                container.roarClipBank.audioClips = clips.ToArray();
+            }
+            else
+            {
+                container.roarClipBank = null;
+            }
+            if (config != null && bank != null)
+            {
+                ApplySettings(container.roarClipBank, container.roarConfiguration);
+            }
+            //FIX HERE
             AssetDatabase.SaveAssets();
             EditorUtility.FocusProjectWindow();
         }
@@ -1036,7 +1055,8 @@ namespace RoaREngine
             }
             else
             {
-                bank = CreateInstance<RoarClipsBankSO>();
+                //bank = CreateInstance<RoarClipsBankSO>();
+                DefaultBank();
             }
             if (container.roarConfiguration != null)
             {
@@ -1044,7 +1064,8 @@ namespace RoaREngine
             }
             else
             {
-                config = CreateInstance<RoarConfigurationSO>();
+                //config = CreateInstance<RoarConfigurationSO>();
+                DefaultConfiguration();
             }
             containerName = container.Name;
             GetSettingsFromBank();
