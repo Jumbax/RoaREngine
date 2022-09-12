@@ -226,7 +226,6 @@ namespace RoaREngine
             {
                 audioSource.volume = Mathf.Lerp(startVolume, volume, time / duration);
                 time += Time.deltaTime;
-                Debug.Log(time);
                 yield return null;
             }
 
