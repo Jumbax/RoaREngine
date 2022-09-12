@@ -180,7 +180,7 @@ namespace RoaREngine
                 GameObject roarEmitter;
                 if (GetContainer(musicID).roarConfiguration.esclusive)
                 {
-                    roarEmitter = GetActiveEmitterObject(musicID);
+                    roarEmitter = GetEmitter(musicID);
                     if (roarEmitter != null)
                     {
                         Stop(musicID);
@@ -204,7 +204,7 @@ namespace RoaREngine
         {
             if (MusicIDIsValid(musicID))
             {
-                GameObject roarEmitter = GetActiveEmitterObject(musicID);
+                GameObject roarEmitter = GetEmitter(musicID);
                 if (roarEmitter != null)
                 {
                     RoarEmitter emitterComponent = roarEmitter.GetComponent<RoarEmitter>();
@@ -217,7 +217,7 @@ namespace RoaREngine
         {
             if (MusicIDIsValid(musicID))
             {
-                GameObject roarEmitter = GetActiveEmitterObject(musicID);
+                GameObject roarEmitter = GetEmitter(musicID);
                 if (roarEmitter != null)
                 {
                     RoarEmitter emitterComponent = roarEmitter.GetComponent<RoarEmitter>();
@@ -230,7 +230,7 @@ namespace RoaREngine
         {
             if (MusicIDIsValid(musicID))
             {
-                GameObject roarEmitter = GetActiveEmitterObject(musicID);
+                GameObject roarEmitter = GetEmitter(musicID);
                 if (roarEmitter != null)
                 {
                     RoarEmitter emitterComponent = roarEmitter.GetComponent<RoarEmitter>();
@@ -241,7 +241,7 @@ namespace RoaREngine
 
         private void StopAll()
         {
-            List<RoarEmitter> emitters = GetActiveEmitters();
+            List<RoarEmitter> emitters = GetEmitters();
             foreach (RoarEmitter emitter in emitters)
             {
                 emitter.Stop();
@@ -250,7 +250,7 @@ namespace RoaREngine
 
         private void PauseAll()
         {
-            List<RoarEmitter> emitters = GetActiveEmitters();
+            List<RoarEmitter> emitters = GetEmitters();
             foreach (RoarEmitter emitter in emitters)
             {
                 emitter.Pause();
@@ -259,7 +259,7 @@ namespace RoaREngine
 
         private void ResumeAll()
         {
-            List<RoarEmitter> emitters = GetActiveEmitters();
+            List<RoarEmitter> emitters = GetEmitters();
             foreach (RoarEmitter emitter in emitters)
             {
                 emitter.Resume();
@@ -289,7 +289,7 @@ namespace RoaREngine
             return containerDict.ContainsKey(musicID);
         }
 
-        private GameObject GetActiveEmitterObject(string musicID)
+        private GameObject GetEmitter(string musicID)
         {
             foreach (GameObject roarEmitter in roarEmitters)
             {
@@ -304,8 +304,8 @@ namespace RoaREngine
             }
             return null;
         }
-
-        private List<RoarEmitter> GetActiveEmitters()
+        
+        private List<RoarEmitter> GetEmitters()
         {
             List<RoarEmitter> activeEmitters = new List<RoarEmitter>();
             foreach (GameObject roarEmitter in roarEmitters)
@@ -316,19 +316,6 @@ namespace RoaREngine
                 }
             }
             return activeEmitters;
-        }
-
-        private RoarEmitter GetEmitter(string musicID)
-        {
-            if (MusicIDIsValid(musicID))
-            {
-                GameObject roarEmitter = GetActiveEmitterObject(musicID);
-                if (roarEmitter != null)
-                {
-                    return roarEmitter.GetComponent<RoarEmitter>();
-                }
-            }
-            return null;
         }
 
         private void AddContainer(RoarContainerSO container)
@@ -373,7 +360,8 @@ namespace RoaREngine
 
         private AudioSource GetAudioSource(string musicID)
         {
-            RoarEmitter emitterComponent = GetEmitter(musicID);
+
+            RoarEmitter emitterComponent = GetEmitter(musicID).GetComponent<RoarEmitter>();
             if (emitterComponent != null)
             {
                 return emitterComponent.GetAudioSource();
@@ -383,7 +371,7 @@ namespace RoaREngine
 
         private void SetParent(string musicID, Transform parent)
         {
-            GameObject emitter = GetActiveEmitterObject(musicID);
+            GameObject emitter = GetEmitter(musicID);
             if (emitter != null)
             {
                 RoarEmitter emitterComponent = emitter.GetComponent<RoarEmitter>();
@@ -393,7 +381,7 @@ namespace RoaREngine
 
         private void ResetParent(string musicID)
         {
-            GameObject emitter = GetActiveEmitterObject(musicID);
+            GameObject emitter = GetEmitter(musicID);
             if (emitter != null)
             {
                 RoarEmitter emitterComponent = emitter.GetComponent<RoarEmitter>();
@@ -404,7 +392,7 @@ namespace RoaREngine
 
         private void AddEffect(string musicID, EffectType type)
         {
-            GameObject emitter = GetActiveEmitterObject(musicID);
+            GameObject emitter = GetEmitter(musicID);
             if (emitter != null)
             {
                 RoarEmitter emitterComponent = emitter.GetComponent<RoarEmitter>();
@@ -440,7 +428,7 @@ namespace RoaREngine
 
         private void Fade(string musicID, float fadeTime, float finalVolume)
         {
-            RoarEmitter emitter = GetEmitter(musicID);
+            RoarEmitter emitter = GetEmitter(musicID).GetComponent<RoarEmitter>();
             if (emitter != null)
             {
                 emitter.Fade(fadeTime, finalVolume);
@@ -700,10 +688,10 @@ namespace RoaREngine
 
         private void SetAudioMixerVolumeWithSlider(string audioMixerName, string volumeNameParameter, float volume)
         {
-            audioMixerDict[audioMixerName].SetFloat(volumeNameParameter, NormalizedMixerValue(volume));
+            audioMixerDict[audioMixerName].SetFloat(volumeNameParameter, RoarTrackInfo.NormalizedMixerValue(volume));
         }
 
-        private float NormalizedMixerValue(float normalizedValue) => Mathf.Log10(normalizedValue) * 20f;
+        
         #endregion
 
         #region delegate

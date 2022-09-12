@@ -12,16 +12,6 @@ public class UserCall : MonoBehaviour
     public int bankIndex;
     public float crossFadeParam;
 
-    private void Awake()
-    {
-        RoarManager.CallAddMeasureEvent("Music", TestMeasureEvent);
-    }
-
-    private void TestMeasureEvent()
-    {
-        Debug.Log("Test Measure Event");
-    }
-
     private void OnGUI()
     {
         hSliderValue = GUI.HorizontalSlider(new Rect(25, 25, 100, 30), hSliderValue, 0f, 1f);
