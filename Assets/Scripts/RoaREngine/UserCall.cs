@@ -1,4 +1,5 @@
 using RoaREngine;
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -10,6 +11,16 @@ public class UserCall : MonoBehaviour
     public float hSliderValue = 0.0f;
     public int bankIndex;
     public float crossFadeParam;
+
+    private void Awake()
+    {
+        RoarManager.CallAddMeasureEvent("Music", TestMeasureEvent);
+    }
+
+    private void TestMeasureEvent()
+    {
+        Debug.Log("Test Measure Event");
+    }
 
     private void OnGUI()
     {

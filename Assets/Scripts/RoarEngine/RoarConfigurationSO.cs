@@ -90,7 +90,8 @@ namespace RoaREngine
         [Header("Measure Event")]
         public bool measureEvent = false;
         public int bpm = 120;
-        public int tempo = 4;
+        public int tempoL = 4;
+        public int tempoR = 4;
         public int everyNBeat = 1;
 
         [Header("Timed Event")]

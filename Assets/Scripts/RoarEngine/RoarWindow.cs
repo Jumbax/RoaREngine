@@ -70,7 +70,8 @@ namespace RoaREngine
         private bool measureEvent = false;
         private bool hasMeasureEvent = false;
         private int bpm = 120;
-        private int tempo = 4;
+        private int tempoL = 4;
+        private int tempoR = 4;
         private int everyNBeat = 1;
         private bool timedEvent = false;
         private bool hasTimedEvent = false;
@@ -438,7 +439,8 @@ namespace RoaREngine
                 using (new GUILayout.HorizontalScope())
                 {
                     GUILayout.Label("Tempo", GUILayout.Width(145));
-                    tempo = EditorGUILayout.IntField(tempo, GUILayout.Width(25));
+                    tempoL = EditorGUILayout.IntField(tempoL, GUILayout.Width(25));
+                    tempoR = EditorGUILayout.IntField(tempoR, GUILayout.Width(25));
                 }
                 using (new GUILayout.HorizontalScope())
                 {
@@ -823,7 +825,8 @@ namespace RoaREngine
             config.fadeOutParamValueStart = fadeOutParamValueStart;
             config.fadeOutParamValueEnd = fadeOutParamValueEnd;
             config.bpm = bpm;
-            config.tempo = tempo;
+            config.tempoL = tempoL;
+            config.tempoR = tempoR;
             config.everyNBeat = everyNBeat;
             config.timedEvent = timedEvent;
             config.repeatTimedEvent = repeatTimedEvent;
@@ -996,7 +999,8 @@ namespace RoaREngine
             stopEvent = false;
             finishedEvent = false;
             bpm = 120;
-            tempo = 4;
+            tempoL = 4;
+            tempoR = 4;
             everyNBeat = 1;
             isInACrossFade = false;
             fadeInParamValueStart = 0f;
@@ -1134,7 +1138,8 @@ namespace RoaREngine
                 maxRandomXYZ = config.maxRandomXYZ;
                 measureEvent = config.measureEvent;
                 bpm = config.bpm;
-                tempo = config.tempo;
+                tempoL = config.tempoL;
+                tempoR = config.tempoR;
                 everyNBeat = config.everyNBeat;
                 timedEvent = config.timedEvent;
                 repeatTimedEvent = config.repeatTimedEvent;

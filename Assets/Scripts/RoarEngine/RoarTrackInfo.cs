@@ -28,10 +28,10 @@ namespace RoaREngine
             return GetTrackQuarterLength(bpm) / tempo;
         }
 
-        public static double GetTrackBarLength(int bpm, int tempo)
+        public static double GetTrackBarLength(int bpm, int tempoL, int tempoR)
         {
             //Bar length = 60/bpm * tempo in 4/8:
-            return (GetTrackQuarterLength(bpm) * tempo) * (4 / 4);
+            return (GetTrackQuarterLength(bpm) * tempoL) * (tempoL / tempoR);
         }
 
         public static double GetTimeElapsed(AudioSource audioSource)
@@ -40,16 +40,16 @@ namespace RoaREngine
             return (double)audioSource.timeSamples / audioSource.clip.frequency;
         }
 
-        public static double GetTimeRemainder(AudioSource audioSource, int bpm, int tempo)
+        public static double GetTimeRemainder(AudioSource audioSource, int bpm, int tempoL, int tempoR)
         {
-            return GetTimeElapsed(audioSource) % GetTrackBarLength(bpm, tempo);
+            return GetTimeElapsed(audioSource) % GetTrackBarLength(bpm, tempoL, tempoR);
         }
 
-        public static double GetTimeBeforeNextBar(AudioSource audioSource, int bpm, int tempo)
+        public static double GetTimeBeforeNextBar(AudioSource audioSource, int bpm, int tempoL, int tempoR)
         {
-            double barLength = GetTrackBarLength(bpm, tempo);
+            double barLength = GetTrackBarLength(bpm, tempoL, tempoR);
             // Use the Modulo Operation to get the time Elapsed in the current bar
-            double remainder = GetTimeRemainder(audioSource, bpm, tempo);
+            double remainder = GetTimeRemainder(audioSource, bpm, tempoL, tempoR);
             // Calculate time remaining in the current bar
             return barLength - remainder;
         }

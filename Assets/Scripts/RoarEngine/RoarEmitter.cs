@@ -287,7 +287,7 @@ namespace RoaREngine
 
         private IEnumerator MeasureEventCoroutine()
         {
-            float seconds = (float)RoarTrackInfo.GetTrackBarLength(container.roarConfiguration.bpm, container.roarConfiguration.tempo);
+            float seconds = (float)RoarTrackInfo.GetTrackBarLength(container.roarConfiguration.bpm, container.roarConfiguration.tempoL, container.roarConfiguration.tempoR);
             float beatNumber = seconds * container.roarConfiguration.everyNBeat;
             yield return new WaitForSeconds(beatNumber);
             container.MeasureEvent?.Invoke();
@@ -307,7 +307,7 @@ namespace RoaREngine
 
         private IEnumerator SyncMeasureEvent()
         {
-            yield return new WaitForSeconds((float)RoarTrackInfo.GetTimeBeforeNextBar(audioSource, container.roarConfiguration.bpm, container.roarConfiguration.tempo));
+            yield return new WaitForSeconds((float)RoarTrackInfo.GetTimeBeforeNextBar(audioSource, container.roarConfiguration.bpm, container.roarConfiguration.tempoL, container.roarConfiguration.tempoR));
             StartCoroutine(MeasureEventCoroutine());
         }
 
