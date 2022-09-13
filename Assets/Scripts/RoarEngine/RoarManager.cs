@@ -12,7 +12,7 @@ namespace RoaREngine
         #region var
         [SerializeField] private GameObject roarEmitter;
         [SerializeField] private int count;
-        [SerializeField] private RoarContainersBank bank;
+        [SerializeField] private RoarContainersBank containersBank;
         [SerializeField] private List<AudioMixer> audiomixers;
         private List<RoarContainerSO> roarContainers;
         private List<GameObject> roarEmitters;
@@ -126,7 +126,7 @@ namespace RoaREngine
 
         private void OnChangeScene(Scene arg0, LoadSceneMode arg1)
         {
-            bank = FindObjectOfType(typeof(RoarContainersBank)) as RoarContainersBank;
+            containersBank = FindObjectOfType(typeof(RoarContainersBank)) as RoarContainersBank;
             SetContainersNames();
         }
 
@@ -269,7 +269,7 @@ namespace RoaREngine
         private void SetContainersNames()
         {
             containerDict.Clear();
-            roarContainers = bank.ContainersBank.RoarContainers;
+            roarContainers = containersBank.ContainersBank.RoarContainers;
             foreach (RoarContainerSO container in roarContainers)
             {
                 containerDict[container.Name] = container;
