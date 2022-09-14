@@ -49,7 +49,6 @@ namespace RoaREngine
             CallGetAudioSource += GetAudioSource;
             CallGetNumberAudioSources += GetNumberAudioSources;
             CallAddEffect += AddEffect;
-            //CallGetAudioSourceEffect += GetAudioSourceEffect;
             CallSetBankIndex += SetBankIndex;
             CallFade += Fade;
             CallCrossFadeByParameter += CrossFadeByParameter;
@@ -96,7 +95,6 @@ namespace RoaREngine
             CallGetAudioSource -= GetAudioSource;
             CallGetNumberAudioSources -= GetNumberAudioSources;
             CallAddEffect -= AddEffect;
-            //CallGetAudioSourceEffect -= GetAudioSourceEffect;
             CallSetBankIndex -= SetBankIndex;
             CallFade -= Fade;
             CallCrossFadeByParameter -= CrossFadeByParameter;
@@ -169,27 +167,27 @@ namespace RoaREngine
             }
         }
 
-        private void Play(string musicID, Transform parent)
+        private void Play(string containerName, Transform parent)
         {
-            if (MusicIDIsValid(musicID))
+            if (containerNameIsValid(containerName))
             {
-                if (GetContainer(musicID).roarClipBank.audioClips.Length <= 0)
+                if (GetContainer(containerName).roarClipBank.audioClips.Length <= 0)
                 {
                     return;
                 }
                 GameObject roarEmitter;
-                if (GetContainer(musicID).roarConfiguration.esclusive)
+                if (GetContainer(containerName).roarConfiguration.esclusive)
                 {
-                    roarEmitter = GetEmitter(musicID);
+                    roarEmitter = GetEmitter(containerName);
                     if (roarEmitter != null)
                     {
-                        Stop(musicID);
+                        Stop(containerName);
                     }
                 }
                 roarEmitter = GetEmitterFromPool();
                 if (roarEmitter != null)
                 {
-                    SetContainer(musicID, roarEmitter);
+                    SetContainer(containerName, roarEmitter);
                     RoarEmitter emitterComponent = roarEmitter.GetComponent<RoarEmitter>();
                     if (parent != null)
                     {
@@ -200,11 +198,11 @@ namespace RoaREngine
             }
         }
 
-        private void Stop(string musicID)
+        private void Stop(string containerName)
         {
-            if (MusicIDIsValid(musicID))
+            if (containerNameIsValid(containerName))
             {
-                GameObject roarEmitter = GetEmitter(musicID);
+                GameObject roarEmitter = GetEmitter(containerName);
                 if (roarEmitter != null)
                 {
                     RoarEmitter emitterComponent = roarEmitter.GetComponent<RoarEmitter>();
@@ -213,11 +211,11 @@ namespace RoaREngine
             }
         }
 
-        private void Pause(string musicID)
+        private void Pause(string containerName)
         {
-            if (MusicIDIsValid(musicID))
+            if (containerNameIsValid(containerName))
             {
-                GameObject roarEmitter = GetEmitter(musicID);
+                GameObject roarEmitter = GetEmitter(containerName);
                 if (roarEmitter != null)
                 {
                     RoarEmitter emitterComponent = roarEmitter.GetComponent<RoarEmitter>();
@@ -226,11 +224,11 @@ namespace RoaREngine
             }
         }
 
-        private void Resume(string musicID)
+        private void Resume(string containerName)
         {
-            if (MusicIDIsValid(musicID))
+            if (containerNameIsValid(containerName))
             {
-                GameObject roarEmitter = GetEmitter(musicID);
+                GameObject roarEmitter = GetEmitter(containerName);
                 if (roarEmitter != null)
                 {
                     RoarEmitter emitterComponent = roarEmitter.GetComponent<RoarEmitter>();
@@ -284,19 +282,19 @@ namespace RoaREngine
             }
         }
 
-        private bool MusicIDIsValid(string musicID)
+        private bool containerNameIsValid(string containerName)
         {
-            return containerDict.ContainsKey(musicID);
+            return containerDict.ContainsKey(containerName);
         }
 
-        private GameObject GetEmitter(string musicID)
+        private GameObject GetEmitter(string containerName)
         {
             foreach (GameObject roarEmitter in roarEmitters)
             {
                 RoarEmitter emitterComponent = roarEmitter.GetComponent<RoarEmitter>();
                 if (roarEmitter.gameObject.activeInHierarchy == true)
                 {
-                    if (emitterComponent.CheckForContainerName(musicID))
+                    if (emitterComponent.CheckForContainerName(containerName))
                     {
                         return roarEmitter;
                     }
@@ -330,18 +328,18 @@ namespace RoaREngine
             containerDict.Remove(container.Name);
         }
 
-        private RoarContainerSO GetContainer(string musicID)
+        private RoarContainerSO GetContainer(string containerName)
         {
-            if (MusicIDIsValid(musicID))
+            if (containerNameIsValid(containerName))
             {
-                return containerDict[musicID];
+                return containerDict[containerName];
             }
             return null;
         }
 
-        private void SetContainer(string musicID, GameObject roarEmitter)
+        private void SetContainer(string containerName, GameObject roarEmitter)
         {
-            roarEmitter.GetComponent<RoarEmitter>().SetContainer(containerDict[musicID]);
+            roarEmitter.GetComponent<RoarEmitter>().SetContainer(containerDict[containerName]);
         }
 
         private List<RoarContainerSO> GetContainers()
@@ -349,19 +347,19 @@ namespace RoaREngine
             return roarContainers;
         }
 
-        private void ChangeSequenceMode(string musicID, AudioSequenceMode audioSequenceMode)
+        private void ChangeSequenceMode(string containerName, AudioSequenceMode audioSequenceMode)
         {
-            RoarContainerSO container = GetContainer(musicID);
+            RoarContainerSO container = GetContainer(containerName);
             if (container != null)
             {
                 container.roarClipBank.sequenceMode = audioSequenceMode;
             }
         }
 
-        private AudioSource GetAudioSource(string musicID)
+        private AudioSource GetAudioSource(string containerName)
         {
 
-            RoarEmitter emitterComponent = GetEmitter(musicID).GetComponent<RoarEmitter>();
+            RoarEmitter emitterComponent = GetEmitter(containerName).GetComponent<RoarEmitter>();
             if (emitterComponent != null)
             {
                 return emitterComponent.GetAudioSource();
@@ -369,9 +367,9 @@ namespace RoaREngine
             return null;
         }
 
-        private void SetParent(string musicID, Transform parent)
+        private void SetParent(string containerName, Transform parent)
         {
-            GameObject emitter = GetEmitter(musicID);
+            GameObject emitter = GetEmitter(containerName);
             if (emitter != null)
             {
                 RoarEmitter emitterComponent = emitter.GetComponent<RoarEmitter>();
@@ -379,9 +377,9 @@ namespace RoaREngine
             }
         }
 
-        private void ResetParent(string musicID)
+        private void ResetParent(string containerName)
         {
-            GameObject emitter = GetEmitter(musicID);
+            GameObject emitter = GetEmitter(containerName);
             if (emitter != null)
             {
                 RoarEmitter emitterComponent = emitter.GetComponent<RoarEmitter>();
@@ -390,20 +388,14 @@ namespace RoaREngine
 
         }
 
-        private void AddEffect(string musicID, EffectType type)
+        private void AddEffect(string containerName, EffectType type)
         {
-            GameObject emitter = GetEmitter(musicID);
+            GameObject emitter = GetEmitter(containerName);
             if (emitter != null)
             {
                 RoarEmitter emitterComponent = emitter.GetComponent<RoarEmitter>();
                 emitterComponent.AddEffect(type);
             }
-        }
-
-        private T GetAudioSourceEffect<T>(string musicID)
-        {
-            T filter = GetAudioSource(musicID).GetComponent<T>();
-            return filter;
         }
 
         private int GetNumberContainers()
@@ -417,18 +409,18 @@ namespace RoaREngine
             return sources.Length;
         }
 
-        private void SetBankIndex(string musicID, int value)
+        private void SetBankIndex(string containerName, int value)
         {
-            RoarContainerSO container = GetContainer(musicID);
+            RoarContainerSO container = GetContainer(containerName);
             if (container != null)
             {
                 container.roarClipBank.IndexClip = Mathf.Min(value, container.roarClipBank.audioClips.Length);
             }
         }
 
-        private void Fade(string musicID, float fadeTime, float finalVolume)
+        private void Fade(string containerName, float fadeTime, float finalVolume)
         {
-            RoarEmitter emitter = GetEmitter(musicID).GetComponent<RoarEmitter>();
+            RoarEmitter emitter = GetEmitter(containerName).GetComponent<RoarEmitter>();
             if (emitter != null)
             {
                 emitter.Fade(fadeTime, finalVolume);
@@ -490,11 +482,11 @@ namespace RoaREngine
             }
         }
 
-        private void AddMeasureEvent(string musicID, UnityAction measureAction)
+        private void AddMeasureEvent(string containerName, UnityAction measureAction)
         {
-            if (MusicIDIsValid(musicID))
+            if (containerNameIsValid(containerName))
             {
-                RoarContainerSO container = GetContainer(musicID);
+                RoarContainerSO container = GetContainer(containerName);
                 if (container != null)
                 {
                     container.MeasureEvent += measureAction;
@@ -502,11 +494,11 @@ namespace RoaREngine
             }
         }
 
-        private void RemoveMeasureEvent(string musicID, UnityAction measureAction)
+        private void RemoveMeasureEvent(string containerName, UnityAction measureAction)
         {
-            if (MusicIDIsValid(musicID))
+            if (containerNameIsValid(containerName))
             {
-                RoarContainerSO container = GetContainer(musicID);
+                RoarContainerSO container = GetContainer(containerName);
                 if (container != null)
                 {
                     container.MeasureEvent -= measureAction;
@@ -514,11 +506,11 @@ namespace RoaREngine
             }
         }
 
-        private void AddTimedEvent(string musicID, UnityAction markerAction)
+        private void AddTimedEvent(string containerName, UnityAction markerAction)
         {
-            if (MusicIDIsValid(musicID))
+            if (containerNameIsValid(containerName))
             {
-                RoarContainerSO container = GetContainer(musicID);
+                RoarContainerSO container = GetContainer(containerName);
                 if (container != null)
                 {
                     container.TimedEvent += markerAction;
@@ -526,11 +518,11 @@ namespace RoaREngine
             }
         }
 
-        private void RemoveTimedEvent(string musicID, UnityAction markerAction)
+        private void RemoveTimedEvent(string containerName, UnityAction markerAction)
         {
-            if (MusicIDIsValid(musicID))
+            if (containerNameIsValid(containerName))
             {
-                RoarContainerSO container = GetContainer(musicID);
+                RoarContainerSO container = GetContainer(containerName);
                 if (container != null)
                 {
                     container.TimedEvent -= markerAction;
@@ -538,11 +530,11 @@ namespace RoaREngine
             }
         }
 
-        private void AddPlayEvent(string musicID, UnityAction playEvent)
+        private void AddPlayEvent(string containerName, UnityAction playEvent)
         {
-            if (MusicIDIsValid(musicID))
+            if (containerNameIsValid(containerName))
             {
-                RoarContainerSO container = GetContainer(musicID);
+                RoarContainerSO container = GetContainer(containerName);
                 if (container != null)
                 {
                     container.OnPlayEvent += playEvent;
@@ -550,11 +542,11 @@ namespace RoaREngine
             }
         }
 
-        private void RemovePlayEvent(string musicID, UnityAction playEvent)
+        private void RemovePlayEvent(string containerName, UnityAction playEvent)
         {
-            if (MusicIDIsValid(musicID))
+            if (containerNameIsValid(containerName))
             {
-                RoarContainerSO container = GetContainer(musicID);
+                RoarContainerSO container = GetContainer(containerName);
                 if (container != null)
                 {
                     container.OnPlayEvent -= playEvent;
@@ -562,11 +554,11 @@ namespace RoaREngine
             }
         }
 
-        private void AddPauseEvent(string musicID, UnityAction pauseEvent)
+        private void AddPauseEvent(string containerName, UnityAction pauseEvent)
         {
-            if (MusicIDIsValid(musicID))
+            if (containerNameIsValid(containerName))
             {
-                RoarContainerSO container = GetContainer(musicID);
+                RoarContainerSO container = GetContainer(containerName);
                 if (container != null)
                 {
                     container.OnPauseEvent += pauseEvent;
@@ -574,11 +566,11 @@ namespace RoaREngine
             }
         }
 
-        private void RemovePauseEvent(string musicID, UnityAction pauseEvent)
+        private void RemovePauseEvent(string containerName, UnityAction pauseEvent)
         {
-            if (MusicIDIsValid(musicID))
+            if (containerNameIsValid(containerName))
             {
-                RoarContainerSO container = GetContainer(musicID);
+                RoarContainerSO container = GetContainer(containerName);
                 if (container != null)
                 {
                     container.OnPauseEvent -= pauseEvent;
@@ -586,11 +578,11 @@ namespace RoaREngine
             }
         }
 
-        private void AddResumeEvent(string musicID, UnityAction resumeEvent)
+        private void AddResumeEvent(string containerName, UnityAction resumeEvent)
         {
-            if (MusicIDIsValid(musicID))
+            if (containerNameIsValid(containerName))
             {
-                RoarContainerSO container = GetContainer(musicID);
+                RoarContainerSO container = GetContainer(containerName);
                 if (container != null)
                 {
                     container.OnResumeEvent += resumeEvent;
@@ -598,11 +590,11 @@ namespace RoaREngine
             }
         }
 
-        private void RemoveResumeEvent(string musicID, UnityAction resumeEvent)
+        private void RemoveResumeEvent(string containerName, UnityAction resumeEvent)
         {
-            if (MusicIDIsValid(musicID))
+            if (containerNameIsValid(containerName))
             {
-                RoarContainerSO container = GetContainer(musicID);
+                RoarContainerSO container = GetContainer(containerName);
                 if (container != null)
                 {
                     container.OnResumeEvent -= resumeEvent;
@@ -610,11 +602,11 @@ namespace RoaREngine
             }
         }
 
-        private void AddStopEvent(string musicID, UnityAction stopEvent)
+        private void AddStopEvent(string containerName, UnityAction stopEvent)
         {
-            if (MusicIDIsValid(musicID))
+            if (containerNameIsValid(containerName))
             {
-                RoarContainerSO container = GetContainer(musicID);
+                RoarContainerSO container = GetContainer(containerName);
                 if (container != null)
                 {
                     container.OnStopEvent += stopEvent;
@@ -622,11 +614,11 @@ namespace RoaREngine
             }
         }
 
-        private void RemoveStopEvent(string musicID, UnityAction stopEvent)
+        private void RemoveStopEvent(string containerName, UnityAction stopEvent)
         {
-            if (MusicIDIsValid(musicID))
+            if (containerNameIsValid(containerName))
             {
-                RoarContainerSO container = GetContainer(musicID);
+                RoarContainerSO container = GetContainer(containerName);
                 if (container != null)
                 {
                     container.OnStopEvent -= stopEvent;
@@ -634,11 +626,11 @@ namespace RoaREngine
             }
         }
 
-        private void AddFinishedEvent(string musicID, UnityAction finishEvent)
+        private void AddFinishedEvent(string containerName, UnityAction finishEvent)
         {
-            if (MusicIDIsValid(musicID))
+            if (containerNameIsValid(containerName))
             {
-                RoarContainerSO container = GetContainer(musicID);
+                RoarContainerSO container = GetContainer(containerName);
                 if (container != null)
                 {
                     container.OnFinishedEvent += finishEvent;
@@ -646,11 +638,11 @@ namespace RoaREngine
             }
         }
 
-        private void RemoveFinishedEvent(string musicID, UnityAction finishEvent)
+        private void RemoveFinishedEvent(string containerName, UnityAction finishEvent)
         {
-            if (MusicIDIsValid(musicID))
+            if (containerNameIsValid(containerName))
             {
-                RoarContainerSO container = GetContainer(musicID);
+                RoarContainerSO container = GetContainer(containerName);
                 if (container != null)
                 {
                     container.OnFinishedEvent -= finishEvent;
@@ -734,7 +726,6 @@ namespace RoaREngine
         public static Func<int> CallGetNumberContainers;
         public static Func<string, AudioSource> CallGetAudioSource;
         public static Func<int> CallGetNumberAudioSources;
-        public static Func<string> CallGetAudioSourceEffect;
         public static Func<string, AudioMixer> CallGetAudioMixer;
         public static Func<string, string, float> CallGetAudioMixerParameter;
         #endregion
