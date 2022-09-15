@@ -29,10 +29,6 @@ namespace RoaREngine
                 }
                 delay = 0f;
             }
-            if (container.roarConfiguration.playFadeTime > 0)
-            {
-                Fade(container.roarConfiguration.playFadeTime, container.roarConfiguration.fadeInVolume);
-            }
             if (container.roarConfiguration.randomStartTime)
             {
                 audioSource.time = Random.Range(0f, audioSource.clip.length);
