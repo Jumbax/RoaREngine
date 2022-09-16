@@ -236,49 +236,41 @@ namespace RoaREngine
                     oldConfig = config;
                 }
             }
-            //texture = AssetPreview.GetAssetPreview(clips[0]);
-            //GUILayout.Label(texture);
             scrollPos = GUILayout.BeginScrollView(scrollPos, false, false, GUIStyle.none, GUI.skin.verticalScrollbar);
             using (new GUILayout.HorizontalScope())
             {
-                //Container
                 using (new GUILayout.VerticalScope())
                 {
-                    EditorGUILayout.LabelField("Container: " + containersName[containerIndex]);
+                    EditorGUILayout.LabelField("CONTAINER: " + containersName[containerIndex]);
                     containerIndex = EditorGUILayout.Popup(containerIndex, containersName.ToArray());
                     ContainerSettings();
-                }
-                EditorGUILayout.Space(25f);
-                //Bank
-                using (new GUILayout.VerticalScope())
-                {
+                    EditorGUILayout.Space(25f);
                     string bankName = bank != null ? bank.name : "None";
-                    EditorGUILayout.LabelField("Bank: " + bankName);
+                    EditorGUILayout.LabelField("BANK: " + bankName);
                     BankSettings();
                 }
-                EditorGUILayout.Space(25f);
-                //Configuration
+                EditorGUILayout.Space(50f);
                 using (new GUILayout.VerticalScope())
                 {
                     string configName = config != null ? config.name : "None";
-                    EditorGUILayout.LabelField("Configuration: " + configName);
+                    EditorGUILayout.LabelField("CONFIGURATION: " + configName);
                     ConfigurationSettings();
                 }
             }
             GUILayout.EndScrollView();
-            if (GUILayout.Button("Play"))
+            if (GUILayout.Button("PLAY"))
             {
                 PlayInEditor();
             }
-            if (GUILayout.Button("Stop"))
+            if (GUILayout.Button("STOP"))
             {
                 StopInEditor();
             }
-            if (GUILayout.Button("Pause"))
+            if (GUILayout.Button("PAUSE"))
             {
                 PauseInEditor();
             }
-            if (GUILayout.Button("Resume"))
+            if (GUILayout.Button("RESUME"))
             {
                 ResumeInEditor();
             }
@@ -290,23 +282,23 @@ namespace RoaREngine
             containerName = EditorGUILayout.TextField("ContainerName", containerName);
             config = EditorGUILayout.ObjectField("Configuration", config, typeof(RoarConfigurationSO), false) as RoarConfigurationSO;
             bank = EditorGUILayout.ObjectField("Bank", bank, typeof(RoarClipsBankSO), false) as RoarClipsBankSO;
-            if (GUILayout.Button("Create Container"))
+            if (GUILayout.Button("CREATE CONTAINER"))
             {
                 CreateContainer();
             }
-            if (GUILayout.Button("Default Container"))
+            if (GUILayout.Button("DEFAULT CONTAINER"))
             {
                 DefaultContainer();
             }
-            if (GUILayout.Button("Save Container"))
+            if (GUILayout.Button("SAVE CONTAINER"))
             {
                 SaveContainerSettings(containers[containerIndex - 1]);
             }
-            if (GUILayout.Button("Reload Containers"))
+            if (GUILayout.Button("RELOAD CONTAINERS"))
             {
                 ReloadContainers();
             }
-            if (GUILayout.Button("Change Folder Path"))
+            if (GUILayout.Button("CHANGE FOLDER PATH"))
             {
                 CreateFolderPath();
             }
@@ -330,11 +322,11 @@ namespace RoaREngine
                 clipIndex = Mathf.Clamp(clipIndex, 0, clips.Count);
             }
             GUI.enabled = true;
-            if (GUILayout.Button("Add Clip"))
+            if (GUILayout.Button("ADD CLIP"))
             {
                 AddClipField();
             }
-            if (GUILayout.Button("Remove Clip"))
+            if (GUILayout.Button("REMOVE CLIP"))
             {
                 RemoveClipField();
             }
