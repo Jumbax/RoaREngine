@@ -730,6 +730,7 @@ namespace RoaREngine
             {
                 container.roarConfiguration = config;
             }
+            EditorUtility.SetDirty(container);
             AssetDatabase.SaveAssets();
             EditorUtility.FocusProjectWindow();
             Selection.activeObject = container;
@@ -745,6 +746,7 @@ namespace RoaREngine
 
             bank.audioClips = clips.ToArray();
 
+            EditorUtility.SetDirty(bank);
             AssetDatabase.SaveAssets();
             EditorUtility.FocusProjectWindow();
             Selection.activeObject = bank;
@@ -756,12 +758,12 @@ namespace RoaREngine
         {
             RoarConfigurationSO config = CreateInstance<RoarConfigurationSO>();
 
-            //string path = AssetDatabase.GenerateUniqueAssetPath(string.Concat("Assets/Test/", containerName, "CONFIG.asset"));
             string path = AssetDatabase.GenerateUniqueAssetPath(string.Concat(folderPath, "/", containerName, "CONFIG.asset"));
             AssetDatabase.CreateAsset(config, path);
 
             ApplySettings(bank, config);
 
+            EditorUtility.SetDirty(config);
             AssetDatabase.SaveAssets();
             EditorUtility.FocusProjectWindow();
             Selection.activeObject = config;
@@ -1037,7 +1039,9 @@ namespace RoaREngine
             {
                 ApplySettings(container.roarClipBank, container.roarConfiguration);
             }
-            //FIX HERE
+            EditorUtility.SetDirty(bank);
+            EditorUtility.SetDirty(config);
+            EditorUtility.SetDirty(container);
             AssetDatabase.SaveAssets();
             EditorUtility.FocusProjectWindow();
         }
@@ -1051,7 +1055,6 @@ namespace RoaREngine
             }
             else
             {
-                //bank = CreateInstance<RoarClipsBankSO>();
                 DefaultBank();
             }
             if (container.roarConfiguration != null)
@@ -1060,7 +1063,6 @@ namespace RoaREngine
             }
             else
             {
-                //config = CreateInstance<RoarConfigurationSO>();
                 DefaultConfiguration();
             }
             containerName = container.Name;
