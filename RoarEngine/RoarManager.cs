@@ -687,8 +687,6 @@ namespace RoaREngine
         #endregion
 
         #region delegate
-
-        Toolti
         public static UnityAction<string, Transform> CallPlay;
         public static UnityAction<string> CallPause;
         public static UnityAction<string> CallResume;
