@@ -70,8 +70,8 @@ namespace RoaREngine
         private bool measureEvent = false;
         private bool hasMeasureEvent = false;
         private int bpm = 120;
-        private int tempoL = 4;
-        private int tempoR = 4;
+        private int beats = 4;
+        private int measure = 4;
         private int everyNBeat = 1;
         private bool timedEvent = false;
         private bool hasTimedEvent = false;
@@ -314,7 +314,7 @@ namespace RoaREngine
             {
                 clips[i] = EditorGUILayout.ObjectField("AudioClips", clips[i], typeof(AudioClip), false) as AudioClip;
             }
-            GUI.enabled = sequenceMode == AudioSequenceMode.Choise;
+            GUI.enabled = sequenceMode == AudioSequenceMode.Choice;
             using (new GUILayout.HorizontalScope())
             {
                 GUILayout.Label("Start From", GUILayout.Width(145));
@@ -431,8 +431,8 @@ namespace RoaREngine
                 using (new GUILayout.HorizontalScope())
                 {
                     GUILayout.Label("Tempo", GUILayout.Width(145));
-                    tempoL = EditorGUILayout.IntField(tempoL, GUILayout.Width(25));
-                    tempoR = EditorGUILayout.IntField(tempoR, GUILayout.Width(25));
+                    beats = EditorGUILayout.IntField(beats, GUILayout.Width(25));
+                    measure = EditorGUILayout.IntField(measure, GUILayout.Width(25));
                 }
                 using (new GUILayout.HorizontalScope())
                 {
@@ -819,8 +819,8 @@ namespace RoaREngine
             config.fadeOutParamValueStart = fadeOutParamValueStart;
             config.fadeOutParamValueEnd = fadeOutParamValueEnd;
             config.bpm = bpm;
-            config.tempoL = tempoL;
-            config.tempoR = tempoR;
+            config.beats = beats;
+            config.measure = measure;
             config.everyNBeat = everyNBeat;
             config.timedEvent = timedEvent;
             config.repeatTimedEvent = repeatTimedEvent;
@@ -993,8 +993,8 @@ namespace RoaREngine
             stopEvent = false;
             finishedEvent = false;
             bpm = 120;
-            tempoL = 4;
-            tempoR = 4;
+            beats = 4;
+            measure = 4;
             everyNBeat = 1;
             isInACrossFade = false;
             fadeInParamValueStart = 0f;
@@ -1132,8 +1132,8 @@ namespace RoaREngine
                 maxRandomXYZ = config.maxRandomXYZ;
                 measureEvent = config.measureEvent;
                 bpm = config.bpm;
-                tempoL = config.tempoL;
-                tempoR = config.tempoR;
+                beats = config.beats;
+                measure = config.measure;
                 everyNBeat = config.everyNBeat;
                 timedEvent = config.timedEvent;
                 repeatTimedEvent = config.repeatTimedEvent;

@@ -13,18 +13,18 @@ namespace RoaREngine
 
         public static double GetTrackQuarterLength(int bpm) => 60d / bpm;
 
-        public static double GetTrackSemiquaverLength(int bpm, int tempo) => GetTrackQuarterLength(bpm) / tempo;
+        public static double GetTrackSemiquaverLength(int bpm, int beats) => GetTrackQuarterLength(bpm) / beats;
 
-        public static double GetTrackBarLength(int bpm, int tempoL, int tempoR) => (GetTrackQuarterLength(bpm) * tempoL) * (tempoL / tempoR);
+        public static double GetTrackBarLength(int bpm, int beats, int measure) => (GetTrackQuarterLength(bpm) * beats) * (beats / measure);
 
         public static double GetTimeElapsed(AudioSource audioSource) => (double)audioSource.timeSamples / audioSource.clip.frequency;
  
-        public static double GetTimeRemainder(AudioSource audioSource, int bpm, int tempoL, int tempoR) => GetTimeElapsed(audioSource) % GetTrackBarLength(bpm, tempoL, tempoR);
+        public static double GetTimeRemainder(AudioSource audioSource, int bpm, int beats, int measure) => GetTimeElapsed(audioSource) % GetTrackBarLength(bpm, beats, measure);
 
-        public static double GetTimeBeforeNextBar(AudioSource audioSource, int bpm, int tempoL, int tempoR)
+        public static double GetTimeBeforeNextBar(AudioSource audioSource, int bpm, int beats, int measure)
         {
-            double barLength = GetTrackBarLength(bpm, tempoL, tempoR);
-            double remainder = GetTimeRemainder(audioSource, bpm, tempoL, tempoR);
+            double barLength = GetTrackBarLength(bpm, beats, measure);
+            double remainder = GetTimeRemainder(audioSource, bpm, beats, measure);
             return barLength - remainder;
         }
         #endregion

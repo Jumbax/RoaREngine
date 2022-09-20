@@ -8,7 +8,7 @@ namespace RoaREngine
     {
         Sequential,
         Random,
-        Choise
+        Choice
     }
     #endregion
 
@@ -58,7 +58,7 @@ namespace RoaREngine
                     }
                     while (currentIndex == previousIndex);
                     break;
-                case AudioSequenceMode.Choise:
+                case AudioSequenceMode.Choice:
                     currentIndex = IndexClip = Mathf.Min(IndexClip, audioClips.Length - 1);
                     break;
             }

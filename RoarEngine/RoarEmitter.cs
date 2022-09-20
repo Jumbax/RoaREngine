@@ -131,7 +131,7 @@ namespace RoaREngine
             }
             if (container.roarConfiguration.startTime > 0 && !container.roarConfiguration.randomStartTime)
             {
-                container.roarConfiguration.startTime = Mathf.Clamp(container.roarConfiguration.startTime, 0f, audioSource.clip.length - 0.01f);
+                container.roarConfiguration.startTime = Mathf.Clamp(container.roarConfiguration.startTime, 0f, audioSource.clip.length);
                 audioSource.time = container.roarConfiguration.startTime;
             }
             if (container.roarConfiguration.minRandomXYZ != 0 || container.roarConfiguration.maxRandomXYZ != 0)
@@ -289,7 +289,7 @@ namespace RoaREngine
         {
             if(container.roarConfiguration.measureEvent)
             {
-                float seconds = (float)RoarTrackInfo.GetTrackBarLength(container.roarConfiguration.bpm, container.roarConfiguration.tempoL, container.roarConfiguration.tempoR);
+                float seconds = (float)RoarTrackInfo.GetTrackBarLength(container.roarConfiguration.bpm, container.roarConfiguration.beats, container.roarConfiguration.measure);
                 float beatNumber = seconds * container.roarConfiguration.everyNBeat;
                 yield return new WaitForSeconds(beatNumber);
                 container.MeasureEvent?.Invoke();
@@ -313,7 +313,7 @@ namespace RoaREngine
 
         private IEnumerator SyncMeasureEvent()
         {
-            yield return new WaitForSeconds((float)RoarTrackInfo.GetTimeBeforeNextBar(audioSource, container.roarConfiguration.bpm, container.roarConfiguration.tempoL, container.roarConfiguration.tempoR));
+            yield return new WaitForSeconds((float)RoarTrackInfo.GetTimeBeforeNextBar(audioSource, container.roarConfiguration.bpm, container.roarConfiguration.beats, container.roarConfiguration.measure));
             StartCoroutine(MeasureEventCoroutine());
         }
 
