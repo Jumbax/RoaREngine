@@ -4,4 +4,4 @@ RoaREngine is a tool for Unity meant for easly designing and implementing audio,
 
 DOWNLOAD:
 
-WIKI:
+WIKI: https://github.com/Jumbax/RoaREngine/wiki
