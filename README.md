@@ -1,6 +1,6 @@
 # RoaREngine
 
-RoaREngine is an audio engine for designing and implementing audio in Unity, helping audio peoples and simplify programmer’s life.
+RoaREngine is a tool for Unity meant for easly designing and implementing audio, helping whoever works in this field and simplify programmer’s life.
 
 DOWNLOAD:
 
