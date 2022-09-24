@@ -618,40 +618,91 @@ namespace RoaREngine
             }
         }
 
-        private float GetAudioMixerParameter(string audioMixerName, string parameter)
+        private bool AudioMixerNameIsValid(string audioMixerName)
         {
-            bool value = audioMixerDict[audioMixerName].GetFloat(parameter, out float param);
-            if (value)
+            if (audioMixerDict.ContainsKey(audioMixerName))
             {
-                return param;
+                return true;
             }
             else
             {
-                return float.MinValue;
+                Debug.LogError("AudioMixerName not found");
+                return false;
             }
+        }
+
+        private float GetAudioMixerParameter(string audioMixerName, string parameter)
+        {
+            if (AudioMixerNameIsValid(audioMixerName))
+            {
+                bool value = audioMixerDict[audioMixerName].GetFloat(parameter, out float param);
+                if (value)
+                {
+                    return param;
+                }
+                else
+                {
+                    Debug.LogError("Mixer Parameter Name not found");
+                }
+            }
+            return float.MinValue;
         }
 
         private void SetAudioMixerParameter(string audioMixerName, string parameter, float volume)
         {
-            audioMixerDict[audioMixerName].SetFloat(parameter, volume);
+            if (AudioMixerNameIsValid(audioMixerName))
+            {
+                bool value = audioMixerDict[audioMixerName].GetFloat(parameter, out float param);
+                if (value)
+                {
+                    audioMixerDict[audioMixerName].SetFloat(parameter, volume);
+                }
+                else
+                {
+                    Debug.LogError("Mixer Parameter Name not found");
+                }
+            }
         }
 
         private void ChangeAudioMixerSnapshot(string audioMixerName, string snapshot, float time)
         {
-            audioMixerDict[audioMixerName].FindSnapshot(snapshot).TransitionTo(time);
+            if (AudioMixerNameIsValid(audioMixerName))
+            {
+                if (audioMixerDict[audioMixerName].FindSnapshot(snapshot))
+                {
+                    audioMixerDict[audioMixerName].FindSnapshot(snapshot).TransitionTo(time);
+                }
+                else
+                {
+                    Debug.LogError("Snapshot Name not found");
+                }
+            }
         }
 
         private AudioMixer GetAudioMixer(string audioMixerName)
         {
-            return audioMixerDict[audioMixerName];
+            if (AudioMixerNameIsValid(audioMixerName))
+            {
+                return audioMixerDict[audioMixerName];
+            }
+            return null;
         }
 
         private void SetAudioMixerVolumeWithSlider(string audioMixerName, string volumeNameParameter, float volume)
         {
-            audioMixerDict[audioMixerName].SetFloat(volumeNameParameter, RoarTrackInfo.NormalizedMixerValue(volume));
+            if (AudioMixerNameIsValid(audioMixerName))
+            {
+                bool value = audioMixerDict[audioMixerName].GetFloat(volumeNameParameter, out float param);
+                if (value)
+                {
+                    audioMixerDict[audioMixerName].SetFloat(volumeNameParameter, RoarTrackInfo.NormalizedMixerValue(volume));
+                }
+                else
+                {
+                    Debug.LogError("Mixer Parameter Name not found");
+                }
+            }
         }
-
-
         #endregion
 
         #region delegate
