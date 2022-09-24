@@ -169,71 +169,76 @@ namespace RoaREngine
 
         private void Play(string containerName, Transform parent)
         {
-            if (containerNameIsValid(containerName))
+            if (GetContainer(containerName).roarClipBank.audioClips.Length <= 0)
             {
-                if (GetContainer(containerName).roarClipBank.audioClips.Length <= 0)
-                {
-                    return;
-                }
-                GameObject roarEmitter;
-                if (GetContainer(containerName).roarConfiguration.esclusive)
-                {
-                    roarEmitter = GetEmitter(containerName);
-                    if (roarEmitter != null)
-                    {
-                        Stop(containerName);
-                    }
-                }
-                roarEmitter = GetEmitterFromPool();
+                Debug.LogWarning("AudioClip not found. Container must have at least one audioclip");
+                return;
+            }
+            GameObject roarEmitter;
+            if (GetContainer(containerName).roarConfiguration.esclusive)
+            {
+                roarEmitter = GetEmitter(containerName);
                 if (roarEmitter != null)
                 {
-                    SetContainer(containerName, roarEmitter);
-                    RoarEmitter emitterComponent = roarEmitter.GetComponent<RoarEmitter>();
-                    if (parent != null)
-                    {
-                        emitterComponent.SetParent(parent);
-                    }
-                    emitterComponent.Play();
+                    Stop(containerName);
                 }
+            }
+            roarEmitter = GetEmitterFromPool();
+            if (roarEmitter != null)
+            {
+                SetContainer(containerName, roarEmitter);
+                RoarEmitter emitterComponent = roarEmitter.GetComponent<RoarEmitter>();
+                if (parent != null)
+                {
+                    emitterComponent.SetParent(parent);
+                }
+                emitterComponent.Play();
+            }
+            else
+            {
+                Debug.LogError("The emitters pool cannot get and activate one");
             }
         }
 
         private void Stop(string containerName)
         {
-            if (containerNameIsValid(containerName))
+            GameObject roarEmitter = GetEmitter(containerName);
+            if (roarEmitter != null)
             {
-                GameObject roarEmitter = GetEmitter(containerName);
-                if (roarEmitter != null)
-                {
-                    RoarEmitter emitterComponent = roarEmitter.GetComponent<RoarEmitter>();
-                    emitterComponent.Stop();
-                }
+                RoarEmitter emitterComponent = roarEmitter.GetComponent<RoarEmitter>();
+                emitterComponent.Stop();
+            }
+            else
+            {
+                Debug.LogError("The emitters pool cannot get and activate one");
             }
         }
 
         private void Pause(string containerName)
         {
-            if (containerNameIsValid(containerName))
+            GameObject roarEmitter = GetEmitter(containerName);
+            if (roarEmitter != null)
             {
-                GameObject roarEmitter = GetEmitter(containerName);
-                if (roarEmitter != null)
-                {
-                    RoarEmitter emitterComponent = roarEmitter.GetComponent<RoarEmitter>();
-                    emitterComponent.Pause();
-                }
+                RoarEmitter emitterComponent = roarEmitter.GetComponent<RoarEmitter>();
+                emitterComponent.Pause();
+            }
+            else
+            {
+                Debug.LogError("The emitters pool cannot get and activate one");
             }
         }
 
         private void Resume(string containerName)
         {
-            if (containerNameIsValid(containerName))
+            GameObject roarEmitter = GetEmitter(containerName);
+            if (roarEmitter != null)
             {
-                GameObject roarEmitter = GetEmitter(containerName);
-                if (roarEmitter != null)
-                {
-                    RoarEmitter emitterComponent = roarEmitter.GetComponent<RoarEmitter>();
-                    emitterComponent.Resume();
-                }
+                RoarEmitter emitterComponent = roarEmitter.GetComponent<RoarEmitter>();
+                emitterComponent.Resume();
+            }
+            else
+            {
+                Debug.LogError("The emitters pool cannot get and activate one");
             }
         }
 
@@ -282,27 +287,38 @@ namespace RoaREngine
             }
         }
 
-        private bool containerNameIsValid(string containerName)
+        private bool ContainerNameIsValid(string containerName)
         {
-            return containerDict.ContainsKey(containerName);
+            if (containerDict.ContainsKey(containerName))
+            {
+                return true;
+            }
+            else
+            {
+                Debug.LogError("ContainerName not found", this);
+                return false;
+            }
         }
 
         private GameObject GetEmitter(string containerName)
         {
-            foreach (GameObject roarEmitter in roarEmitters)
+            if (ContainerNameIsValid(containerName))
             {
-                RoarEmitter emitterComponent = roarEmitter.GetComponent<RoarEmitter>();
-                if (roarEmitter.gameObject.activeInHierarchy == true)
+                foreach (GameObject roarEmitter in roarEmitters)
                 {
-                    if (emitterComponent.CheckForContainerName(containerName))
+                    RoarEmitter emitterComponent = roarEmitter.GetComponent<RoarEmitter>();
+                    if (roarEmitter.gameObject.activeInHierarchy == true)
                     {
-                        return roarEmitter;
+                        if (emitterComponent.CheckForContainerName(containerName))
+                        {
+                            return roarEmitter;
+                        }
                     }
                 }
             }
             return null;
         }
-        
+
         private List<RoarEmitter> GetEmitters()
         {
             List<RoarEmitter> activeEmitters = new List<RoarEmitter>();
@@ -330,7 +346,7 @@ namespace RoaREngine
 
         private RoarContainerSO GetContainer(string containerName)
         {
-            if (containerNameIsValid(containerName))
+            if (ContainerNameIsValid(containerName))
             {
                 return containerDict[containerName];
             }
@@ -358,7 +374,6 @@ namespace RoaREngine
 
         private AudioSource GetAudioSource(string containerName)
         {
-
             RoarEmitter emitterComponent = GetEmitter(containerName).GetComponent<RoarEmitter>();
             if (emitterComponent != null)
             {
@@ -385,7 +400,6 @@ namespace RoaREngine
                 RoarEmitter emitterComponent = emitter.GetComponent<RoarEmitter>();
                 emitterComponent.ResetParent();
             }
-
         }
 
         private void AddEffect(string containerName, EffectType type)
@@ -484,169 +498,127 @@ namespace RoaREngine
 
         private void AddMeasureEvent(string containerName, UnityAction measureAction)
         {
-            if (containerNameIsValid(containerName))
+            RoarContainerSO container = GetContainer(containerName);
+            if (container != null)
             {
-                RoarContainerSO container = GetContainer(containerName);
-                if (container != null)
-                {
-                    container.MeasureEvent += measureAction;
-                }
+                container.MeasureEvent += measureAction;
             }
         }
 
         private void RemoveMeasureEvent(string containerName, UnityAction measureAction)
         {
-            if (containerNameIsValid(containerName))
+            RoarContainerSO container = GetContainer(containerName);
+            if (container != null)
             {
-                RoarContainerSO container = GetContainer(containerName);
-                if (container != null)
-                {
-                    container.MeasureEvent -= measureAction;
-                }
+                container.MeasureEvent -= measureAction;
             }
         }
 
         private void AddTimedEvent(string containerName, UnityAction markerAction)
         {
-            if (containerNameIsValid(containerName))
+            RoarContainerSO container = GetContainer(containerName);
+            if (container != null)
             {
-                RoarContainerSO container = GetContainer(containerName);
-                if (container != null)
-                {
-                    container.TimedEvent += markerAction;
-                }
+                container.TimedEvent += markerAction;
             }
         }
 
         private void RemoveTimedEvent(string containerName, UnityAction markerAction)
         {
-            if (containerNameIsValid(containerName))
+            RoarContainerSO container = GetContainer(containerName);
+            if (container != null)
             {
-                RoarContainerSO container = GetContainer(containerName);
-                if (container != null)
-                {
-                    container.TimedEvent -= markerAction;
-                }
+                container.TimedEvent -= markerAction;
             }
         }
 
         private void AddPlayEvent(string containerName, UnityAction playEvent)
         {
-            if (containerNameIsValid(containerName))
+            RoarContainerSO container = GetContainer(containerName);
+            if (container != null)
             {
-                RoarContainerSO container = GetContainer(containerName);
-                if (container != null)
-                {
-                    container.OnPlayEvent += playEvent;
-                }
+                container.OnPlayEvent += playEvent;
             }
         }
 
         private void RemovePlayEvent(string containerName, UnityAction playEvent)
         {
-            if (containerNameIsValid(containerName))
+            RoarContainerSO container = GetContainer(containerName);
+            if (container != null)
             {
-                RoarContainerSO container = GetContainer(containerName);
-                if (container != null)
-                {
-                    container.OnPlayEvent -= playEvent;
-                }
+                container.OnPlayEvent -= playEvent;
             }
         }
 
         private void AddPauseEvent(string containerName, UnityAction pauseEvent)
         {
-            if (containerNameIsValid(containerName))
+            RoarContainerSO container = GetContainer(containerName);
+            if (container != null)
             {
-                RoarContainerSO container = GetContainer(containerName);
-                if (container != null)
-                {
-                    container.OnPauseEvent += pauseEvent;
-                }
+                container.OnPauseEvent += pauseEvent;
             }
         }
 
         private void RemovePauseEvent(string containerName, UnityAction pauseEvent)
         {
-            if (containerNameIsValid(containerName))
+            RoarContainerSO container = GetContainer(containerName);
+            if (container != null)
             {
-                RoarContainerSO container = GetContainer(containerName);
-                if (container != null)
-                {
-                    container.OnPauseEvent -= pauseEvent;
-                }
+                container.OnPauseEvent -= pauseEvent;
             }
         }
 
         private void AddResumeEvent(string containerName, UnityAction resumeEvent)
         {
-            if (containerNameIsValid(containerName))
+            RoarContainerSO container = GetContainer(containerName);
+            if (container != null)
             {
-                RoarContainerSO container = GetContainer(containerName);
-                if (container != null)
-                {
-                    container.OnResumeEvent += resumeEvent;
-                }
+                container.OnResumeEvent += resumeEvent;
             }
         }
 
         private void RemoveResumeEvent(string containerName, UnityAction resumeEvent)
         {
-            if (containerNameIsValid(containerName))
+            RoarContainerSO container = GetContainer(containerName);
+            if (container != null)
             {
-                RoarContainerSO container = GetContainer(containerName);
-                if (container != null)
-                {
-                    container.OnResumeEvent -= resumeEvent;
-                }
+                container.OnResumeEvent -= resumeEvent;
             }
         }
 
         private void AddStopEvent(string containerName, UnityAction stopEvent)
         {
-            if (containerNameIsValid(containerName))
+            RoarContainerSO container = GetContainer(containerName);
+            if (container != null)
             {
-                RoarContainerSO container = GetContainer(containerName);
-                if (container != null)
-                {
-                    container.OnStopEvent += stopEvent;
-                }
+                container.OnStopEvent += stopEvent;
             }
         }
 
         private void RemoveStopEvent(string containerName, UnityAction stopEvent)
         {
-            if (containerNameIsValid(containerName))
+            RoarContainerSO container = GetContainer(containerName);
+            if (container != null)
             {
-                RoarContainerSO container = GetContainer(containerName);
-                if (container != null)
-                {
-                    container.OnStopEvent -= stopEvent;
-                }
+                container.OnStopEvent -= stopEvent;
             }
         }
 
         private void AddFinishedEvent(string containerName, UnityAction finishEvent)
         {
-            if (containerNameIsValid(containerName))
+            RoarContainerSO container = GetContainer(containerName);
+            if (container != null)
             {
-                RoarContainerSO container = GetContainer(containerName);
-                if (container != null)
-                {
-                    container.OnFinishedEvent += finishEvent;
-                }
+                container.OnFinishedEvent += finishEvent;
             }
         }
 
         private void RemoveFinishedEvent(string containerName, UnityAction finishEvent)
         {
-            if (containerNameIsValid(containerName))
+            RoarContainerSO container = GetContainer(containerName);
+            if (container != null)
             {
-                RoarContainerSO container = GetContainer(containerName);
-                if (container != null)
-                {
-                    container.OnFinishedEvent -= finishEvent;
-                }
+                container.OnFinishedEvent -= finishEvent;
             }
         }
 
@@ -683,7 +655,7 @@ namespace RoaREngine
             audioMixerDict[audioMixerName].SetFloat(volumeNameParameter, RoarTrackInfo.NormalizedMixerValue(volume));
         }
 
-        
+
         #endregion
 
         #region delegate
