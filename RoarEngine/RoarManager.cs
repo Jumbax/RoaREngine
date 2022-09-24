@@ -177,7 +177,7 @@ namespace RoaREngine
             GameObject roarEmitter;
             if (GetContainer(containerName).roarConfiguration.esclusive)
             {
-                roarEmitter = GetEmitter(containerName);
+                roarEmitter = GetActiveEmitter(containerName);
                 if (roarEmitter != null)
                 {
                     Stop(containerName);
@@ -202,49 +202,37 @@ namespace RoaREngine
 
         private void Stop(string containerName)
         {
-            GameObject roarEmitter = GetEmitter(containerName);
+            GameObject roarEmitter = GetActiveEmitter(containerName);
             if (roarEmitter != null)
             {
                 RoarEmitter emitterComponent = roarEmitter.GetComponent<RoarEmitter>();
                 emitterComponent.Stop();
             }
-            else
-            {
-                Debug.LogError("The emitters pool cannot get and activate one");
-            }
         }
 
         private void Pause(string containerName)
         {
-            GameObject roarEmitter = GetEmitter(containerName);
+            GameObject roarEmitter = GetActiveEmitter(containerName);
             if (roarEmitter != null)
             {
                 RoarEmitter emitterComponent = roarEmitter.GetComponent<RoarEmitter>();
                 emitterComponent.Pause();
             }
-            else
-            {
-                Debug.LogError("The emitters pool cannot get and activate one");
-            }
         }
 
         private void Resume(string containerName)
         {
-            GameObject roarEmitter = GetEmitter(containerName);
+            GameObject roarEmitter = GetActiveEmitter(containerName);
             if (roarEmitter != null)
             {
                 RoarEmitter emitterComponent = roarEmitter.GetComponent<RoarEmitter>();
                 emitterComponent.Resume();
             }
-            else
-            {
-                Debug.LogError("The emitters pool cannot get and activate one");
-            }
         }
 
         private void StopAll()
         {
-            List<RoarEmitter> emitters = GetEmitters();
+            List<RoarEmitter> emitters = GetActiveEmitters();
             foreach (RoarEmitter emitter in emitters)
             {
                 emitter.Stop();
@@ -253,7 +241,7 @@ namespace RoaREngine
 
         private void PauseAll()
         {
-            List<RoarEmitter> emitters = GetEmitters();
+            List<RoarEmitter> emitters = GetActiveEmitters();
             foreach (RoarEmitter emitter in emitters)
             {
                 emitter.Pause();
@@ -262,7 +250,7 @@ namespace RoaREngine
 
         private void ResumeAll()
         {
-            List<RoarEmitter> emitters = GetEmitters();
+            List<RoarEmitter> emitters = GetActiveEmitters();
             foreach (RoarEmitter emitter in emitters)
             {
                 emitter.Resume();
@@ -307,19 +295,27 @@ namespace RoaREngine
                 foreach (GameObject roarEmitter in roarEmitters)
                 {
                     RoarEmitter emitterComponent = roarEmitter.GetComponent<RoarEmitter>();
-                    if (roarEmitter.gameObject.activeInHierarchy == true)
+                    if (emitterComponent.CheckForContainerName(containerName))
                     {
-                        if (emitterComponent.CheckForContainerName(containerName))
-                        {
-                            return roarEmitter;
-                        }
+                        return roarEmitter;
                     }
                 }
             }
             return null;
         }
 
-        private List<RoarEmitter> GetEmitters()
+        private GameObject GetActiveEmitter(string containerName)
+        {
+            GameObject emitter = GetEmitter(containerName);
+            if (emitter.activeInHierarchy)
+            {
+                return emitter;
+            }
+            Debug.LogError("Invalid operation on inactive emitter");
+            return null;
+        }
+
+        private List<RoarEmitter> GetActiveEmitters()
         {
             List<RoarEmitter> activeEmitters = new List<RoarEmitter>();
             foreach (GameObject roarEmitter in roarEmitters)
@@ -434,7 +430,7 @@ namespace RoaREngine
 
         private void Fade(string containerName, float fadeTime, float finalVolume)
         {
-            RoarEmitter emitter = GetEmitter(containerName).GetComponent<RoarEmitter>();
+            RoarEmitter emitter = GetActiveEmitter(containerName).GetComponent<RoarEmitter>();
             if (emitter != null)
             {
                 emitter.Fade(fadeTime, finalVolume);
