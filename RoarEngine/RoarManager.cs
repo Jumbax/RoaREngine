@@ -32,7 +32,7 @@ namespace RoaREngine
 
         private void OnEnable()
         {
-            SceneManager.sceneLoaded += OnChangeScene;
+            SceneManager.sceneLoaded += OnChangeScene;   
             CallPlay += Play;
             CallPause += Pause;
             CallResume += Resume;
@@ -419,12 +419,12 @@ namespace RoaREngine
             return sources.Length;
         }
 
-        private void SetBankIndex(string containerName, int value)
+        private void SetBankIndex(string containerName, int bankIndex)
         {
             RoarContainerSO container = GetContainer(containerName);
             if (container != null)
             {
-                container.roarClipBank.IndexClip = Mathf.Min(value, container.roarClipBank.audioClips.Length);
+                container.roarClipBank.IndexClip = Mathf.Min(bankIndex, container.roarClipBank.audioClips.Length);
             }
         }
 
@@ -437,57 +437,57 @@ namespace RoaREngine
             }
         }
 
-        private void CrossFadeByParameter(string[] musicsID, float param)
+        private void CrossFadeByParameter(string[] containersNames, float param)
         {
-            for (int i = 0; i < musicsID.Length; i++)
+            for (int i = 0; i < containersNames.Length; i++)
             {
-                float fadeInParamValueStart = GetContainer(musicsID[i]).roarConfiguration.fadeInParamValueStart;
-                float fadeInParamValueEnd = GetContainer(musicsID[i]).roarConfiguration.fadeInParamValueEnd;
-                float fadeOutParamValueStart = GetContainer(musicsID[i]).roarConfiguration.fadeOutParamValueStart;
-                float fadeOutParamValueEnd = GetContainer(musicsID[i]).roarConfiguration.fadeOutParamValueEnd;
+                float fadeInParamValueStart = GetContainer(containersNames[i]).roarConfiguration.fadeInParamValueStart;
+                float fadeInParamValueEnd = GetContainer(containersNames[i]).roarConfiguration.fadeInParamValueEnd;
+                float fadeOutParamValueStart = GetContainer(containersNames[i]).roarConfiguration.fadeOutParamValueStart;
+                float fadeOutParamValueEnd = GetContainer(containersNames[i]).roarConfiguration.fadeOutParamValueEnd;
 
                 if (param < fadeInParamValueStart)
                 {
-                    GetAudioSource(musicsID[i]).volume = 0f;
+                    GetAudioSource(containersNames[i]).volume = 0f;
                     continue;
                 }
                 if (param >= fadeInParamValueStart && param <= fadeInParamValueEnd)
                 {
                     if (fadeInParamValueStart == 0 && fadeInParamValueEnd == 0)
                     {
-                        GetAudioSource(musicsID[i]).volume = 1f;
+                        GetAudioSource(containersNames[i]).volume = 1f;
                         continue;
                     }
-                    GetAudioSource(musicsID[i]).volume = RoarTrackInfo.Remap(param, fadeInParamValueStart, fadeInParamValueEnd);
+                    GetAudioSource(containersNames[i]).volume = RoarTrackInfo.Remap(param, fadeInParamValueStart, fadeInParamValueEnd);
                 }
                 else
                 {
-                    GetAudioSource(musicsID[i]).volume = 1f - RoarTrackInfo.Remap(param, fadeOutParamValueStart, fadeOutParamValueEnd);
+                    GetAudioSource(containersNames[i]).volume = 1f - RoarTrackInfo.Remap(param, fadeOutParamValueStart, fadeOutParamValueEnd);
                 }
             }
         }
 
-        private void CrossFadeByParameterWithParam(string[] musicsID, float[][] crossFadeInput, float param)
+        private void CrossFadeByParameterWithParam(string[] containersNames, float[][] crossFadeInput, float param)
         {
-            for (int i = 0; i < musicsID.Length; i++)
+            for (int i = 0; i < containersNames.Length; i++)
             {
                 if (param < crossFadeInput[i][0])
                 {
-                    GetAudioSource(musicsID[i]).volume = 0f;
+                    GetAudioSource(containersNames[i]).volume = 0f;
                     continue;
                 }
                 if (param >= crossFadeInput[i][0] && param <= crossFadeInput[i][1])
                 {
                     if (crossFadeInput[i][0] == 0 && crossFadeInput[i][1] == 0)
                     {
-                        GetAudioSource(musicsID[i]).volume = 1f;
+                        GetAudioSource(containersNames[i]).volume = 1f;
                         continue;
                     }
-                    GetAudioSource(musicsID[i]).volume = RoarTrackInfo.Remap(param, crossFadeInput[i][0], crossFadeInput[i][1]);
+                    GetAudioSource(containersNames[i]).volume = RoarTrackInfo.Remap(param, crossFadeInput[i][0], crossFadeInput[i][1]);
                 }
                 else
                 {
-                    GetAudioSource(musicsID[i]).volume = 1f - RoarTrackInfo.Remap(param, crossFadeInput[i][2], crossFadeInput[i][3]);
+                    GetAudioSource(containersNames[i]).volume = 1f - RoarTrackInfo.Remap(param, crossFadeInput[i][2], crossFadeInput[i][3]);
                 }
             }
         }
@@ -648,14 +648,14 @@ namespace RoaREngine
             return float.MinValue;
         }
 
-        private void SetAudioMixerParameter(string audioMixerName, string parameter, float volume)
+        private void SetAudioMixerParameter(string audioMixerName, string parameter, float parameterValue)
         {
             if (AudioMixerNameIsValid(audioMixerName))
             {
                 bool value = audioMixerDict[audioMixerName].GetFloat(parameter, out float param);
                 if (value)
                 {
-                    audioMixerDict[audioMixerName].SetFloat(parameter, volume);
+                    audioMixerDict[audioMixerName].SetFloat(parameter, parameterValue);
                 }
                 else
                 {

@@ -233,9 +233,7 @@ namespace RoaREngine
 
             if (stop)
             {
-                audioSource.Stop();
-                audioSource.gameObject.SetActive(false);
-                ResetParent();
+                Dispose();
             }
 
             if (paused)
@@ -254,9 +252,7 @@ namespace RoaREngine
             }
             if (!audioSource.loop && !container.roarConfiguration.onGoing)
             {
-                ResetParent();
-                audioSource.Stop();
-                audioSource.gameObject.SetActive(false);
+                Dispose();
             }
         }
 
@@ -317,6 +313,14 @@ namespace RoaREngine
             StartCoroutine(MeasureEventCoroutine());
         }
 
+        private void Dispose()
+        {
+            ResetParent();
+            audioSource.Stop();
+            audioSource.clip = default;
+            containerNameHash = default;
+            audioSource.gameObject.SetActive(false);
+        }
         #endregion
 
         #region public functions
@@ -409,9 +413,7 @@ namespace RoaREngine
             }
             if (container.roarConfiguration.stopFadeTime <= 0)
             {
-                audioSource.Stop();
-                audioSource.gameObject.SetActive(false);
-                ResetParent();
+                Dispose();
             }
             else
             {
