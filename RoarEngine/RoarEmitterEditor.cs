@@ -7,12 +7,13 @@ namespace RoaREngine
     [ExecuteInEditMode]
     public class RoarEmitterEditor : RoarEmitter
     {
+        #region var
         private AudioSource audioSource;
         private RoarContainerSO container;
         private float delay = 0f;
-
-        #region private
+        #endregion
         
+        #region private
         private void Awake()
         {
             audioSource = gameObject.AddComponent<AudioSource>();
@@ -28,6 +29,10 @@ namespace RoaREngine
                     yield return null;
                 }
                 delay = 0f;
+            }
+            if (container.roarConfiguration.playFadeTime > 0)
+            {
+                Fade(container.roarConfiguration.playFadeTime, container.roarConfiguration.fadeInVolume);
             }
             if (container.roarConfiguration.randomStartTime)
             {
@@ -193,6 +198,7 @@ namespace RoaREngine
             float clipLengthRemaining = audioSource.clip.length - audioSource.time;
             yield return new WaitForSeconds(clipLengthRemaining);
             audioSource.Stop();
+            RoarWindow.canChangeContainer = true;
             DestroyImmediate(gameObject);
         }
 
@@ -226,11 +232,9 @@ namespace RoaREngine
                 container.roarConfiguration.ApplyTo(audioSource);
             }
         }
-
         #endregion
 
         #region public
-
         public new void Play()
         {
             if (audioSource.clip == null)
@@ -291,7 +295,7 @@ namespace RoaREngine
             }
             else
             {
-                Fade(container.roarConfiguration.resumeFadeTime, container.roarConfiguration.volume, true);
+                Fade(container.roarConfiguration.resumeFadeTime, container.roarConfiguration.fadeInVolume, true);
             }
         }
 
@@ -322,7 +326,6 @@ namespace RoaREngine
             float posZ = Random.Range(minRandomXYZ, maxRandomXYZ);
             transform.position = new Vector3(posX, posY, posZ);
         }
-        
         #endregion
     }
 #endif

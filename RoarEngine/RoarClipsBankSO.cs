@@ -20,15 +20,8 @@ namespace RoaREngine
         public AudioClip[] audioClips;
         private int currentIndex = -1;
         private int previousIndex = -1;
-        public int IndexClip = 0;
+        public int ClipIndex = 0;
         #endregion
-
-        //#region private functions
-        //private AudioClip NextClip()
-        //{
-        //    
-        //}
-        //#endregion
         
         #region public functions
         public void ResetIndex()
@@ -59,7 +52,7 @@ namespace RoaREngine
                     while (currentIndex == previousIndex);
                     break;
                 case AudioSequenceMode.Choice:
-                    currentIndex = IndexClip = Mathf.Min(IndexClip, audioClips.Length - 1);
+                    currentIndex = ClipIndex = Mathf.Min(ClipIndex, audioClips.Length - 1);
                     break;
             }
 

@@ -13,6 +13,8 @@ namespace RoaREngine
 
         Vector2 scrollPos = Vector2.zero;
         private RoarContainerSO containerEditor = null;
+        RoarClipsBankSO bankEditor = null;
+        RoarConfigurationSO configEditor = null;
         private List<RoarContainerSO> containers = new List<RoarContainerSO>();
         private List<string> containersName = new List<string>();
         private int containerIndex = 0;
@@ -20,6 +22,7 @@ namespace RoaREngine
         private GameObject emitterEditor;
 
         private string containerName;
+        public static bool canChangeContainer = true;
         private RoarConfigurationSO config = null;
         private RoarConfigurationSO oldConfig = null;
         private RoarClipsBankSO bank = null;
@@ -115,7 +118,7 @@ namespace RoaREngine
         private int reverbFilterReflectionsLevel = -10000;
         private float reverbFilterReflectionsDelay = 0f;
         private int reverbFilterReverbLevel = 0;
-        private float reverbFilterReverDelay = 0.04f;
+        private float reverbFilterReverbDelay = 0.04f;
         private int reverbFilterHFReference = 5000;
         private int reverbFilterLFReference = 250;
         private float reverbFilterDiffusion = 100f;
@@ -201,6 +204,9 @@ namespace RoaREngine
             {
                 if (containerIndex == 0)
                 {
+                    containerName = "";
+                    bank = null;
+                    config = null;
                     DefaultContainer();
                     containerOldIndex = containerIndex;
                 }
@@ -242,7 +248,9 @@ namespace RoaREngine
                 using (new GUILayout.VerticalScope())
                 {
                     EditorGUILayout.LabelField("CONTAINER: " + containersName[containerIndex]);
+                    GUI.enabled = canChangeContainer;
                     containerIndex = EditorGUILayout.Popup(containerIndex, containersName.ToArray());
+                    GUI.enabled = true;
                     ContainerSettings();
                     EditorGUILayout.Space(25f);
                     string bankName = bank != null ? bank.name : "None";
@@ -274,7 +282,6 @@ namespace RoaREngine
             {
                 ResumeInEditor();
             }
-            ControlAudioSource();
         }
 
         private void ContainerSettings()
@@ -292,7 +299,7 @@ namespace RoaREngine
             }
             if (GUILayout.Button("SAVE CONTAINER"))
             {
-                SaveContainerSettings(containers[containerIndex - 1]);
+                SaveContainerSettings();
             }
             if (GUILayout.Button("RELOAD CONTAINERS"))
             {
@@ -638,8 +645,8 @@ namespace RoaREngine
                     using (new GUILayout.HorizontalScope())
                     {
                         GUILayout.Label("Reverb Delay", GUILayout.Width(145));
-                        reverbFilterReverDelay = EditorGUILayout.FloatField(reverbFilterReverDelay, GUILayout.Width(25));
-                        reverbFilterReverDelay = Mathf.Clamp(reverbFilterReverDelay, 0f, 0.1f);
+                        reverbFilterReverbDelay = EditorGUILayout.FloatField(reverbFilterReverbDelay, GUILayout.Width(25));
+                        reverbFilterReverbDelay = Mathf.Clamp(reverbFilterReverbDelay, 0f, 0.1f);
                     }
                     using (new GUILayout.HorizontalScope())
                     {
@@ -705,6 +712,7 @@ namespace RoaREngine
         {
             if (containers.Find(container => container.Name == containerName))
             {
+                Debug.LogError("A Container with the same name already exists");
                 return;
             }
 
@@ -774,7 +782,7 @@ namespace RoaREngine
         private void ApplySettings(RoarClipsBankSO bank, RoarConfigurationSO config)
         {
             bank.sequenceMode = sequenceMode;
-            bank.IndexClip = clipIndex;
+            bank.ClipIndex = clipIndex;
 
             config.audioMixerGroup = audioMixerGroup;
             config.startTime = startTime;
@@ -838,7 +846,6 @@ namespace RoaREngine
             config.chorusDelay = chorusDelay;
             config.chorusRate = chorusRate;
             config.chorusDepth = chorusDepth;
-            config.chorusFilter = chorus.target;
             config.distortionFilter = distortion.target;
             config.distortionLevel = distortionLevel;
             config.echoFilter = echo.target;
@@ -862,7 +869,7 @@ namespace RoaREngine
             config.reverbFilterReflectionsLevel = reverbFilterReflectionsLevel;
             config.reverbFilterReflectionsDelay = reverbFilterReflectionsDelay;
             config.reverbFilterReverbLevel = reverbFilterReverbLevel;
-            config.reverbFilterReverbDelay = reverbFilterReverDelay;
+            config.reverbFilterReverbDelay = reverbFilterReverbDelay;
             config.reverbFilterHFReference = reverbFilterHFReference;
             config.reverbFilterLFReference = reverbFilterLFReference;
             config.reverbFilterDiffusion = reverbFilterDiffusion;
@@ -926,14 +933,12 @@ namespace RoaREngine
 
         private void DefaultContainer()
         {
-            containerName = "";
             DefaultBank();
             DefaultConfiguration();
         }
 
         private void DefaultBank()
         {
-            bank = null;
             clips.Clear();
             clipsNumber = 0;
             clipIndex = 0;
@@ -941,7 +946,6 @@ namespace RoaREngine
 
         private void DefaultConfiguration()
         {
-            config = null;
             audioMixerGroup = null;
             priority = PriorityLevel.Standard;
             sequenceMode = AudioSequenceMode.Sequential;
@@ -1011,12 +1015,14 @@ namespace RoaREngine
             reverbZone = new AnimBool(false);
         }
 
-        private void SaveContainerSettings(RoarContainerSO container)
+        private void SaveContainerSettings()
         {
             if (containerName == "" || containerIndex == 0)
             {
+                Debug.LogError("You need to create a container before you can save it");
                 return;
             }
+            RoarContainerSO container = containers[containerIndex - 1];
             container.Name = containerName;
             if (config != null)
             {
@@ -1085,7 +1091,7 @@ namespace RoaREngine
                     clips[i] = bank.audioClips[i];
                 }
                 sequenceMode = bank.sequenceMode;
-                clipIndex = bank.IndexClip;
+                clipIndex = bank.ClipIndex;
             }
         }
 
@@ -1179,7 +1185,7 @@ namespace RoaREngine
                 reverbFilterReflectionsLevel = config.reverbFilterReflectionsLevel;
                 reverbFilterReflectionsDelay = config.reverbFilterReflectionsDelay;
                 reverbFilterReverbLevel = config.reverbFilterReverbLevel;
-                reverbFilterReverDelay = config.reverbFilterReverbDelay;
+                reverbFilterReverbDelay = config.reverbFilterReverbDelay;
                 reverbFilterHFReference = config.reverbFilterHFReference;
                 reverbFilterLFReference = config.reverbFilterLFReference;
                 reverbFilterDiffusion = config.reverbFilterDiffusion;
@@ -1202,24 +1208,34 @@ namespace RoaREngine
                 reverbZoneDensity = config.reverbZoneDensity;
             }
         }
+   
+        private void UpdateEmitterEditorSettings()
+        {
+            if (emitterEditor != null)
+            {
+                ApplySettings(bankEditor, configEditor);
+                if (configEditor.playFadeTime > 0 || configEditor.resumeFadeTime > 0 || configEditor.pauseFadeTime > 0 || configEditor.stopFadeTime > 0)
+                {
+                    volume = emitterEditor.GetComponent<AudioSource>().volume;
+                }
+            }
+        }
 
         private void PlayInEditor()
         {
             if (clips.Count > 0)
             {
+                canChangeContainer = false;
                 emitterEditor = new GameObject();
                 emitterEditor.name = "EmitterEditor";
                 RoarEmitterEditor emitterComponent = emitterEditor.AddComponent<RoarEmitterEditor>();
-                if (containerIndex - 1 < 0)
-                {
-                    containerEditor = CreateInstance<RoarContainerSO>();
-                }
-                else
-                {
-                    containerEditor = containers[containerIndex - 1];
-                }
-                containerEditor.roarClipBank = bank;
-                containerEditor.roarConfiguration = config;
+                containerEditor = CreateInstance<RoarContainerSO>();
+                bankEditor = CreateInstance<RoarClipsBankSO>();
+                configEditor = CreateInstance<RoarConfigurationSO>();
+                bankEditor.audioClips = clips.ToArray();
+                ApplySettings(bankEditor, configEditor);
+                containerEditor.roarClipBank = bankEditor;
+                containerEditor.roarConfiguration = configEditor;
                 emitterComponent.SetContainer(containerEditor);
                 emitterComponent.Play();
             }
@@ -1227,10 +1243,12 @@ namespace RoaREngine
 
         private void StopInEditor()
         {
+            RoarEmitterEditor emitterEditor = FindObjectOfType<RoarEmitterEditor>();
             if (emitterEditor != null)
             {
                 RoarEmitterEditor emitterComponent = emitterEditor.GetComponent<RoarEmitterEditor>();
                 emitterComponent.Stop();
+                canChangeContainer = true;
             }
         }
 
@@ -1252,12 +1270,9 @@ namespace RoaREngine
             }
         }
 
-        private void ControlAudioSource()
+        private void Update()
         {
-            if (emitterEditor != null)
-            {
-                ApplySettings(bank, config);
-            }
+            UpdateEmitterEditorSettings();
         }
         #endregion
     }

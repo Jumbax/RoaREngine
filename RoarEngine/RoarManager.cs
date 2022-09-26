@@ -171,7 +171,7 @@ namespace RoaREngine
         {
             if (GetContainer(containerName).roarClipBank.audioClips.Length <= 0)
             {
-                Debug.LogWarning("AudioClip not found. Container must have at least one audioclip");
+                Debug.LogError("AudioClip not found. Container must have at least one audioclip");
                 return;
             }
             GameObject roarEmitter;
@@ -424,7 +424,7 @@ namespace RoaREngine
             RoarContainerSO container = GetContainer(containerName);
             if (container != null)
             {
-                container.roarClipBank.IndexClip = Mathf.Min(bankIndex, container.roarClipBank.audioClips.Length);
+                container.roarClipBank.ClipIndex = Mathf.Min(bankIndex, container.roarClipBank.audioClips.Length);
             }
         }
 
