@@ -428,8 +428,8 @@ namespace RoaREngine
         public void SetParent(Transform parent)
         {
             transform.parent = parent;
-            transform.position = parent.position;
             transform.position = Vector3.zero;
+            transform.position = parent.position;
         }
 
         public void ResetParent() => transform.parent = initialParent;

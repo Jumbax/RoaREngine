@@ -59,8 +59,8 @@ namespace RoaREngine
         [Header("Spatialisation")]
         [Range(0f, 1f)] public float spatialBlend = 0f;
         public AudioRolloffMode rolloffMode = AudioRolloffMode.Logarithmic;
-        [Range(0.01f, 5f)] public float minDistance = 0.1f;
-        [Range(5f, 100f)] public float maxDistance = 50f;
+        [Range(0.01f, 500f)] public float minDistance = 0.1f;
+        [Range(0.01f, 500f)] public float maxDistance = 50f;
         [Range(0, 360)] public int spread = 0;
         [Range(0f, 5f)] public float dopplerLevel = 0f;
 

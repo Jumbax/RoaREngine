@@ -9,6 +9,7 @@ namespace RoaREngine
 {
     public class RoarManager : MonoBehaviour
     {
+        public static RoarManager Instance;
         #region var
         [SerializeField] private GameObject roarEmitter;
         [SerializeField] private int count;
@@ -23,7 +24,15 @@ namespace RoaREngine
         #region functions
         private void Awake()
         {
-            DontDestroyOnLoad(transform.gameObject);
+            if (Instance != null && Instance != this)
+            {
+                Destroy(transform.gameObject);
+            }
+            else
+            {
+                Instance = this;
+                DontDestroyOnLoad(transform.gameObject);
+            }
             SetContainersNames();
             ResetContainersBankIndex();
             SetInitialEmitters();
@@ -143,10 +152,13 @@ namespace RoaREngine
         {
             for (int i = 0; i < roarEmitters.Count; i++)
             {
-                if (!roarEmitters[i].activeInHierarchy)
+                if (roarEmitters[i] != null)
                 {
-                    roarEmitters[i].SetActive(true);
-                    return roarEmitters[i];
+                    if (!roarEmitters[i].activeInHierarchy)
+                    {
+                        roarEmitters[i].SetActive(true);
+                        return roarEmitters[i];
+                    }
                 }
             }
 
@@ -180,7 +192,7 @@ namespace RoaREngine
                 roarEmitter = GetActiveEmitter(containerName);
                 if (roarEmitter != null)
                 {
-                    Stop(containerName);
+                    Stop(containerName, parent);
                 }
             }
             roarEmitter = GetEmitterFromPool();
@@ -200,32 +212,62 @@ namespace RoaREngine
             }
         }
 
-        private void Stop(string containerName)
+        private void Stop(string containerName, Transform parent)
         {
+            RoarEmitter emitterComponent;
+            if (parent != null)
+            {
+                emitterComponent = parent.GetComponentInChildren<RoarEmitter>();
+                if (emitterComponent != null)
+                {
+                    emitterComponent.Stop();
+                    return;
+                }
+            }
             GameObject roarEmitter = GetActiveEmitter(containerName);
             if (roarEmitter != null)
             {
-                RoarEmitter emitterComponent = roarEmitter.GetComponent<RoarEmitter>();
+                emitterComponent = roarEmitter.GetComponent<RoarEmitter>();
                 emitterComponent.Stop();
             }
         }
 
-        private void Pause(string containerName)
+        private void Pause(string containerName, Transform parent)
         {
+            RoarEmitter emitterComponent;
+            if (parent != null)
+            {
+                emitterComponent = parent.GetComponentInChildren<RoarEmitter>();
+                if (emitterComponent != null)
+                {
+                    emitterComponent.Pause();
+                    return;
+                }
+            }
             GameObject roarEmitter = GetActiveEmitter(containerName);
             if (roarEmitter != null)
             {
-                RoarEmitter emitterComponent = roarEmitter.GetComponent<RoarEmitter>();
+                emitterComponent = roarEmitter.GetComponent<RoarEmitter>();
                 emitterComponent.Pause();
             }
         }
 
-        private void Resume(string containerName)
+        private void Resume(string containerName, Transform parent)
         {
+            RoarEmitter emitterComponent;
+            if (parent != null)
+            {
+                emitterComponent = parent.GetComponentInChildren<RoarEmitter>();
+                if (emitterComponent != null)
+                {
+                    emitterComponent.Resume();
+                    return;
+                }
+            }
             GameObject roarEmitter = GetActiveEmitter(containerName);
             if (roarEmitter != null)
             {
-                RoarEmitter emitterComponent = roarEmitter.GetComponent<RoarEmitter>();
+                emitterComponent = roarEmitter.GetComponent<RoarEmitter>();
                 emitterComponent.Resume();
             }
         }
@@ -294,10 +336,13 @@ namespace RoaREngine
             {
                 foreach (GameObject roarEmitter in roarEmitters)
                 {
-                    RoarEmitter emitterComponent = roarEmitter.GetComponent<RoarEmitter>();
-                    if (emitterComponent.CheckForContainerName(containerName))
+                    if (roarEmitter != null)
                     {
-                        return roarEmitter;
+                        RoarEmitter emitterComponent = roarEmitter.GetComponent<RoarEmitter>();
+                        if (emitterComponent.CheckForContainerName(containerName))
+                        {
+                            return roarEmitter;
+                        }
                     }
                 }
             }
@@ -307,11 +352,13 @@ namespace RoaREngine
         private GameObject GetActiveEmitter(string containerName)
         {
             GameObject emitter = GetEmitter(containerName);
-            if (emitter.activeInHierarchy)
+            if (emitter != null)
             {
-                return emitter;
+                if (emitter.activeInHierarchy)
+                {
+                    return emitter;
+                }
             }
-            Debug.LogError("Invalid operation on inactive emitter");
             return null;
         }
 
@@ -320,9 +367,12 @@ namespace RoaREngine
             List<RoarEmitter> activeEmitters = new List<RoarEmitter>();
             foreach (GameObject roarEmitter in roarEmitters)
             {
-                if (roarEmitter.gameObject.activeInHierarchy == true)
+                if (roarEmitter != null)
                 {
-                    activeEmitters.Add(roarEmitter.GetComponent<RoarEmitter>());
+                    if (roarEmitter.gameObject.activeInHierarchy == true)
+                    {
+                        activeEmitters.Add(roarEmitter.GetComponent<RoarEmitter>());
+                    }
                 }
             }
             return activeEmitters;
@@ -370,7 +420,13 @@ namespace RoaREngine
 
         private AudioSource GetAudioSource(string containerName)
         {
-            RoarEmitter emitterComponent = GetEmitter(containerName).GetComponent<RoarEmitter>();
+
+            GameObject emitter = GetActiveEmitter(containerName);
+            RoarEmitter emitterComponent = null;
+            if (emitter != null)
+            {
+                emitterComponent = emitter.GetComponent<RoarEmitter>();
+            }
             if (emitterComponent != null)
             {
                 return emitterComponent.GetAudioSource();
@@ -707,9 +763,9 @@ namespace RoaREngine
 
         #region delegate
         public static UnityAction<string, Transform> CallPlay;
-        public static UnityAction<string> CallPause;
-        public static UnityAction<string> CallResume;
-        public static UnityAction<string> CallStop;
+        public static UnityAction<string, Transform> CallPause;
+        public static UnityAction<string, Transform> CallResume;
+        public static UnityAction<string, Transform> CallStop;
         public static UnityAction CallStopAll;
         public static UnityAction CallPauseAll;
         public static UnityAction CallResumeAll;
